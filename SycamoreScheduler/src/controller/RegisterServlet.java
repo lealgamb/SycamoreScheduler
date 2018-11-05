@@ -17,12 +17,12 @@ import driver.JDBCDriver;
  */
 @WebServlet("/RegisterServlet")
 public class RegisterServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-
-	/**
-	 * Handles user registration requests.
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+  private static final long serialVersionUID = 1L;
+  
+  /**
+   * Handles user registration requests.
+   */
+  protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	  // Get the writer
 	  PrintWriter pw = response.getWriter();
 	  
