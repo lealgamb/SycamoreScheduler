@@ -23,51 +23,51 @@ public class RegisterServlet extends HttpServlet {
    * Handles user registration requests.
    */
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	  // Get the writer
-	  PrintWriter pw = response.getWriter();
+    // Get the writer
+    PrintWriter pw = response.getWriter();
+    
+    // Get all of the parameters
+    String email = request.getParameter("email");
+    String fName = request.getParameter("fName");
+    String lName = request.getParameter("lName");
+    String password = request.getParameter("password");
+    String major1 = request.getParameter("major1");
+    String major2 = request.getParameter("major2");
+    String minor1 = request.getParameter("minor1");
+    String minor2 = request.getParameter("minor2");
 	  
-	  // Get all of the parameters
-	  String email = request.getParameter("email");
-	  String fName = request.getParameter("fName");
-	  String lName = request.getParameter("lName");
-	  String password = request.getParameter("password");
-	  String major1 = request.getParameter("major1");
-	  String major2 = request.getParameter("major2");
-	  String minor1 = request.getParameter("minor1");
-	  String minor2 = request.getParameter("minor2");
-	  
-	  // Check if any of the parameters are null and send an error message if so
-	  // At minimum, major1 must have a value
-	  if (email == null || fName == null || lName == null || password == null || major1 == null) {
-	    pw.write(HttpServletResponse.SC_BAD_REQUEST);
-	    pw.flush();
-	  }
-	  else {
-	    // Add the degree program names to the academicPrograms list
-	    ArrayList<String> academicPrograms = new ArrayList<String>();
-	    academicPrograms.add(major1); // At this point we know major1 is not null
-	    if (major2 != null) {
-	      academicPrograms.add(major2);
-	    }
-	    if (minor1 != null) {
-	      academicPrograms.add(minor1);
-	    }
-	    if (minor2 != null) {
-	      academicPrograms.add(minor2);
-	    }
+    // Check if any of the parameters are null and send an error message if so
+    // At minimum, major1 must have a value
+    if (email == null || fName == null || lName == null || password == null || major1 == null) {
+      pw.write(HttpServletResponse.SC_BAD_REQUEST);
+      pw.flush();
+    }
+    else {
+      // Add the degree program names to the academicPrograms list
+      ArrayList<String> academicPrograms = new ArrayList<String>();
+      academicPrograms.add(major1); // At this point we know major1 is not null
+      if (major2 != null) {
+        academicPrograms.add(major2);
+      }
+      if (minor1 != null) {
+        academicPrograms.add(minor1);
+      }
+      if (minor2 != null) {
+        academicPrograms.add(minor2);
+      }
 	    
-	    // Attempt to register the user
-	    if (JDBCDriver.addUser(email, fName, lName, password, academicPrograms)) {
-	      // Successfully registered user
-	      pw.write(HttpServletResponse.SC_OK);
-	      pw.flush();
-	    }
-	    else {
-	      // Failed to register user
-	      pw.write(HttpServletResponse.SC_BAD_REQUEST);
-	      pw.flush();
-	    }
-	  }
-	}
+      // Attempt to register the user
+      if (JDBCDriver.addUser(email, fName, lName, password, academicPrograms)) {
+        // Successfully registered user
+        pw.write(HttpServletResponse.SC_OK);
+        pw.flush();
+      }
+      else {
+        // Failed to register user
+        pw.write(HttpServletResponse.SC_BAD_REQUEST);
+        pw.flush();
+      }
+    }
+  }
 
 }

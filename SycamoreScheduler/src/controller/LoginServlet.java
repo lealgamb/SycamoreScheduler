@@ -27,26 +27,26 @@ public class LoginServlet extends HttpServlet {
     
     // Get all of the parameters
     String email = request.getParameter("email");
-		String password = request.getParameter("password");
+    String password = request.getParameter("password");
 		
-		// Check if any of the parameters are null and send an error message if so
-		if (email == null || password == null) {
-		  pw.write(HttpServletResponse.SC_BAD_REQUEST);
-		  pw.flush();
-		}
-		else {
-		  // Check if the user can be authenticated
-		  if (JDBCDriver.isUserRegistered(email, password)) {
-		    // Successfully authenticated user
-		    pw.write(HttpServletResponse.SC_OK);
-		    pw.flush();
-		  }
-		  else {
-		    // Failed to authenticate the user
-		    pw.write(HttpServletResponse.SC_OK);
-		    pw.flush();
-		  }
-		}
-	}
+    // Check if any of the parameters are null and send an error message if so
+    if (email == null || password == null) {
+      pw.write(HttpServletResponse.SC_BAD_REQUEST);
+      pw.flush();
+    }
+    else {
+      // Check if the user can be authenticated
+      if (JDBCDriver.isUserRegistered(email, password)) {
+        // Successfully authenticated user
+        pw.write(HttpServletResponse.SC_OK);
+        pw.flush();
+      }
+      else {
+        // Failed to authenticate the user
+        pw.write(HttpServletResponse.SC_OK);
+        pw.flush();
+      }
+    }
+  }
 
 }
