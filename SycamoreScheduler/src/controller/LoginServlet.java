@@ -44,7 +44,7 @@ public class LoginServlet extends HttpServlet {
       }
       else {
         // Failed to authenticate the user
-        pw.write(HttpServletResponse.SC_OK);
+        pw.write(HttpServletResponse.SC_BAD_REQUEST);
         pw.flush();
       }
     }
