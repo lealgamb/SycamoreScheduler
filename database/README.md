@@ -1,6 +1,6 @@
 # Database Section
 ---
-To run the script, simply run it with no parameters. 
+To run the python (usc_class_scraper.py) script, simply run it with no parameters. 
 
 It will create a file that you can specify within the script -- by default it is called classes.txt. 
 
