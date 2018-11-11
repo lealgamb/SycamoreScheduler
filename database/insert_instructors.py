@@ -13,5 +13,5 @@ if __name__ == "__main__":
             rating = float(rating_dict[key]['rating'])
         except:
             pass
-        print("INSERT INTO Instructor(instructorID, instructorName, rmpRating) VALUES (" + str(instructorID) + ", "
-                + instructorName + ", " + str(rating) + ");")
+        print("INSERT INTO Instructor(instructorID, instructorName, rmpRating) VALUES (" + str(instructorID) + "\", "
+                + instructorName + "\", " + str(rating) + ");")
