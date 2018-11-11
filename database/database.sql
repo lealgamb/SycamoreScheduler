@@ -38,9 +38,9 @@ CREATE TABLE Corequisite (
 # Corequisite: coreqID (P_K, AUTO_INC), classID (NOT NULL), coClassID (NOT NULL)
 
 CREATE TABLE Instructor (
-	instructorID INT(11) PRIMARY KEY AUTO_INCREMENT,
+	instructorID INT(11) PRIMARY KEY,
     instructorName VARCHAR(50) NOT NULL,
-    rateMyProfessorLink VARCHAR(100) NULL
+    rmpRating DECIMAL NULL
 );
 
 # Instructor: instructorID (P_K, AUTO_INC), instructorName (NOT NULL) ratemyprofessorLink (NULL)
