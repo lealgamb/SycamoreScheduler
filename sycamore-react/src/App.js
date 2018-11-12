@@ -20,9 +20,15 @@ const theme = {
 			size: '14px',
 			height: '20px',
 			color: '#ffffff'
+		},
+		focus: {
+			border: {
+				color: '#ff3300'
+			}
 		}
 	},
 	anchor: {
+		color: '#ff3300',
 		hover: {
 			textDecoration: 'none'
 		}
@@ -72,7 +78,7 @@ const PageLink = (props) => (
 	</Anchor>
 );
 
-const items = Array(100)
+const items = Array(1000)
   .fill()
   .map((_, i) => `CSCI ${i}`);
 
@@ -115,6 +121,9 @@ class App extends Component {
 								open={showSidebar}
 							>
 								<Box
+									direction='column'
+									align='center'
+									justify='start'
 									height='85vh'
 									width='large'
 									overflow={{vertical: 'auto', horizontal: 'hidden'}}
@@ -125,19 +134,16 @@ class App extends Component {
 										step={20}
 									>
 										{item => (
-											<Box
-												direction='column'
-												key={item}
+											<Anchor 
+												key={item} 
+												size='xxlarge'
 												margin={{
-													'vertical': 'large',
+													'vertical': 'medium',
 													'horizontal': 'medium'
 												}}
-												border='all'
-												align='center'
-												justify='center'
 											>
-												<Anchor size='xxlarge'>{item}</Anchor>	
-											</Box>
+												{item}
+											</Anchor>	
 										)}
 									</InfiniteScroll>
 								</Box>
