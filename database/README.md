@@ -10,6 +10,8 @@ The program will only APPEND to the file, so make sure to delete whatever is sto
 
 The INSERT statements in the file can then be used as SQL queries to insert classes into the database (database.sql).
 
+You MUST insert the instructors into the database before inserting the classes into the database to create the class-instructor link.
+
 ### insert_instructors.py
 Parses the json given by Jon Luca's RateMyProfessor ratings on his github page.
 
