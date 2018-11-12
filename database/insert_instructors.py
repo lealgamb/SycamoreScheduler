@@ -1,6 +1,7 @@
 import json
 
 if __name__ == "__main__":
+    outfile = open("instructors.txt", "w")
     rating_dict = json.load(open('ratings.json'))
     instructorID = 0
     instructorName = ""
@@ -12,5 +13,7 @@ if __name__ == "__main__":
             rating = float(rating_dict[key]['rating'])
         except:
             pass
-        print("INSERT INTO Instructor(instructorID, instructorName, rmpRating) VALUES (" + str(instructorID) + ", \""
-                + instructorName + "\", " + str(rating) + ");")
+        outfile.write("INSERT INTO Instructor(instructorID, instructorName, rmpRating) VALUES (" + str(instructorID) +
+                      ", \"" + instructorName + "\", " + str(rating) + ");\n")
+        outfile.flush()
+    outfile.close()
