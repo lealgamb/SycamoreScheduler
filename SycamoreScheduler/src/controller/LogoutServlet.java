@@ -20,9 +20,10 @@ public class LogoutServlet extends HttpServlet {
     // Get the writer
     PrintWriter pw = response.getWriter();
     
-    // Set all session attributes to null and send a success message when done
-    //TODO
+    // Set the email session attribute to null
+    request.getSession().setAttribute("email", null);
     
+    // Communicate with the front-end
     pw.write(HttpServletResponse.SC_OK);
     pw.flush();
   }

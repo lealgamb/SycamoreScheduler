@@ -59,6 +59,11 @@ public class RegisterServlet extends HttpServlet {
       // Attempt to register the user
       if (JDBCDriver.addUser(email, fName, lName, password, academicPrograms)) {
         // Successfully registered user
+        
+        // Store the email as a session attribute
+        request.getSession().setAttribute("email", email);
+        
+        // Communicate with the front-end
         pw.write(HttpServletResponse.SC_OK);
         pw.flush();
       }

@@ -51,12 +51,64 @@ public class JDBCDriver {
   }
   
   /**
+   * Returns the user's registered information on the database and requested schedule
+   * @param email the user's email
+   * @param degreeProgramName the degree program name for which to get the schedule
+   * @return null if the specified user information or the requested schedule cannot be found
+   */
+  public static ArrayList<ArrayList<String>> getUserInformation(String email, String degreeProgramName) {
+    //TODO
+  }
+  
+  /**
+   * Returns the primary major for the specified user.
+   * @param email the user's email
+   * @return null if the use does not have a registered major
+   */
+  public static String getPrimaryMajor(String email) {
+    //TODO
+  }
+  
+  /**
    * Updates the user's information on the database.
    * @param email the user's email
    * @param updates the key-value pairs of the user's information to update
    * @return false if the user's information is unable to be updated in the database
    */
   public static boolean updateUser(String email, Map<String, String> updates) {
+    //TODO may not be necessary
+  }
+  
+  /**
+   * Updates the user's specified degree program.
+   * @param email the user's email
+   * @param degreeProgramName the name of the degree program to be changed to
+   * @param category the type of degree program: primary/secondary major/minor
+   * @return false if the user's specified degree program is unable to be updated in the database
+   */
+  public static boolean updateDegreeProgram(String email, String degreeProgramName, String category) {
+    //TODO
+  }
+  
+  /**
+   * Remove the user's specified degree program if and only if it is not the primary major.
+   * @param email the user's email
+   * @param degreeProgramName the name of the degree program to be removed
+   * @param category the type of degree program: primary/secondary major/minor
+   * @return false if the user's specified degree program is unable to be removed from the database
+   */
+  public static boolean removeDegreeProgram(String email, String degreeProgramName, String category) {
+    //TODO
+  }
+  
+  /**
+   * Updates the user's password if and only if it is a new password. 
+   * @param email the user's email
+   * @param oldPassword the user's old password used to authenticate the request
+   * @param newPassword the user's new password
+   * @return false if unable to update the user's password
+   */
+  public static boolean updatePassword(String email, String oldPassword, String newPassword) {
     //TODO
   }
   
@@ -78,7 +130,7 @@ public class JDBCDriver {
    * @return false if the user's schedule is unable to be updated in the database
    */
   public static boolean updateSchedule(String email, String degreeProgramName, Map<String, String> updates) {
-    //TODO
+    //TODO may not be necessary
   }
   
   /**
@@ -92,11 +144,34 @@ public class JDBCDriver {
   }
   
   /**
-   * Return's the classes for the specified degree program.
+   * Adds a class to the specified degree program for the specified user.
+   * @param email the user's email
+   * @param className the name of the class to be added
+   * @param degreeProgramName the degree program name for which to add the class to
+   * @return false if the class is unable to be added
+   */
+  public static boolean addClassToSchedule(String email, String className, String degreeProgramName) {
+    //TODO
+  }
+  
+  /**
+   * Removes a class from the specified degree program for the specified user.
+   * @param email the user's email
+   * @param className the name of the class to be removed
+   * @param degreeProgramName the degree program name from which to remove the class from
+   * @return false if the class is unable to be removed
+   */
+  public static boolean removeClassFromSchedule(String email, String className, String degreeProgramName) {
+    //TODO
+  }
+  
+  /**
+   * Returns the classes for the specified degree program.
    * @param degreeProgramName the degree program name for which to get classes for
    * @return null if unable to get classes from the database for the specified degree program name
    */
   public static ArrayList<ArrayList<String>> getClasses(String degreeProgramName) {
     //TODO
   }
+  
 }

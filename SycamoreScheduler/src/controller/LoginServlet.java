@@ -37,8 +37,12 @@ public class LoginServlet extends HttpServlet {
     else {
       // Check if the user can be authenticated
       if (JDBCDriver.isUserRegistered(email, password)) {
-        
         // Successfully authenticated user
+        
+        // Store the email as a session attribute
+        request.getSession().setAttribute("email", email);
+        
+        // Communicate with the front-end
         pw.write(HttpServletResponse.SC_OK);
         pw.flush();
       }
