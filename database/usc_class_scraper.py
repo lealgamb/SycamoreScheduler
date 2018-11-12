@@ -2,16 +2,16 @@ from requests import get
 from requests.exceptions import RequestException
 from bs4 import BeautifulSoup
 import lxml
+import json
 
 
 # WILL NOT ADD COURSES WITH TIME = TBA
 
-
-## CONSTANTS ##
+# CONSTANTS #
 EXPORT = 'classes.txt'
 DELIMITER = ', '
 CLASSES_URL = 'https://classes.usc.edu/term-20191/'  # THIS IS SPRING 2019
-
+DEBUG = 5  # Debug Verbosity Scale of 0-5
 
 
 class Class:
@@ -45,6 +45,22 @@ class Class:
 
         self.instructor = instructor
         self.location = location
+
+        self.instructorID = self.get_instructor_id(instructor)
+
+    def get_instructor_id(self, name):
+        if not name or name == '':
+            return None
+        try:
+            ratings_file = open('ratings.json')
+            rating_dict = json.load(ratings_file)
+            ret = rating_dict[name]['id']
+        except:
+            return None
+        finally:
+            ratings_file.close()
+        return ret
+
 
     def course_info(self, course):
         split = course.split(" ")
@@ -144,9 +160,15 @@ class Class:
     def add(self):
         try:
             file = open(self.filename, "a")
-            string = "INSERT INTO Class (department, classNumber, className, units, section, sessionNum, " \
-                    "typeName, timeStart, timeEnd, days, registered, registeredMax, instructor, location, info) VALUES " \
-                     "("
+            string = ""
+            if self.instructorID:
+                string += "INSERT INTO Class (department, classNumber, className, units, section, sessionNum, " \
+                        "typeName, timeStart, timeEnd, days, registered, registeredMax, instructor, location, info," \
+                        " instructorID) VALUES ("
+            else:
+                string += "INSERT INTO Class (department, classNumber, className, units, section, sessionNum, " \
+                          "typeName, timeStart, timeEnd, days, registered, registeredMax, instructor, location, info" \
+                          ") VALUES ("
             string += "'" + self.department + "'" + DELIMITER
             string += "'" + self.course_num + "'" + DELIMITER
             string += "'" + self.name.replace("'", "\\'") + "'" + DELIMITER
@@ -163,7 +185,11 @@ class Class:
             string += self.registered_max + DELIMITER
             string += "'" + self.instructor.replace("'", "\\'") + "'" + DELIMITER
             string += "'" + self.location + "'" + DELIMITER
-            string += "'" + self.description.replace("'", "\\'") + "'" + ");\n"
+            string += "'" + self.description.replace("'", "\\'") + "'"
+            if self.instructorID:
+                string += DELIMITER + str(self.instructorID) + ");\n"
+            else:
+                string += ");\n"
             file.write(string)
             file.flush()
             file.close()
@@ -177,43 +203,53 @@ class Class:
 
 def get_classes(website):
     try:
-        print("\tAttempting to connect to " + website)
+        if DEBUG > 0:
+            print("\tAttempting to connect to " + website)
         htmltext = get(website).content
-        print("\tConnected to " + website)
+        if DEBUG > 0:
+            print("\tConnected to " + website)
     except RequestException:
-        print("\tCount not connect to " + website)
+        if DEBUG > 0:
+            print("\tCount not connect to " + website)
         return
 
     soup = BeautifulSoup(htmltext, 'lxml')
     courses = soup.findAll('div', attrs={'class': 'course-info expandable'})
     if len(courses) == 0:
-        print("\t\tNo classes found")
+        if DEBUG > 1:
+            print("\t\tNo classes found")
         return
     for i in courses:
         course = i.find('a', attrs={'class': 'courselink'}).text
-        print("\t\tFound class " + course)
+        if DEBUG > 1:
+            print("\t\tFound class " + course)
 
         description = i.find('div', attrs={'class': 'catalogue'}).text
-        print("\t\t\tDescription: " + description)
+        if DEBUG > 2:
+            print("\t\t\tDescription: " + description)
 
         coreqs = i.find('li', attrs={'class': 'coreq'})
         if coreqs:
             coreqs = coreqs.find('a').text  # CHANGE TO FIND ALL!!!!!!!
         if coreqs:
-            print("\t\t\tCorequities: " + coreqs)
+            if DEBUG > 3:
+                print("\t\t\tCorequisites: " + coreqs)
 
         prereqs = i.find('li', attrs={'class': 'prereq'})
         if prereqs:
             prereqs = prereqs.find('a').text    # CHANGE TO FIND ALL!!!!!!!
         if prereqs:
-            print("\t\t\tPrerequities: " + prereqs)
+            if DEBUG > 3:
+                print("\t\t\tPrerequisites: " + prereqs)
 
         restrictions = i.find('li', attrs={'class': 'restriction'})
         if restrictions:
-            print("\t\t\tRestrictions: " + restrictions.text)
+            if DEBUG > 3:
+                print("\t\t\tRestrictions: " + restrictions.text)
 
         table = i.find_all('tr')
-        print("\t\t\tFound " + str(len(table)-1) + " courses:")
+        if DEBUG > 3:
+            print("\t\t\tFound " + str(len(table)-1) + " courses")
         for j in table:
             if j.has_attr('data-section-id'):
                 #### SECTION ####
@@ -265,27 +301,37 @@ def get_classes(website):
                 else:
                     location = ""
 
-                print("\t\t\t\tAttempting to add course " + section + " to " + EXPORT)
-
-                print("\t\t\t\t\tSection: " + section)
-                print("\t\t\t\t\tSession: " + session)
-                print("\t\t\t\t\tType: " + type)
-                print("\t\t\t\t\tTime: " + time)
-                print("\t\t\t\t\tDays: " + days)
-                print("\t\t\t\t\tRegistered: " + registered)
-                print("\t\t\t\t\tInstructor: " + instructor)
-                print("\t\t\t\t\tLocation: " + location)
+                if DEBUG > 3:
+                    print("\t\t\t\tAttempting to add course " + section + " to " + EXPORT)
+                if DEBUG > 4:
+                    print("\t\t\t\t\tSection: " + section)
+                if DEBUG > 4:
+                    print("\t\t\t\t\tSession: " + session)
+                if DEBUG > 4:
+                    print("\t\t\t\t\tType: " + type)
+                if DEBUG > 4:
+                    print("\t\t\t\t\tTime: " + time)
+                if DEBUG > 4:
+                    print("\t\t\t\t\tDays: " + days)
+                if DEBUG > 4:
+                    print("\t\t\t\t\tRegistered: " + registered)
+                if DEBUG > 4:
+                    print("\t\t\t\t\tInstructor: " + instructor)
+                if DEBUG > 4:
+                    print("\t\t\t\t\tLocation: " + location)
 
                 try:
                     add_course = Class(EXPORT, course, prereqs, coreqs, description,
                          section, session, type, time, days, registered, instructor, location)
                     ### ADD COURSE HERE (add_course.add())
-                    if add_course.add():
-                        print("\t\t\t\tSuccessfully added course " + section + " to " + EXPORT)
-                    else:
-                        print("\t\t\t\tCould not add course " + section + " to " + EXPORT)
+                    if DEBUG > 3:
+                        if add_course.add():
+                            print("\t\t\t\tSuccessfully added course " + section + " to " + EXPORT)
+                        else:
+                            print("\t\t\t\tCould not add course " + section + " to " + EXPORT)
                 except:
-                    print("\t\t\t\tCould not add course " + section + " to " + EXPORT)
+                    if DEBUG > 3:
+                        print("\t\t\t\tCould not add course " + section + " to " + EXPORT)
 
 
 
@@ -294,11 +340,14 @@ def get_classes(website):
 
 def scrape(website):
     try:
-        print("Attempting to connect to " + website)
+        if DEBUG > 0:
+            print("Attempting to connect to " + website)
         htmltext = get(website).content
-        print("Connected to " + website)
+        if DEBUG > 0:
+            print("Connected to " + website)
     except RequestException:
-        print("Count not connect to " + website)
+        if DEBUG > 0:
+            print("ERROR: Count not connect to " + website)
         return
 
     """file = open(EXPORT, "a")
@@ -325,15 +374,14 @@ def scrape(website):
     file.close()"""
 
     soup = BeautifulSoup(htmltext, 'lxml')
+    link_list = []
     for i in soup.findAll('li'):
         var = i.find('a')
         if var:
-            link = var.attrs['href'] ## Remove duplicates!!!!!!!!!!!!!!
-            if link and CLASSES_URL + 'classes/' in link:
+            link = var.attrs['href']
+            if link and CLASSES_URL + 'classes/' in link and link not in link_list:
+                link_list.append(link)  # Removing duplicates
                 get_classes(link)
-
-
-
 
 if __name__ == "__main__":
     scrape(website=CLASSES_URL)
