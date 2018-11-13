@@ -55,7 +55,7 @@ const theme = {
 		}
 		button[role='tab'] span {
 			font-size: 24px;
-			padding: 10px;
+			padding: 5%;
 		}
 		`
 	},
