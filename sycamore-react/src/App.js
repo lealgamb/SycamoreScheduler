@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import { css } from 'styled-components';
 
 import {
 	Anchor,
@@ -7,7 +8,9 @@ import {
 	Grommet,
 	ResponsiveContext,
 	Collapsible,
-	InfiniteScroll
+	InfiniteScroll,
+	Tabs,
+	Tab
 } from 'grommet';
 
 const theme = {
@@ -20,11 +23,6 @@ const theme = {
 			size: '14px',
 			height: '20px',
 			color: '#ffffff'
-		},
-		focus: {
-			border: {
-				color: '#ff3300'
-			}
 		}
 	},
 	anchor: {
@@ -36,10 +34,29 @@ const theme = {
 	box: {
 		extend: {
 			whiteSpace: 'nowrap',
-			maxHeight: window.innerHeight
 		}
+	},
+	tabs: {
+		background: "light",
+		header: {
+		  background: "light-1",
+		  extend: ({ theme }) => css`
+			padding: ${theme.global.edgeSize.small};
+			box-shadow: 0;
+		  `
+		},
+		gap: "medium"
 	}
 };
+
+const Contain = (props) => (
+	<Box
+		direction='column'
+		align='stretch'
+		justify='start'
+		{...props}
+	/>	
+);
 
 const Header = (props) => (
 	<Box
@@ -78,26 +95,61 @@ const PageLink = (props) => (
 	</Anchor>
 );
 
-const items = Array(1000)
+const CourseBox = (props) => (
+	<Box
+		flex
+		direction='column'
+		align='center'
+		justify='start'
+		width='large'
+		height='85vh'
+		overflow={{vertical: 'auto', horizontal: 'hidden'}}
+	>
+		<InfiniteScroll
+			items={props.list}
+			step={20}
+		>
+			{item => (
+				<Box
+					margin={{
+						'vertical': 'large',
+						'horizontal': 'medium'
+					}}
+					key={item}
+				>
+					
+					<Anchor  
+						size='xxlarge'
+					>
+						{item}
+					</Anchor>	
+				</Box>
+			)}
+		</InfiniteScroll>
+	</Box>
+);
+
+const majorClasses = Array(1000)
   .fill()
-  .map((_, i) => `CSCI ${i}`);
+  .map((_, i) => `MAJ ${i}`);
+
+const minorClasses = Array(1000)
+  .fill()
+  .map((_, i) => `MIN ${i}`);
 
 class App extends Component {
 
 	state = {
-		showSidebar: false
+		showSidebar: true,
+		courseTab: 0
 	}
 	render() {
-		const {showSidebar} = this.state;
+		const {showSidebar, courseTab} = this.state;
 		return (
 			<Grommet theme={theme} full>
 				<ResponsiveContext.Consumer>
 				{size => (
-					<Box
-						direction='column'
-						align='stretch'
-						justify='start'
-					>
+					<Box fill>
 						<Header>
 							<Heading level='1' margin={{'left': 'large'}}>Sycamore Scheduler</Heading>
 							<Box
@@ -121,31 +173,27 @@ class App extends Component {
 								open={showSidebar}
 							>
 								<Box
+									flex
 									direction='column'
 									align='center'
-									justify='start'
-									height='85vh'
-									width='large'
-									overflow={{vertical: 'auto', horizontal: 'hidden'}}
-									>
-									<InfiniteScroll
-										scrollableAncestor={this.boxy}
-										items={items}
-										step={20}
-									>
-										{item => (
-											<Anchor 
-												key={item} 
-												size='xxlarge'
-												margin={{
-													'vertical': 'medium',
-													'horizontal': 'medium'
-												}}
-											>
-												{item}
-											</Anchor>	
-										)}
-									</InfiniteScroll>
+									justify='end'
+								>
+								<Tabs
+									activeIndex={courseTab}
+									onActive={(i) => {this.setState({courseTab: i})}}
+									justify='center'
+								>
+								<Tab 
+									title='Major'
+								>
+									<CourseBox list={majorClasses}></CourseBox>
+								</Tab>
+								<Tab 
+									title='Minor'
+								>
+									<CourseBox list={minorClasses}></CourseBox>
+								</Tab>
+								</Tabs>
 								</Box>
 							</Collapsible>
 						</Box>
