@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
 import PropTypes from "prop-types";
+import styled from 'styled-components';
+
 import {
-	Anchor, 
 	Box, 
+	Button,
     InfiniteScroll,
     Tabs, 
     Text,
@@ -11,23 +13,51 @@ import {
 
 const majorClasses = Array(50)
   .fill()
-  .map((_, i) => `MAJ ${i}`);
+  .map((_, i) => {
+	  var id = Math.floor(Math.random() * (700 - 100 + 1) ) + 100
+	  return `MAJR ${id}`;
+	});
 
 const minorClasses = Array(20)
   .fill()
-  .map((_, i) => `MIN ${i}`);
+  .map((_, i) => {
+	var id = Math.floor(Math.random() * (700 - 100 + 1) ) + 100
+	return `MINR ${id}`;
+  });
+
+const Course = props => (
+	<Box
+		flex
+		direction='column'
+		align='center'
+		justify='center'
+	>
+		<Button 
+			fill
+			onClick={() => {props.clickFunc(props.id)}}
+			label={props.name}
+			hoverIndicator
+			style={{
+				padding: '30% 100% 30% 100%',
+				radius: '4px',
+				border: '3px solid main',
+				fontSize: '30px'
+			}}
+		>
+		</Button>
+	</Box>
+);
 
 const CourseBox = props => (
 	<InfiniteScroll items={props.list} step={20}>
 	  {item => (
 		<Box
+		  flex
 		  align="center"
-		  pad={{
-			top: 'large'
-		  }}
+		  pad='small'
 		  key={item}
 		>
-		  <Anchor size="xxlarge">{item}</Anchor>
+		  <Course clickFunc = {props.clickFunc} name={item} id={item}></Course>
 		</Box>
 	  )}
 	</InfiniteScroll>
@@ -39,11 +69,11 @@ const RichTabTitle = ({label}) => (
         <strong>{label}</strong>
       </Text>
     </Box>
-  );
+);
   
-  RichTabTitle.propTypes = {
-    label: PropTypes.string.isRequired
-  };
+RichTabTitle.propTypes = {
+	label: PropTypes.string.isRequired
+};
   
   
 class Classes extends Component {
@@ -62,11 +92,11 @@ class Classes extends Component {
                 <Tab 
                     title={
                         <RichTabTitle
-                        label="Major"
+                      		label="Major"
                         />
                     }
                 >
-					<CourseBox list={majorClasses} />
+					<CourseBox clickFunc = {this.props.clickFunc} list={majorClasses} />
 				</Tab>
                 <Tab 
                     title={
@@ -75,7 +105,7 @@ class Classes extends Component {
                         />
                     }
                 >
-					<CourseBox list={minorClasses} />
+					<CourseBox clickFunc = {this.props.clickFunc} list={minorClasses} />
 				</Tab>
 			</Tabs>
 		);

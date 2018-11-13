@@ -12,6 +12,7 @@ import {
 import Classes from './Classes';
 import CoursePlan from './CoursePlan';
 import Profile from './Profile';
+import ClassView from './ClassView';
 
 
 const Header = (props) => (
@@ -59,12 +60,18 @@ const PageLink = (props) => (
 
 class Main extends Component {
 	state = {
-		classes: true,
-		coursePlan: false,
-		profile: false
-	}
+		showSidebar: true,
+		display: 'none',
+		whichClass: 'none'
+	};
+
+	displayClass = (id) => {
+		this.setState({display: 'class', whichClass: id});
+	};
+
 	render() {
-		const {classes, coursePlan, profile} = this.state;
+		const {showSidebar, display, whichClass} = this.state;
+		
 		return (
 				<ResponsiveContext.Consumer>
 				{size => (
@@ -88,9 +95,9 @@ class Main extends Component {
 								align='center'
 								justify='end'
 							>
-								<PageLink text='Classes' func={() => this.setState({classes: !this.state.classes})}></PageLink>
-								<PageLink text='Course Plan' func={() => this.setState({coursePlan: true, profile: false})}></PageLink>
-								<PageLink text='Profile' func={() => this.setState({coursePlan: false, profile: true})}></PageLink>
+								<PageLink text='Classes' func={() => this.setState({showSidebar: !this.state.showSidebar})}></PageLink>
+								<PageLink text='Course Plan' func={() => this.setState({display: 'coursePlan'})}></PageLink>
+								<PageLink text='Profile' func={() => this.setState({display: 'profile'})}></PageLink>
 							</Box>
 						</Header> 
 						<Box
@@ -106,7 +113,7 @@ class Main extends Component {
 						>
 							<Collapsible
 								direction='horizontal'
-								open={classes}
+								open={showSidebar}
 							>
 								<Box 
 									width='medium'
@@ -117,12 +124,12 @@ class Main extends Component {
 										size: 'medium'
 									}}
 								>
-									<Classes></Classes>
+									<Classes clickFunc={this.displayClass}></Classes>
 								</Box>
 							</Collapsible>
-							{coursePlan && <CoursePlan></CoursePlan>}
-							{profile && <Profile></Profile>}
-							{!coursePlan && !profile && 
+							{display==='coursePlan' && <CoursePlan></CoursePlan>}
+							{display==='profile' && <Profile></Profile>}
+							{display==='none' && 
 								<Box
 									flex
 									direction='column'
@@ -143,6 +150,9 @@ class Main extends Component {
 									>
 									</Button>
 								</Box>
+							}
+							{display==='class' && 
+								<ClassView id={whichClass}></ClassView>
 							}
 						</Box>
 					</Box>

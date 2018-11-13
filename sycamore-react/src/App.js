@@ -19,6 +19,10 @@ const theme = {
 			size: '14px',
 			height: '20px',
 			color: '#ffffff'
+		},
+		hover: {
+			color: 'black',
+			background: '#ffdbe9'
 		}
 	},
 	button: {
@@ -44,6 +48,7 @@ const theme = {
 		  extend: ({ theme }) => css`
 			flex: 0 0;
 			padding-top: ${theme.global.edgeSize.large};
+			padding-bottom: ${theme.global.edgeSize.small};
 			box-shadow: 0;
 		  `
 		},
