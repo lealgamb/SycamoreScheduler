@@ -8,6 +8,7 @@
     "nodemon": "^1.18.6",
     "react": "^16.6.1",
     "react-dom": "^16.6.1",
+    "react-router-dom": "^4.3.1",
     "react-scripts": "2.1.1",
     "react-window-size": "^1.2.2",
     "simplebar": "^3.1.0-beta.5",
