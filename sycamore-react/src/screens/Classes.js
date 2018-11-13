@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
+import PropTypes from "prop-types";
 import {
 	Anchor, 
 	Box, 
-	InfiniteScroll,
-	Tabs, 
+    InfiniteScroll,
+    Tabs, 
+    Text,
 	Tab
 } from 'grommet';
 
@@ -30,6 +32,19 @@ const CourseBox = props => (
 	  )}
 	</InfiniteScroll>
 );
+
+const RichTabTitle = ({label}) => (
+    <Box direction="row" align="center" gap="xsmall" margin="xsmall">
+      <Text size="large">
+        <strong>{label}</strong>
+      </Text>
+    </Box>
+  );
+  
+  RichTabTitle.propTypes = {
+    label: PropTypes.string.isRequired
+  };
+  
   
 class Classes extends Component {
 	state = {
@@ -44,10 +59,22 @@ class Classes extends Component {
 					this.setState({ courseTab: i });
 				}}
 			>
-				<Tab title="Major">
+                <Tab 
+                    title={
+                        <RichTabTitle
+                        label="Major"
+                        />
+                    }
+                >
 					<CourseBox list={majorClasses} />
 				</Tab>
-				<Tab title="Minor">
+                <Tab 
+                    title={
+                        <RichTabTitle
+                            label="Minor"
+                        />
+                    }
+                >
 					<CourseBox list={minorClasses} />
 				</Tab>
 			</Tabs>

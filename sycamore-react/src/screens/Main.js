@@ -109,7 +109,7 @@ class Main extends Component {
 								open={classes}
 							>
 								<Box 
-									width='large'
+									width='medium'
 									animation={{
 										type: 'slideRight',
 										delay: 500,

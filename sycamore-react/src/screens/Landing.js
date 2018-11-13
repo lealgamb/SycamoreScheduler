@@ -35,7 +35,7 @@ class Landing extends Component {
 					<Button
 						href='/Main'
 						hoverIndicator
-						label='enter Sycamore Calendar ... '
+						label='enter Sycamore Scheduler ... '
 					>
 					</Button>
 				</Box>

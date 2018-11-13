@@ -47,17 +47,13 @@ const theme = {
 			box-shadow: 0;
 		  `
 		},
-		gap: "medium",
+        gap: "medium",
 		extend: `
 		div[role='tabpanel'] {
 			overflow: auto;
-			padding-bottom: 40px;
+			padding-bottom: 10%;
 		}
-		button[role='tab'] span {
-			font-size: 24px;
-			padding: 5%;
-		}
-		`
+        `
 	},
 	tab: {
 		active: {
