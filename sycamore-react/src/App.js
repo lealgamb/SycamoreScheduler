@@ -48,7 +48,7 @@ const theme = {
 		  extend: ({ theme }) => css`
 			flex: 0 0;
 			padding-top: ${theme.global.edgeSize.large};
-			padding-bottom: ${theme.global.edgeSize.small};
+			padding-bottom: ${theme.global.edgeSize.medium};
 			box-shadow: 0;
 		  `
 		},
