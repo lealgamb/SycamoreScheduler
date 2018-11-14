@@ -30,14 +30,15 @@ const Course = props => (
 		flex
 		direction='column'
 		align='center'
-		justify='center'
+        justify='center'
 	>
 		<Button 
 			fill
 			onClick={() => {props.clickFunc(props.id)}}
 			label={props.name}
-			hoverIndicator
+            hoverIndicator
 			style={{
+                background: 'white',
 				padding: '30% 100% 30% 100%',
 				radius: '4px',
 				border: '3px solid main',
@@ -55,7 +56,7 @@ const CourseBox = props => (
 		  flex
 		  align="center"
 		  pad='small'
-		  key={item}
+          key={item}
 		>
 		  <Course clickFunc = {props.clickFunc} name={item} id={item}></Course>
 		</Box>

@@ -42,12 +42,12 @@ const theme = {
 		}
 	},
 	tabs: {
-		background: "white",
+		background: "light-2",
 		header: {
-		  background: "white",
+		  background: "light-2",
 		  extend: ({ theme }) => css`
 			flex: 0 0;
-			padding-top: ${theme.global.edgeSize.large};
+			padding-top: ${theme.global.edgeSize.medium};
 			padding-bottom: ${theme.global.edgeSize.medium};
 			box-shadow: 0;
 		  `
