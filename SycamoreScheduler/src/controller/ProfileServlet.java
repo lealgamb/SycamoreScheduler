@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
+
 import driver.JDBCDriver;
 
 /**
@@ -53,8 +55,11 @@ public class ProfileServlet extends HttpServlet {
             // Successfully retrieved the user's information and schedule
             
             // Communicate with the front-end
-            // TODO send information and schedule as JSON
-            // pw.write(userInformationAndSchedule);
+            String userInformationAndScheduleJSON = 
+                new Gson().toJson(userInformationAndSchedule);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            pw.write(userInformationAndScheduleJSON);
             pw.flush();
           }
           else {
