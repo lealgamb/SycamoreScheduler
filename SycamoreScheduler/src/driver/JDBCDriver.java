@@ -1,8 +1,11 @@
 package driver;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -10,21 +13,42 @@ public class JDBCDriver {
   private static Connection conn = null;
   private static ResultSet rs = null;
   private static PreparedStatement ps = null;
-  //TODO String to connect to the database
-  // private static final String CONN_STRING = "";
+  private static final String CONNECTION_PATH = ""; // TODO Determine the connection path
   
   /**
    * Connects to the database.
    */
   private static void connect() {
-    //TODO
+    try {
+    	Class.forName("com.mysql.jdbc.Driver");
+    	conn = DriverManager.getConnection(CONNECTION_PATH);
+    } catch (ClassNotFoundException cnfe) {
+    	cnfe.printStackTrace();
+    } catch (SQLException sqle) {
+    	sqle.printStackTrace();
+    }
   }
   
   /**
    * Closes the database connection.
    */
   private static void close() {
-    //TODO
+	  try {
+		  if (rs != null) {
+			  rs.close();
+			  rs = null;
+		  }
+		  if (conn != null) {
+			  conn.close();
+			  conn = null;
+		  }
+		  if (ps != null) {
+			  ps = null;
+		  }
+	  } catch (SQLException sqle) {
+		  System.out.println("connection close error");
+		  sqle.printStackTrace();
+	  }
   }
   
   /**
@@ -37,7 +61,102 @@ public class JDBCDriver {
    * @return false if user is unable to be added to the database
    */
   public static boolean addUser(String email, String fName, String lName, String password, ArrayList<String> academicPrograms) {
-    //TODO
+	  // Problem: where to return true/false?
+	  
+	  // Assume:
+	  // 0th index represents degreeID (aka major) - we always assume that this exists
+	  // 1st index represents degree2ID (aka major 2) - an empty string "" represents no major2
+	  // 2nd index represents minorID (aka minor) - an empty string "" represents no minor
+	  // 3rd index represents minor2ID (aka minor 2) - an empty string "" represents no minor2
+	  connect();
+	  boolean hasMajor2 = true;
+	  boolean hasMinor = true;
+	  boolean hasMinor2 = true;
+	  if (academicPrograms.get(1) == "") {
+		  hasMajor2 = false;
+	  }
+	  if (academicPrograms.get(2) == "") {
+		  hasMinor = false;
+	  }
+	  if (academicPrograms.get(3) == "") {
+		  hasMinor2 = false;
+	  } 
+	  
+	  int majorDegreeID = -1;
+	  int major2DegreeID = -1;
+	  int minorDegreeID = -1;
+	  int minor2DegreeID = -1;
+	  try {
+		  // Getting the degreeID associated with the user's major (i.e. academicPrograms.get(0))
+		  ps = conn.prepareStatement("SELECT degreeID FROM DegreeProgram WHERE degreeName=?");
+		  ps.setString(1, academicPrograms.get(0));
+		  rs = ps.executeQuery();
+		  if (rs.next()) {
+			  majorDegreeID = rs.getInt("degreeID");
+		  }
+		  // Getting the degreeID associated with the user's major2 (i.e. academicPrograms.get(1))
+		  if (hasMajor2 == true) {
+			  ps = conn.prepareStatement("SELECT degreeID FROM DegreeProgram WHERE degreeName=?");
+			  ps.setString(1, academicPrograms.get(1));
+			  rs = ps.executeQuery();
+			  if (rs.next()) {
+				  major2DegreeID = rs.getInt("degreeID");
+			  }
+		  }
+		  // Getting the degreeID associated with the user's minor (i.e. academicPrograms.get(2))
+		  if (hasMinor == true) {
+			  ps = conn.prepareStatement("SELECT degreeID FROM DegreeProgram WHERE degreeName=?");
+			  ps.setString(1, academicPrograms.get(2));
+			  rs = ps.executeQuery();
+			  if (rs.next()) {
+				  minorDegreeID = rs.getInt("degreeID");
+			  }
+		  }
+		  // Getting the degreeID associated with the user's minor2 (i.e. academicPrograms.get(2))
+		  if (hasMinor2 == true) {
+			  ps = conn.prepareStatement("SELECT degreeID FROM DegreeProgram WHERE degreeName=?");
+			  ps.setString(1, academicPrograms.get(3));
+			  rs = ps.executeQuery();
+			  if (rs.next()) {
+				  minor2DegreeID = rs.getInt("degreeID");
+			  }
+		  }
+		  
+		  
+		  ps = conn.prepareStatement("INSERT INTO Users(email, fname, lname, pass, degreeID, degree2ID, minorID, minor2ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);");
+		  ps.setString(1, email);
+		  ps.setString(2, fName);
+		  ps.setString(3, lName);
+		  ps.setString(4, password);
+		  ps.setInt(5, majorDegreeID);
+		  if (hasMajor2 == true) {
+			  ps.setInt(6, major2DegreeID);
+		  }
+		  else {
+			  ps.setNull(6, Types.INTEGER);
+		  }
+		  if (hasMinor == true) {
+			  ps.setInt(7, minorDegreeID);
+		  }
+		  else {
+			  ps.setNull(7, Types.INTEGER);
+		  }
+		  if (hasMinor2 == true) {
+			  ps.setInt(6, minor2DegreeID);
+		  }
+		  else {
+			  ps.setNull(6, Types.INTEGER);
+		  }
+		  ps.executeUpdate();
+		  return true;
+		  
+	  } catch (SQLException sqle) {
+		  System.out.println("SQLException in function addUser()");
+		  sqle.printStackTrace();
+	  } finally {
+		  close();
+	  }
+	  return false;
   }
   
   /**
@@ -47,7 +166,24 @@ public class JDBCDriver {
    * @return false if the user is not authenticated against the database
    */
   public static boolean isUserRegistered(String email, String password) {
-    //TODO
+	  // Problem: case sensitivity?
+	  connect();
+	  try {
+		  ps = conn.prepareStatement("SELECT pass FROM Users WHERE email=?");
+		  ps.setString(1, email);
+		  rs = ps.executeQuery();
+		  if (rs.next()) {
+			  if (password.equals(rs.getString("pass"))) {
+				  return true;
+			  }
+		  }
+	  } catch (SQLException sqle) {
+		  System.out.println("SQLException in function isUserRegistered()");
+		  sqle.printStackTrace();
+	  } finally {
+		  close();
+	  }
+	  return false;
   }
   
   /**
@@ -63,10 +199,24 @@ public class JDBCDriver {
   /**
    * Returns the primary major for the specified user.
    * @param email the user's email
-   * @return null if the use does not have a registered major
+   * @return null if the user does not have a registered major
    */
   public static String getPrimaryMajor(String email) {
-    //TODO
+	  connect();
+	  try {
+		  ps = conn.prepareStatement("SELECT degreeName FROM Users u, DegreeProgram dp WHERE email=? AND u.degreeID=dp.degreeID");
+		  ps.setString(1, email);
+		  rs = ps.executeQuery();
+		  if (rs.next()) {
+			  return rs.getString("degreeName");
+		  }
+	  } catch (SQLException sqle) {
+		  System.out.println("SQLException in function getPrimaryMajor()");
+		  sqle.printStackTrace();
+	  } finally {
+		  close();
+	  }
+	  return null;
   }
   
   /**
@@ -87,7 +237,47 @@ public class JDBCDriver {
    * @return false if the user's specified degree program is unable to be updated in the database
    */
   public static boolean updateDegreeProgram(String email, String degreeProgramName, String category) {
-    //TODO
+	  connect();
+	  try {
+		  int newDegreeID = -1;
+		  // Getting the degreeID associated with the degreeProgramName
+		  ps = conn.prepareStatement("SELECT degreeID FROM DegreeProgram WHERE degreeName=?");
+		  ps.setString(1, degreeProgramName);
+		  rs = ps.executeQuery();
+		  if (rs.next()) {
+			  newDegreeID = rs.getInt("degreeID");
+		  }
+		  if (category == "primary major") {
+			  ps = conn.prepareStatement("UPDATE Users SET degreeID=? WHERE email=?");
+			  ps.setInt(1, newDegreeID);
+			  ps.setString(2,  email);
+			  return true;
+		  }
+		  else if (category == "secondary major") {
+			  ps = conn.prepareStatement("UPDATE Users SET degree2ID=? WHERE email=?");
+			  ps.setInt(1, newDegreeID);
+			  ps.setString(2,  email);
+			  return true;
+		  }
+		  else if (category == "primary minor") {
+			  ps = conn.prepareStatement("UPDATE Users SET minorID=? WHERE email=?");
+			  ps.setInt(1, newDegreeID);
+			  ps.setString(2,  email);
+			  return true;
+		  }
+		  else if (category == "secondary minor") {
+			  ps = conn.prepareStatement("UPDATE Users SET minor2ID=? WHERE email=?");
+			  ps.setInt(1, newDegreeID);
+			  ps.setString(2,  email);
+			  return true;
+		  }
+	  } catch (SQLException sqle) {
+		  System.out.println("SQLException in function updateDegreeProgram()");
+		  sqle.printStackTrace();
+	  } finally {
+		  close();
+	  }
+	  return false;
   }
   
   /**
@@ -98,7 +288,33 @@ public class JDBCDriver {
    * @return false if the user's specified degree program is unable to be removed from the database
    */
   public static boolean removeDegreeProgram(String email, String degreeProgramName, String category) {
-    //TODO
+	  connect();
+	  try {
+		  if (category == "secondary major") {
+			  ps = conn.prepareStatement("UPDATE Users SET degree2ID=? WHERE email=?");
+			  ps.setNull(1, Types.INTEGER);
+			  ps.setString(2,  email);
+			  return true;
+		  }
+		  else if (category == "primary minor") {
+			  ps = conn.prepareStatement("UPDATE Users SET minorID=? WHERE email=?");
+			  ps.setNull(1, Types.INTEGER);
+			  ps.setString(2,  email);
+			  return true;
+		  }
+		  else if (category == "secondary minor") {
+			  ps = conn.prepareStatement("UPDATE Users SET minor2ID=? WHERE email=?");
+			  ps.setNull(1, Types.INTEGER);
+			  ps.setString(2,  email);
+			  return true;
+		  }
+	  } catch (SQLException sqle) {
+		  System.out.println("SQLException in function removeDegreeProgram()");
+		  sqle.printStackTrace();
+	  } finally {
+		  close();
+	  }
+	  return false;
   }
   
   /**
@@ -109,7 +325,26 @@ public class JDBCDriver {
    * @return false if unable to update the user's password
    */
   public static boolean updatePassword(String email, String oldPassword, String newPassword) {
-    //TODO
+    connect();
+    try {
+    	ps = conn.prepareStatement("SELECT pass FROM Users WHERE email=?");
+    	ps.setString(1, email);
+    	rs = ps.executeQuery();
+    	if (rs.next()) {
+    		if (oldPassword.equals(rs.getString("pass"))) {
+    			ps = conn.prepareStatement("UPDATE Users SET pass=? WHERE email=?");
+    			ps.setString(1, newPassword);
+    			ps.setString(2, email);
+    			return true;
+    		}
+    	}
+    } catch (SQLException sqle) {
+    	System.out.println("SQLException in function updatePassword()");
+    	sqle.printStackTrace();
+    } finally {
+    	close();
+    }
+    return false;
   }
   
   /**
