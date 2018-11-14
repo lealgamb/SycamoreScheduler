@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
+
 import driver.JDBCDriver;
 
 /**
@@ -43,8 +45,10 @@ public class ScheduleServlet extends HttpServlet {
         // Successfully retrieved the schedule
         
         // Communicate with the front-end
-        // TODO send schedule as JSON
-        // pw.write(scheduleJSON);
+        String scheduleJSON = new Gson().toJson(schedule);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        pw.write(scheduleJSON);
         pw.flush();
       }
       else {
