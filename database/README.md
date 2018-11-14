@@ -1,6 +1,11 @@
 # Database Section
 ---
 
+## Initializing the database
+First, run database.sql and then run instructors_and_classes.sql to initialize all the values in the database.
+
+
+
 ### usc_class_scraper.py
 To run the python (usc_class_scraper.py) script, simply run it with no parameters. 
 
