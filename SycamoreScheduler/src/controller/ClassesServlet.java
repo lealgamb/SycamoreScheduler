@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
+
 import driver.JDBCDriver;
 
 /**
@@ -42,8 +44,10 @@ public class ClassesServlet extends HttpServlet {
         // Successfully retrieved the classes
         
         // Communicate with the front-end
-        // TODO send classes as JSON
-        // pw.write(classesJSON);
+        String classesJSON = new Gson().toJson(classes);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        pw.write(classesJSON);
         pw.flush();
       }
       else {
