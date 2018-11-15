@@ -22,7 +22,7 @@ const theme = {
 		},
 		hover: {
 			color: 'black',
-			background: '#ffdbe9'
+			background: 'inherit'
 		}
 	},
 	button: {
@@ -55,7 +55,8 @@ const theme = {
         gap: "medium",
 		extend: `
 		div[role='tabpanel'] {
-			overflow: auto;
+			overflow-y: auto;
+			overflow-x: hidden;
 			padding-bottom: 10%;
 		}
         `

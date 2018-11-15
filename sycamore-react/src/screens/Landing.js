@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {
 	Box,
-	Button,
+	RoutedButton,
 	Heading
 } from 'grommet';
 
@@ -32,12 +32,12 @@ class Landing extends Component {
 						size: 'xlarge'
 					}}
 				>
-					<Button
-						href='/Main'
+					<RoutedButton
+						path='/Main'
 						hoverIndicator
 						label='enter Sycamore Scheduler ... '
 					>
-					</Button>
+					</RoutedButton>
 				</Box>
 			</Box>
 		);

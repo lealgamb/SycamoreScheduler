@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 
 import {
 	Box, 
-	Button,
 	Heading,
 	Table,
 	TableBody,
@@ -81,7 +80,7 @@ class CoursePlan extends Component {
 				<Box
 					flex
 					direction='row'
-					align='start'
+					align='center'
 					justify='center'
 					margin={{
 						top: '0',
@@ -116,6 +115,15 @@ class CoursePlan extends Component {
 										</TableRow>
 									))}
 								</TableBody>
+								<TableFooter>
+									<TableRow>
+										<TableCell>
+											<Heading level='3'>
+												{item.term}
+											</Heading>
+										</TableCell>
+									</TableRow>
+								</TableFooter>
 							</Table>
 						</Box>
 					))}

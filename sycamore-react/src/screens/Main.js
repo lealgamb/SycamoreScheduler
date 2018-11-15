@@ -6,7 +6,8 @@ import {
 	Button,
 	Collapsible,
 	Heading,
-	ResponsiveContext
+	ResponsiveContext,
+	RoutedButton
 } from 'grommet';
 
 import Classes from './Classes';
@@ -17,36 +18,27 @@ import ClassView from './ClassView';
 
 const Header = (props) => (
 	<Box
-		flex={false}
-		tag='header'
+		flex
 		direction='row'
 		align='center'
 		justify='between'
 		background='main'
-		wrap={false}
-		pad='medium'
-		margin='none'
-		elevation='small'
+		pad='large'
 		animation={{
 			type: 'slideDown',
 			delay: 0,
 			duration: 500,
 			size: 'xlarge'
 		}}
-		style={
-			{zIndex: '100'}
-		}
+		style={{
+			zIndex: '100',
+		}}
 		{...props}
 	/>
 );
 
 const PageLink = (props) => (
 	<Anchor
-		margin={
-			{
-				'right': 'large'
-			}
-		}
 		onClick={props.func}
 		color='light'
 		size='xxlarge'
@@ -82,25 +74,29 @@ class Main extends Component {
 						justify='start'
 					>
 						<Header>
-							<Anchor 
-								margin={{'left': 'large'}}
-								href='/'
-								size='xxlarge'
-								color='#ffffff'
+							<RoutedButton
+								plain
+								path='/'
 							>
-								Sycamore Scheduler
-							</Anchor>
+								<Heading
+									level='1'
+									color='white'
+								>
+									Sycamore Scheduler
+								</Heading>
+							</RoutedButton>
 							<Box
 								direction='row'
 								align='center'
 								justify='end'
 							>
-								<PageLink text='Classes' func={() => this.setState({showSidebar: !this.state.showSidebar})}></PageLink>
-								<PageLink text='Course Plan' func={() => this.setState({display: 'coursePlan'})}></PageLink>
+								<PageLink margin={{right: 'large'}} text='Classes' func={() => this.setState({showSidebar: !this.state.showSidebar})}></PageLink>
+								<PageLink margin={{right: 'large'}} text='Course Plan' func={() => this.setState({display: 'coursePlan'})}></PageLink>
 								<PageLink text='Profile' func={() => this.setState({display: 'profile'})}></PageLink>
 							</Box>
 						</Header> 
 						<Box
+							fill
 							direction='row'
 							justify='start'
 							align='stretch'
@@ -121,8 +117,12 @@ class Main extends Component {
 										type: 'slideRight',
 										delay: 500,
 										duration: 500,
-										size: 'medium'
+										size: 'large'
 									}}
+									style={{
+										minHeight: '100%'
+									}}
+									background='light-2'
 								>
 									<Classes clickFunc={this.displayClass}></Classes>
 								</Box>
@@ -143,12 +143,12 @@ class Main extends Component {
 									}}
 								>
 									<Heading level='1'>Click on a class to view details</Heading>
-									<Button
-										href='/'
+									<RoutedButton
+										path='/'
 										hoverIndicator
 										label='Go back to welcome screen ... '
 									>
-									</Button>
+									</RoutedButton>
 								</Box>
 							}
 							{display==='class' && 

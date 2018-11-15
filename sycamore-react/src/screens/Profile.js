@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {
 	Box, 
-	Button,
-	Heading
+	Heading,
+	RoutedButton
 } from 'grommet';
 
 class Profile extends Component {
@@ -21,12 +21,12 @@ class Profile extends Component {
 				}}
 			>
 				<Heading level='1'>Profile</Heading>
-				<Button
-					href='/Main'
+				<RoutedButton
+					path='/'
 					hoverIndicator
-					label='Reload this page ... '
+					label='Go back to welcome page ... '
 				>
-				</Button>
+				</RoutedButton>
 			</Box>
 		);
 	}
