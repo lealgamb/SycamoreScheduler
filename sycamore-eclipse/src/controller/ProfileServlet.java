@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 
+import driver.JDBCDriver;
+
 /**
  * Servlet implementation class ProfileServlet
  */
