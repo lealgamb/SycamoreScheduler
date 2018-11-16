@@ -21,4 +21,5 @@
 hs_err_pid*
 
 # custom
-sycamore-react/node_modules/
+#sycamore-react/node_modules/
+
