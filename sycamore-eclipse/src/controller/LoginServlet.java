@@ -1,0 +1,56 @@
+package controller;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Servlet implementation class LoginServlet
+ */
+@WebServlet("/LoginServlet")
+public class LoginServlet extends HttpServlet {
+  private static final long serialVersionUID = 1L;
+  
+  /**
+   * Handles user login requests.
+   */
+  protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    // Get the writer
+    PrintWriter pw = response.getWriter();
+    System.out.println("in do post");
+    
+    // Get all of the parameters
+    String email = request.getParameter("email");
+    String password = request.getParameter("password");
+	System.out.println(email + '\n' + password);
+    // Check if any of the parameters are null and send an error message if so
+    if (email == null || password == null) {
+      pw.write("some string bad request");
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+    }
+    else {
+      // Check if the user can be authenticated
+      if (JDBCDriver.isUserRegistered(email, password)) {
+        // Successfully authenticated user
+        
+        // Store the email as a session attribute
+        request.getSession().setAttribute("email", email);
+        
+        // Communicate with the front-end
+        pw.write(HttpServletResponse.SC_OK);
+        pw.flush();
+      }
+      else {
+        // Failed to authenticate the user
+        pw.write(HttpServletResponse.SC_BAD_REQUEST);
+        pw.flush();
+      }
+    }
+  }
+
+}
