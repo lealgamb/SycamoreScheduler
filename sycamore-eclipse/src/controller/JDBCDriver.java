@@ -7,20 +7,21 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class JDBCDriver {
   private static Connection conn = null;
   private static ResultSet rs = null;
   private static PreparedStatement ps = null;
-  private static final String CONNECTION_PATH = "jdbc:mysql://127.0.0.1:3306/Scheduler?user=root&password=root&useSSL=false&serverTimezone=UTC"; // TODO Determine the connection path
+  private static final String CONNECTION_PATH = ""; // TODO Determine the connection path
   
   /**
    * Connects to the database.
    */
   private static void connect() {
     try {
-    	Class.forName("com.mysql.cj.jdbc.Driver");
+    	Class.forName("com.mysql.jdbc.Driver");
     	conn = DriverManager.getConnection(CONNECTION_PATH);
     } catch (ClassNotFoundException cnfe) {
     	System.out.println("cnfe: " + cnfe.getMessage());
@@ -71,13 +72,13 @@ public class JDBCDriver {
 	  boolean hasMajor2 = true;
 	  boolean hasMinor = true;
 	  boolean hasMinor2 = true;
-	  if (academicPrograms.get(1).equals("")) {
+	  if (academicPrograms.get(1) == null) {
 		  hasMajor2 = false;
 	  }
-	  if (academicPrograms.get(2).equals("")) {
+	  if (academicPrograms.get(2) == null) {
 		  hasMinor = false;
 	  }
-	  if (academicPrograms.get(3).equals("")) {
+	  if (academicPrograms.get(3) == null) {
 		  hasMinor2 = false;
 	  } 
 	  
@@ -123,7 +124,7 @@ public class JDBCDriver {
 		  
 		  
 		  ps = conn.prepareStatement("INSERT INTO Users(email, fname, lname, pass, degreeID, degree2ID, minorID, minor2ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);");
-		  ps.setString(1, email);
+		  ps.setString(1, email.toLowerCase());
 		  ps.setString(2, fName);
 		  ps.setString(3, lName);
 		  ps.setString(4, password);
@@ -179,7 +180,7 @@ public class JDBCDriver {
 	  connect();
 	  try {
 		  ps = conn.prepareStatement("SELECT pass FROM Users WHERE email=?");
-		  ps.setString(1, email);
+		  ps.setString(1, email.toLowerCase());
 		  rs = ps.executeQuery();
 		  if (rs.next()) {
 			  if (password.equals(rs.getString("pass"))) {
@@ -202,9 +203,11 @@ public class JDBCDriver {
    * @return null if the specified user information or the requested schedule cannot be found
    */
   public static ArrayList<ArrayList<String>> getUserInformation(String email, String degreeProgramName) {
-	  return new ArrayList<ArrayList<String>>();
+//	  connect();
+//	  try {
+//		  ps = conn.prepareStatement("SELECT ")
+//	  }
   }
-
   
   /**
    * Returns the primary major for the specified user.
@@ -236,7 +239,6 @@ public class JDBCDriver {
    */
   public static boolean updateUser(String email, Map<String, String> updates) {
     //TODO may not be necessary
-	  return true;
   }
   
   /**
@@ -365,43 +367,42 @@ public class JDBCDriver {
    * @param degreeProgramName the degree program name for which to get the schedule
    * @return null if unable to get the user's schedule
    */
-  public static ArrayList<ArrayList<String>> getSchedule(String email, String degreeProgramName) {
-	  return new ArrayList<ArrayList<String>>();
-//	  connect();
-//	  ArrayList<ArrayList<String>> userSchedule = new ArrayList<ArrayList<String>>();
-//	  try {
-//		  // Get the userID associated with the email
-//		  int userID = -1;
-//		  ps = conn.prepareStatement("SELECT userID FROM Users WHERE email=?");
-//		  ps.setString(1, email);
-//		  rs = ps.executeQuery();
-//		  if (rs.next()) {
-//			  userID = rs.getInt("userID");
-//		  }
-//		  
-//		  // Get all of the classID's associated with the user
-//		  ArrayList<Integer> listOfClasses = new ArrayList<Integer>(); // Stores all of the classID's
-//		  ps = conn.prepareStatement("SELECT classID FROM UserClasses WHERE userID=?");
-//		  ps.setInt(1, userID);
-//		  rs = ps.executeQuery();
-//		  while (rs.next()) {
-//			  listOfClasses.add(rs.getInt("classID"));
-//		  }
-//		  
-//		  // Get the degreeID of the specified degree program
-//		  int degreeID = -1;
-//		  ps = conn.prepareStatement("SELECT degreeID FROM DegreeProgram WHERE degreeName=?");
-//		  ps.setString(1, degreeProgramName);
-//		  rs = ps.executeQuery();
-//		  if (rs.next()) {
-//			  degreeID = rs.getInt("degreeID");
-//		  }
-//		  
-//		  // Get the class information for each classID for the specified degree program
-//		  ArrayList<String> classInformation = new ArrayList<String>();
-//	  } catch (SQLException sqle) {
-//		  System.out.println("sqle: " + sqle.getMessage());
-//	  }
+  public static Map<String, ArrayList<ArrayList<String>>> getSchedule(String email, String degreeProgramName) {
+	  connect();
+	  Map<String, ArrayList<ArrayList<String>>> userSchedule = new HashMap<String, ArrayList<ArrayList<String>>>();
+	  try {
+		  // Get the userID associated with the email
+		  int userID = -1;
+		  ps = conn.prepareStatement("SELECT userID FROM Users WHERE email=?");
+		  ps.setString(1, email);
+		  rs = ps.executeQuery();
+		  if (rs.next()) {
+			  userID = rs.getInt("userID");
+		  }
+		  
+		  // Get all of the classID's associated with the user
+		  ArrayList<Integer> listOfClasses = new ArrayList<Integer>(); // Stores all of the classID's
+		  ps = conn.prepareStatement("SELECT classID FROM UserClasses WHERE userID=?");
+		  ps.setInt(1, userID);
+		  rs = ps.executeQuery();
+		  while (rs.next()) {
+			  listOfClasses.add(rs.getInt("classID"));
+		  }
+		  
+		  // Get the degreeID of the specified degree program
+		  int degreeID = -1;
+		  ps = conn.prepareStatement("SELECT degreeID FROM DegreeProgram WHERE degreeName=?");
+		  ps.setString(1, degreeProgramName);
+		  rs = ps.executeQuery();
+		  if (rs.next()) {
+			  degreeID = rs.getInt("degreeID");
+		  }
+		  
+		  // Get the class information for each classID for the specified degree program
+		  ArrayList<String> classInformation = new ArrayList<String>();
+	  } catch (SQLException sqle) {
+		  System.out.println("sqle: " + sqle.getMessage());
+	  }
   }
   
   /**
@@ -413,7 +414,6 @@ public class JDBCDriver {
    */
   public static boolean updateSchedule(String email, String degreeProgramName, Map<String, String> updates) {
     //TODO may not be necessary
-	  return true;
   }
   
   /**
@@ -424,7 +424,6 @@ public class JDBCDriver {
    */
   public static boolean deleteSchedule(String email, String degreeProgramName) {
     //TODO
-	  return true;
   }
   
   /**
@@ -436,7 +435,6 @@ public class JDBCDriver {
    */
   public static boolean addClassToSchedule(String email, String className, String degreeProgramName) {
     //TODO
-	  return true;
   }
   
   /**
@@ -448,7 +446,6 @@ public class JDBCDriver {
    */
   public static boolean removeClassFromSchedule(String email, String className, String degreeProgramName) {
     //TODO
-	  return true;
   }
   
   /**
