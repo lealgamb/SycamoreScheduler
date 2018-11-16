@@ -23,9 +23,9 @@ public class JDBCDriver {
     	Class.forName("com.mysql.jdbc.Driver");
     	conn = DriverManager.getConnection(CONNECTION_PATH);
     } catch (ClassNotFoundException cnfe) {
-    	cnfe.printStackTrace();
+    	System.out.println("cnfe: " + cnfe.getMessage());
     } catch (SQLException sqle) {
-    	sqle.printStackTrace();
+    	System.out.println("sqle: " + sqle.getMessage());
     }
   }
   
@@ -43,11 +43,12 @@ public class JDBCDriver {
 			  conn = null;
 		  }
 		  if (ps != null) {
+			  ps.close();
 			  ps = null;
 		  }
 	  } catch (SQLException sqle) {
 		  System.out.println("connection close error");
-		  sqle.printStackTrace();
+		  System.out.println("sqle: " + sqle.getMessage());
 	  }
   }
   
@@ -61,8 +62,6 @@ public class JDBCDriver {
    * @return false if user is unable to be added to the database
    */
   public static boolean addUser(String email, String fName, String lName, String password, ArrayList<String> academicPrograms) {
-	  // Problem: where to return true/false?
-	  
 	  // Assume:
 	  // 0th index represents degreeID (aka major) - we always assume that this exists
 	  // 1st index represents degree2ID (aka major 2) - an empty string "" represents no major2
@@ -112,7 +111,7 @@ public class JDBCDriver {
 				  minorDegreeID = rs.getInt("degreeID");
 			  }
 		  }
-		  // Getting the degreeID associated with the user's minor2 (i.e. academicPrograms.get(2))
+		  // Getting the degreeID associated with the user's minor2 (i.e. academicPrograms.get(3))
 		  if (hasMinor2 == true) {
 			  ps = conn.prepareStatement("SELECT degreeID FROM DegreeProgram WHERE degreeName=?");
 			  ps.setString(1, academicPrograms.get(3));
@@ -148,11 +147,21 @@ public class JDBCDriver {
 			  ps.setNull(6, Types.INTEGER);
 		  }
 		  ps.executeUpdate();
-		  return true;
+		  
+		  // Check to see if user is in the database
+		  ps = conn.prepareStatement("SELECT email FROM Users WHERE email=?");
+		  ps.setString(1, email);
+		  
+		  if (rs.next()) {
+			  if (email.equals(rs.getString("email"))) {
+				  return true;
+			  }
+		  }
+		  
 		  
 	  } catch (SQLException sqle) {
-		  System.out.println("SQLException in function addUser()");
-		  sqle.printStackTrace();
+		  System.out.println("sqle: " + sqle.getMessage());
+		  return false;
 	  } finally {
 		  close();
 	  }
@@ -178,8 +187,8 @@ public class JDBCDriver {
 			  }
 		  }
 	  } catch (SQLException sqle) {
-		  System.out.println("SQLException in function isUserRegistered()");
-		  sqle.printStackTrace();
+		  System.out.println("sqle: " + sqle.getMessage());
+		  return false;
 	  } finally {
 		  close();
 	  }
@@ -193,7 +202,10 @@ public class JDBCDriver {
    * @return null if the specified user information or the requested schedule cannot be found
    */
   public static ArrayList<ArrayList<String>> getUserInformation(String email, String degreeProgramName) {
-    //TODO
+	  connect();
+	  try {
+		  ps = conn.prepareStatement("SELECT ")
+	  }
   }
   
   /**
@@ -211,8 +223,7 @@ public class JDBCDriver {
 			  return rs.getString("degreeName");
 		  }
 	  } catch (SQLException sqle) {
-		  System.out.println("SQLException in function getPrimaryMajor()");
-		  sqle.printStackTrace();
+		  System.out.println("sqle: " + sqle.getMessage());
 	  } finally {
 		  close();
 	  }
@@ -251,29 +262,33 @@ public class JDBCDriver {
 			  ps = conn.prepareStatement("UPDATE Users SET degreeID=? WHERE email=?");
 			  ps.setInt(1, newDegreeID);
 			  ps.setString(2,  email);
+			  ps.executeUpdate();
 			  return true;
 		  }
 		  else if (category == "secondary major") {
 			  ps = conn.prepareStatement("UPDATE Users SET degree2ID=? WHERE email=?");
 			  ps.setInt(1, newDegreeID);
 			  ps.setString(2,  email);
+			  ps.executeUpdate();
 			  return true;
 		  }
 		  else if (category == "primary minor") {
 			  ps = conn.prepareStatement("UPDATE Users SET minorID=? WHERE email=?");
 			  ps.setInt(1, newDegreeID);
 			  ps.setString(2,  email);
+			  ps.executeQuery();
 			  return true;
 		  }
 		  else if (category == "secondary minor") {
 			  ps = conn.prepareStatement("UPDATE Users SET minor2ID=? WHERE email=?");
 			  ps.setInt(1, newDegreeID);
 			  ps.setString(2,  email);
+			  ps.executeQuery();
 			  return true;
 		  }
 	  } catch (SQLException sqle) {
-		  System.out.println("SQLException in function updateDegreeProgram()");
-		  sqle.printStackTrace();
+		  System.out.println("sqle: " + sqle.getMessage());
+		  return false;
 	  } finally {
 		  close();
 	  }
@@ -309,8 +324,7 @@ public class JDBCDriver {
 			  return true;
 		  }
 	  } catch (SQLException sqle) {
-		  System.out.println("SQLException in function removeDegreeProgram()");
-		  sqle.printStackTrace();
+		  System.out.println("sqle: " + sqle.getMessage());
 	  } finally {
 		  close();
 	  }
@@ -339,8 +353,7 @@ public class JDBCDriver {
     		}
     	}
     } catch (SQLException sqle) {
-    	System.out.println("SQLException in function updatePassword()");
-    	sqle.printStackTrace();
+    	System.out.println("sqle: " + sqle.getMessage());
     } finally {
     	close();
     }
@@ -354,7 +367,41 @@ public class JDBCDriver {
    * @return null if unable to get the user's schedule
    */
   public static ArrayList<ArrayList<String>> getSchedule(String email, String degreeProgramName) {
-    //TODO
+//	  connect();
+//	  ArrayList<ArrayList<String>> userSchedule = new ArrayList<ArrayList<String>>();
+//	  try {
+//		  // Get the userID associated with the email
+//		  int userID = -1;
+//		  ps = conn.prepareStatement("SELECT userID FROM Users WHERE email=?");
+//		  ps.setString(1, email);
+//		  rs = ps.executeQuery();
+//		  if (rs.next()) {
+//			  userID = rs.getInt("userID");
+//		  }
+//		  
+//		  // Get all of the classID's associated with the user
+//		  ArrayList<Integer> listOfClasses = new ArrayList<Integer>(); // Stores all of the classID's
+//		  ps = conn.prepareStatement("SELECT classID FROM UserClasses WHERE userID=?");
+//		  ps.setInt(1, userID);
+//		  rs = ps.executeQuery();
+//		  while (rs.next()) {
+//			  listOfClasses.add(rs.getInt("classID"));
+//		  }
+//		  
+//		  // Get the degreeID of the specified degree program
+//		  int degreeID = -1;
+//		  ps = conn.prepareStatement("SELECT degreeID FROM DegreeProgram WHERE degreeName=?");
+//		  ps.setString(1, degreeProgramName);
+//		  rs = ps.executeQuery();
+//		  if (rs.next()) {
+//			  degreeID = rs.getInt("degreeID");
+//		  }
+//		  
+//		  // Get the class information for each classID for the specified degree program
+//		  ArrayList<String> classInformation = new ArrayList<String>();
+//	  } catch (SQLException sqle) {
+//		  System.out.println("sqle: " + sqle.getMessage());
+//	  }
   }
   
   /**
@@ -406,7 +453,59 @@ public class JDBCDriver {
    * @return null if unable to get classes from the database for the specified degree program name
    */
   public static ArrayList<ArrayList<String>> getClasses(String degreeProgramName) {
-    //TODO
+	  connect();
+	  try {
+		  ArrayList<ArrayList<String>> allClasses = new ArrayList<ArrayList<String>>();
+		  // Get the degreeID associated with the degree program name
+		  int degreeID = -1;
+		  ps = conn.prepareStatement("SELECT degreeID FROM DegreeProgram WHERE degreeName=?");
+		  ps.setString(1, degreeProgramName);
+		  rs = ps.executeQuery();
+		  if (rs.next()) {
+			  degreeID = rs.getInt("degreeID");
+		  }
+		  
+		  // Get all of the classes that have the degreeID
+		  ps = conn.prepareStatement("SELECT classID FROM DegreeClassID WHERE degreeID=?");
+		  ps.setInt(1, degreeID);
+		  rs = ps.executeQuery();
+		  ArrayList<Integer> allClassID = new ArrayList<Integer>(); // Stores all classes with the degreeID
+		  while (rs.next()) {
+			  allClassID.add(rs.getInt("classID"));
+		  }
+		  
+		  for (int i = 0; i < allClassID.size(); i++) {
+			  ArrayList<String> classInformation = new ArrayList<String>();
+			  ps = conn.prepareStatement("SELECT * FROM Class WHERE classID=?");
+			  ps.setInt(1, allClassID.get(i));
+			  rs = ps.executeQuery();
+			  if (rs.next()) {
+				  classInformation.add(rs.getString("department"));
+				  classInformation.add(rs.getString("classNumber"));
+				  classInformation.add(rs.getString("className"));
+				  classInformation.add(Integer.toString(rs.getInt("units")));
+				  classInformation.add(rs.getString("section"));
+				  classInformation.add(Integer.toString(rs.getInt("sessionNum")));
+				  classInformation.add(rs.getString("typeName"));
+				  classInformation.add(rs.getString("timeStart"));
+				  classInformation.add(rs.getString("timeEnd"));
+				  classInformation.add(rs.getString("days"));
+				  classInformation.add(Integer.toString(rs.getInt("registered")));
+				  classInformation.add(Integer.toString(rs.getInt("registeredMax")));
+				  classInformation.add(rs.getString("instructor"));
+				  classInformation.add(rs.getString("location"));
+				  classInformation.add(rs.getString("syllabus"));
+				  classInformation.add(rs.getString("info"));
+				  allClasses.add(classInformation);
+			  }
+		  }
+		  return allClasses;
+	  } catch (SQLException sqle) {
+		  System.out.println("sqle: " + sqle.getMessage());
+		  return null;
+	  } finally {
+		  close();
+	  }
   }
   
 }
