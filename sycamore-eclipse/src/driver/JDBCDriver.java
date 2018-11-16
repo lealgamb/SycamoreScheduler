@@ -161,6 +161,7 @@ public class JDBCDriver {
 		  
 		  
 	  } catch (SQLException sqle) {
+		  System.out.println("SQLException in function addUser()");
 		  System.out.println("sqle: " + sqle.getMessage());
 		  return false;
 	  } finally {
@@ -176,7 +177,6 @@ public class JDBCDriver {
    * @return false if the user is not authenticated against the database
    */
   public static boolean isUserRegistered(String email, String password) {
-	  // Problem: case sensitivity?
 	  connect();
 	  try {
 		  ps = conn.prepareStatement("SELECT pass FROM Users WHERE email=?");
@@ -188,6 +188,7 @@ public class JDBCDriver {
 			  }
 		  }
 	  } catch (SQLException sqle) {
+		  System.out.println("SQLException in function isUserRegistered()");
 		  System.out.println("sqle: " + sqle.getMessage());
 		  return false;
 	  } finally {
@@ -197,21 +198,69 @@ public class JDBCDriver {
   }
   
   /**
-   * Returns the user's registered information on the database and requested schedule
+   * Returns the user's registered information on the database.
    * @param email the user's email
-   * @param degreeProgramName the degree program name for which to get the schedule
-   * @return null if the specified user information or the requested schedule cannot be found
+   * @return null if the specified user information cannot be found
    */
   public static Map<String, String> getUserInformation(String email) {
-	  // name key returns user's name
+	  // fullname key returns user's first and last name
 	  // major1 key returns user's major1
 	  // major2 key returns user's major2
 	  // minor1 key returns user's minor1
 	  // minor2 key returns user's minor2
 	  connect();
+	  Map<String, String> userInformation = new HashMap<String, String>();
 	  try {
-		  
+		  ps = conn.prepareStatement("SELECT * FROM Users WHERE email=?");
+		  ps.setString(1, email);
+		  rs = ps.executeQuery();
+		  if (rs.next()) {
+			  // Get fname and lname from database and combines them
+			  String fullname = rs.getString("fname") + " " + rs.getString("lname");
+			  userInformation.put("fullname", fullname);
+			  
+			  // Get the degreeName associated with the degreeID
+			  String major1 = getDegreeProgramNameFromID(rs.getInt("degreeID"));
+			  String major2 = getDegreeProgramNameFromID(rs.getInt("degree2ID"));
+			  String minor1 = getDegreeProgramNameFromID(rs.getInt("minorID"));
+			  String minor2 = getDegreeProgramNameFromID(rs.getInt("minor2ID"));
+			  
+			  userInformation.put("major1", major1);
+			  userInformation.put("major2", major2);
+			  userInformation.put("minor1", minor1);
+			  userInformation.put("minor2", minor2);
+		  }
+		  if (!userInformation.isEmpty()) {
+			  return userInformation;
+		  }
+	  } catch (SQLException sqle) {
+		  System.out.println("SQLException in getUserInformation()");
+		  System.out.println("sqle: " + sqle.getMessage());
+		  return null;
+	  } finally {
+		  close();
 	  }
+	  return null;
+  }
+  
+  /**
+   * Returns the degreeName based on a given degreeID from the database.
+   * @param degreeProgramID the degreeID of the degree program
+   * @return null if no degree name is found based on the degreeID
+   */
+  private static String getDegreeProgramNameFromID(int degreeProgramID) {
+	  try {
+		  ps = conn.prepareStatement("SELECT degreeName FROM DegreeProgram WHERE degreeID=?");
+		  ps.setInt(1, degreeProgramID);
+		  rs = ps.executeQuery();
+		  if (rs.next()) {
+			  return rs.getString("degreeName");
+		  }
+	  } catch (SQLException sqle) {
+		  System.out.println("SQLException in getDegreeProgramNameFromID()");
+		  System.out.println("sqle: " + sqle.getMessage());
+	  }
+	  return null;
   }
   
   /**
@@ -222,13 +271,14 @@ public class JDBCDriver {
   public static String getPrimaryMajor(String email) {
 	  connect();
 	  try {
-		  ps = conn.prepareStatement("SELECT degreeName FROM Users u, DegreeProgram dp WHERE email=? AND u.degreeID=dp.degreeID");
+		  ps = conn.prepareStatement("SELECT degreeID FROM Users WHERE email=?");
 		  ps.setString(1, email);
 		  rs = ps.executeQuery();
 		  if (rs.next()) {
-			  return rs.getString("degreeName");
+			  return getDegreeProgramNameFromID(rs.getInt("degreeID"));
 		  }
 	  } catch (SQLException sqle) {
+		  System.out.println("SQLException in getPrimaryMajor()");
 		  System.out.println("sqle: " + sqle.getMessage());
 	  } finally {
 		  close();
@@ -293,6 +343,7 @@ public class JDBCDriver {
 			  return true;
 		  }
 	  } catch (SQLException sqle) {
+		  System.out.println("SQLException in updateDegreeProgram()");
 		  System.out.println("sqle: " + sqle.getMessage());
 		  return false;
 	  } finally {
@@ -304,7 +355,6 @@ public class JDBCDriver {
   /**
    * Remove the user's specified degree program if and only if it is not the primary major.
    * @param email the user's email
-   * @param degreeProgramName the name of the degree program to be removed
    * @param category the type of degree program: primary/secondary major/minor
    * @return false if the user's specified degree program is unable to be removed from the database
    */
@@ -334,6 +384,7 @@ public class JDBCDriver {
 			  return true;
 		  }
 	  } catch (SQLException sqle) {
+		  System.out.println("SQLException in removeDegreeProgram()");
 		  System.out.println("sqle: " + sqle.getMessage());
 	  } finally {
 		  close();
@@ -361,8 +412,12 @@ public class JDBCDriver {
     			ps.setString(2, email);
     			return true;
     		}
+    		else {
+    			return false;
+    		}
     	}
     } catch (SQLException sqle) {
+    	System.out.println("SQLException in updatePassword");
     	System.out.println("sqle: " + sqle.getMessage());
     } finally {
     	close();
@@ -373,10 +428,14 @@ public class JDBCDriver {
   /**
    * Returns the user's schedule for the requested degree program.
    * @param email the user's schedule
-   * @param degreeProgramName the degree program name for which to get the schedule
    * @return null if unable to get the user's schedule
    */
-  public static Map<String, ArrayList<ArrayList<String>>> getSchedule(String email, String degreeProgramName) {
+  public static Map<String, ArrayList<ArrayList<String>>> getSchedule(String email) {
+	  // TODO
+	  // We need to get all of the terms a user is enrolled in. We can store the terms in a set.
+	  // Iterate through the set and for each entry in the set, select the classes from UserClasses where
+	  // the term is equal to the current term in the set. Populate the ArrayList<ArrayList<String>> with
+	  // the class information.
 	  connect();
 	  Map<String, ArrayList<ArrayList<String>>> userSchedule = new HashMap<String, ArrayList<ArrayList<String>>>();
 	  try {
@@ -428,21 +487,35 @@ public class JDBCDriver {
   /**
    * Deletes the user's schedule on the database.
    * @param email the user's email
-   * @param degreeProgramName the degree program name for which to update the schedule
+   * @param term the term the user wants their schedule to be deleted
+   * Term format: YYYY-X where X is 1, 2, or 3 (1 represents Fall semester, 2 represents Spring semester,
+   * and 3 represents Summer semester)
    * @return false if the user's schedule is unable to be deleted from the database
    */
-  public static boolean deleteSchedule(String email, String degreeProgramName) {
+  public static boolean deleteSchedule(String email, String term) {
     //TODO
+  }
+  
+  /**
+   * Gets the classID associated with the className from the database.
+   * @param className Format: "departmentName classNumber"
+   * @return null if no classID found from given className
+   */
+  private static int getClassIDFromClassName(String className) {
+	  //TODO
+	  connect();
   }
   
   /**
    * Adds a class to the specified degree program for the specified user.
    * @param email the user's email
    * @param className the name of the class to be added
-   * @param degreeProgramName the degree program name for which to add the class to
+   * @param term the term the user wants their schedule to be deleted
+   * Term format: YYYY-X where X is 1, 2, or 3 (1 represents Fall semester, 2 represents Spring semester,
+   * and 3 represents Summer semester)
    * @return false if the class is unable to be added
    */
-  public static boolean addClassToSchedule(String email, String className, String degreeProgramName) {
+  public static boolean addClassToSchedule(String email, String className, String term) {
     //TODO
   }
   
@@ -450,10 +523,12 @@ public class JDBCDriver {
    * Removes a class from the specified degree program for the specified user.
    * @param email the user's email
    * @param className the name of the class to be removed
-   * @param degreeProgramName the degree program name from which to remove the class from
+   * @param term the term the user wants their schedule to be deleted
+   * Term format: YYYY-X where X is 1, 2, or 3 (1 represents Fall semester, 2 represents Spring semester,
+   * and 3 represents Summer semester)
    * @return false if the class is unable to be removed
    */
-  public static boolean removeClassFromSchedule(String email, String className, String degreeProgramName) {
+  public static boolean removeClassFromSchedule(String email, String className, String term) {
     //TODO
   }
   
@@ -509,13 +584,17 @@ public class JDBCDriver {
 				  allClasses.add(classInformation);
 			  }
 		  }
-		  return allClasses;
+		  if (!allClasses.isEmpty()) {
+			  return allClasses;
+		  }
 	  } catch (SQLException sqle) {
+		  System.out.println("SQLException in getClasses()");
 		  System.out.println("sqle: " + sqle.getMessage());
 		  return null;
 	  } finally {
 		  close();
 	  }
+	  return null;
   }
   
 }
