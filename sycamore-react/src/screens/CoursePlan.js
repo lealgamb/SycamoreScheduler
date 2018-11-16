@@ -6,7 +6,6 @@ import {
 	Table,
 	TableBody,
 	TableCell, 
-	TableFooter,
 	TableHeader,
 	TableRow,
 	Text
@@ -69,10 +68,11 @@ class CoursePlan extends Component {
 				}}
 			>
 				<Heading 
-					level='1'
+                    level='1'
 					margin={{
-						top: 'xlarge',
-						bottom: 'large'
+                        top: 'large',
+                        bottom: '0',
+                        left: 'large'
 					}}
 				>
 					Course Plan
@@ -80,14 +80,8 @@ class CoursePlan extends Component {
 				<Box
 					flex
 					direction='row'
-					align='center'
+					align='start'
 					justify='center'
-					margin={{
-						top: '0',
-						bottom: 'large',
-						left: 'large',
-						right: 'large'
-					}}
 				>
 					{DATA.map(item => (
 						<Box
@@ -115,15 +109,6 @@ class CoursePlan extends Component {
 										</TableRow>
 									))}
 								</TableBody>
-								<TableFooter>
-									<TableRow>
-										<TableCell>
-											<Heading level='3'>
-												{item.term}
-											</Heading>
-										</TableCell>
-									</TableRow>
-								</TableFooter>
 							</Table>
 						</Box>
 					))}
