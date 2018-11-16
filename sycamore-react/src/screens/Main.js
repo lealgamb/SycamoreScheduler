@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 
 import {
 	Anchor,
-	Box, 
+    Box,
+    Button, 
 	Collapsible,
 	Heading,
 	ResponsiveContext,
@@ -62,7 +63,25 @@ class Main extends Component {
 
 	render() {
 		const {showSidebar, display, whichClass} = this.state;
-		
+		const doAjax = () => {
+            console.log("FIRST AJAX REQUEST");
+            fetch("/sycamore-scheduler/LoginServlet", {
+                method: 'POST',
+                body: 'email=sajeevsa@usc.edu&password=password'
+            })
+            .then((status) => { 
+                console.log("STATUS: " + JSON.stringify(status)); 
+            })
+            .then((res) => {
+                console.log("JSON: " + JSON.stringify(res));
+            });
+
+            console.log("SECOND AJAX REQUEST");
+            fetch("/sycamore-scheduler/ClassesServlet?degreeProgramName=CSCI")
+            .then((res) => {
+                console.log("JSON: " + JSON.stringify(res));
+            })
+        }; 
 		return (
 				<ResponsiveContext.Consumer>
 				{size => (
@@ -142,12 +161,12 @@ class Main extends Component {
 									}}
 								>
 									<Heading level='1'>Click on a class to view details</Heading>
-									<RoutedButton
-										path='/'
-										hoverIndicator
-										label='Go back to welcome screen ... '
+									<Button
+                                        hoverIndicator
+                                        onClick={() => {doAjax()}}
+                                        label='Do some AJAX'
 									>
-									</RoutedButton>
+									</Button>
 								</Box>
 							}
 							{display==='class' && 
