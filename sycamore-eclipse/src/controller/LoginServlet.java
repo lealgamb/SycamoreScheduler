@@ -27,7 +27,7 @@ public class LoginServlet extends HttpServlet {
     String password = request.getParameter("password");
 	  // Check if any of the parameters are null and send an error message if so
     if (email == null || password == null) {
-      response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing login parameters.");
     }
     else {
       // Check if the user can be authenticated
@@ -42,7 +42,7 @@ public class LoginServlet extends HttpServlet {
       }
       else {
         // Failed to authenticate the user
-        response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Failed to authenticate user.");
       }
     }
   }

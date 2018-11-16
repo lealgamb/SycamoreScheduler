@@ -42,7 +42,7 @@ public class RegisterServlet extends HttpServlet {
     // Check if any of the parameters are null and send an error message if so
     // At minimum, major1 must have a value
     if (email == null || fName == null || lName == null || password == null || major1 == null) {
-      response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing registration parameters.");
     }
     else {
       // Add the degree program names to the academicPrograms list
@@ -64,7 +64,7 @@ public class RegisterServlet extends HttpServlet {
       }
       else {
         // Failed to register user
-        response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Failed to register user in database.");
       }
     }
   }
