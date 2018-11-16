@@ -25,16 +25,12 @@ public class ClassesServlet extends HttpServlet {
    * Handles requests for classes.
    */
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    // Get the writer
-    PrintWriter pw = response.getWriter();
-    System.out.println("in classes servlet");
     // Get the parameter
     String degreeProgramName = request.getParameter("degreeProgramName");
     
     // Check if the parameter is null and send an error message if so
     if (degreeProgramName == null) {
-      pw.write(HttpServletResponse.SC_BAD_REQUEST);
-      pw.flush();
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing degree program name.");
     }
     else {
       ArrayList<ArrayList<String>> classes = JDBCDriver.getClasses(degreeProgramName);
@@ -47,13 +43,15 @@ public class ClassesServlet extends HttpServlet {
         String classesJSON = new Gson().toJson(classes);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+        // Get the writer
+        PrintWriter pw = response.getWriter();
         pw.write(classesJSON);
         pw.flush();
       }
       else {
         // Failed to retrieve classes
-        pw.write(HttpServletResponse.SC_BAD_REQUEST);
-        pw.flush();
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST, 
+            "Failed to get classes for " + degreeProgramName + " from database.");
       }
     }
   }
