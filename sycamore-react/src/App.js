@@ -98,7 +98,7 @@ const Content = () => (
 
 
 export default () => (
-	<Router basename="/">
+	<Router basename="/sycamore-scheduler">
 		<Grommet theme={theme} full>
 			<Fragment>
 			<Content />
