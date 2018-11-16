@@ -3,6 +3,7 @@ package controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -24,21 +25,17 @@ public class ScheduleServlet extends HttpServlet {
   /**
    * Handles schedule retrieval requests.
    */
-  protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	  // Get the writer
-    PrintWriter pw = response.getWriter();
-    
+  protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {    
     // Get all of the parameters
     String email = request.getParameter("email");
     String degreeProgramName = request.getParameter("degreeProgramName");
     
     // Check if the parameters are null and send an error message if so
     if (email == null || degreeProgramName == null) {
-      pw.write(HttpServletResponse.SC_BAD_REQUEST);
-      pw.flush();
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing course plan parameters.");
     }
     else {
-      ArrayList<ArrayList<String>> schedule = JDBCDriver.getSchedule(email, degreeProgramName);
+      Map<String, ArrayList<ArrayList<String>>> schedule = JDBCDriver.getSchedule(email, degreeProgramName);
       
       // Check if the schedule can be retrieved
       if (schedule != null) {
@@ -48,13 +45,15 @@ public class ScheduleServlet extends HttpServlet {
         String scheduleJSON = new Gson().toJson(schedule);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+        // Get the writer
+        PrintWriter pw = response.getWriter();
         pw.write(scheduleJSON);
         pw.flush();
       }
       else {
         // Failed to retrieve classes
-        pw.write(HttpServletResponse.SC_BAD_REQUEST);
-        pw.flush();
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST, 
+            "Failed to retreive classes for " + degreeProgramName + " from the database.");
       }
     }
   }

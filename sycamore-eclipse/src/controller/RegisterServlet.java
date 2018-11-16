@@ -1,7 +1,6 @@
 package controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import javax.servlet.ServletException;
@@ -20,12 +19,16 @@ public class RegisterServlet extends HttpServlet {
   private static final long serialVersionUID = 1L;
   
   /**
+   * Handles user registration requests to display all degree programs.
+   */
+  protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    // TODO
+  }
+  
+  /**
    * Handles user registration requests.
    */
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    // Get the writer
-    PrintWriter pw = response.getWriter();
-    
     // Get all of the parameters
     String email = request.getParameter("email");
     String fName = request.getParameter("fName");
@@ -39,22 +42,15 @@ public class RegisterServlet extends HttpServlet {
     // Check if any of the parameters are null and send an error message if so
     // At minimum, major1 must have a value
     if (email == null || fName == null || lName == null || password == null || major1 == null) {
-      pw.write(HttpServletResponse.SC_BAD_REQUEST);
-      pw.flush();
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing registration parameters.");
     }
     else {
       // Add the degree program names to the academicPrograms list
       ArrayList<String> academicPrograms = new ArrayList<String>();
       academicPrograms.add(major1); // At this point we know major1 is not null
-      if (major2 != null) {
-        academicPrograms.add(major2);
-      }
-      if (minor1 != null) {
-        academicPrograms.add(minor1);
-      }
-      if (minor2 != null) {
-        academicPrograms.add(minor2);
-      }
+      academicPrograms.add(major2);
+      academicPrograms.add(minor1);
+      academicPrograms.add(minor2);
 	    
       // Attempt to register the user
       if (JDBCDriver.addUser(email, fName, lName, password, academicPrograms)) {
@@ -64,13 +60,11 @@ public class RegisterServlet extends HttpServlet {
         request.getSession().setAttribute("email", email);
         
         // Communicate with the front-end
-        pw.write(HttpServletResponse.SC_OK);
-        pw.flush();
+        response.setStatus(HttpServletResponse.SC_OK);
       }
       else {
         // Failed to register user
-        pw.write(HttpServletResponse.SC_BAD_REQUEST);
-        pw.flush();
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Failed to register user in database.");
       }
     }
   }

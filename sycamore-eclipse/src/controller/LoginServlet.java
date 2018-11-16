@@ -1,7 +1,6 @@
 package controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -22,18 +21,12 @@ public class LoginServlet extends HttpServlet {
    * Handles user login requests.
    */
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    // Get the writer
-    PrintWriter pw = response.getWriter();
-    System.out.println("in do post");
-    
     // Get all of the parameters
     String email = request.getParameter("email");
     String password = request.getParameter("password");
-	System.out.println(email + '\n' + password);
-    // Check if any of the parameters are null and send an error message if so
+	  // Check if any of the parameters are null and send an error message if so
     if (email == null || password == null) {
-      pw.write("some string bad request");
-      response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing login parameters.");
     }
     else {
       // Check if the user can be authenticated
@@ -44,13 +37,11 @@ public class LoginServlet extends HttpServlet {
         request.getSession().setAttribute("email", email);
         
         // Communicate with the front-end
-        pw.write(HttpServletResponse.SC_OK);
-        pw.flush();
+        response.setStatus(HttpServletResponse.SC_OK);
       }
       else {
         // Failed to authenticate the user
-        pw.write(HttpServletResponse.SC_BAD_REQUEST);
-        pw.flush();
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Failed to authenticate user.");
       }
     }
   }

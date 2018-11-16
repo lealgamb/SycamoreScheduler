@@ -1,7 +1,6 @@
 package controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,15 +16,16 @@ public class LogoutServlet extends HttpServlet {
   private static final long serialVersionUID = 1L;
   
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    // Get the writer
-    PrintWriter pw = response.getWriter();
-    
     // Set the email session attribute to null
     request.getSession().setAttribute("email", null);
     
-    // Communicate with the front-end
-    pw.write(HttpServletResponse.SC_OK);
-    pw.flush();
+    // Communicate with the front-end after email is null
+    if (request.getSession().getAttribute("email") == null) {
+      response.setStatus(HttpServletResponse.SC_OK);
+    }
+    else {
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Failed to log out user.");
+    }
   }
   
 }
