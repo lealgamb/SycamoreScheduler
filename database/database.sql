@@ -14,8 +14,9 @@ CREATE TABLE DegreeProgram (
 # DegreeProgram: degreeID (P_K, AUTO_INC), degreeName (NOT NULL)
 
 CREATE TABLE DegreeClass (
-	degreeClassName VARCHAR(10) PRIMARY KEY,
-    classID INT(11) NOT NULL,
+	degreeClassID INT(11) PRIMARY KEY AUTO_INCREMENT,
+	degreeClassName VARCHAR(10),
+    className VARCHAR(10) NOT NULL,
     FOREIGN KEY fk1 (degreeClassName) REFERENCES DegreeProgram(degreeName)
 );
 
