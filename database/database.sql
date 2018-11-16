@@ -78,10 +78,11 @@ CREATE TABLE Class (
     registered INT(11) NOT NULL,
     registeredMax INT(11) NOT NULL,
     instructor VARCHAR(200) NULL,
+    instructorID INT(11) NULL,
     location VARCHAR(20) NOT NULL,
     syllabus VARCHAR(100) NULL,
-    info VARCHAR(500) NOT NULL
-    #FOREIGN KEY fk5 (instructorID) REFERENCES Instructor(instructorID)
+    info VARCHAR(500) NOT NULL,
+    FOREIGN KEY fk5 (instructorID) REFERENCES Instructor(instructorID)
 );
 
 
@@ -98,5 +99,4 @@ CREATE TABLE UserClasses (
 );
 
 # UserClasses: userClassID (P_K, AUTO_INC), userID (NOT NULL), classID (NOT NULL)
-
 
