@@ -26,16 +26,15 @@ public class ScheduleServlet extends HttpServlet {
    * Handles schedule retrieval requests.
    */
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {    
-    // Get all of the parameters
+    // Get the parameter
     String email = request.getParameter("email");
-    String degreeProgramName = request.getParameter("degreeProgramName");
     
-    // Check if the parameters are null and send an error message if so
-    if (email == null || degreeProgramName == null) {
-      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing course plan parameters.");
+    // Check if the parameter is null and send an error message if so
+    if (email == null) {
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing course plan email parameter.");
     }
     else {
-      Map<String, ArrayList<ArrayList<String>>> schedule = JDBCDriver.getSchedule(email, degreeProgramName);
+      Map<String, ArrayList<ArrayList<String>>> schedule = JDBCDriver.getSchedule(email);
       
       // Check if the schedule can be retrieved
       if (schedule != null) {
@@ -53,7 +52,7 @@ public class ScheduleServlet extends HttpServlet {
       else {
         // Failed to retrieve classes
         response.sendError(HttpServletResponse.SC_BAD_REQUEST, 
-            "Failed to retreive classes for " + degreeProgramName + " from the database.");
+            "Failed to retreive classes for " + email + " from the database.");
       }
     }
   }
