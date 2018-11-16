@@ -71,13 +71,13 @@ public class JDBCDriver {
 	  boolean hasMajor2 = true;
 	  boolean hasMinor = true;
 	  boolean hasMinor2 = true;
-	  if (academicPrograms.get(1) == "") {
+	  if (academicPrograms.get(1).equals("")) {
 		  hasMajor2 = false;
 	  }
-	  if (academicPrograms.get(2) == "") {
+	  if (academicPrograms.get(2).equals("")) {
 		  hasMinor = false;
 	  }
-	  if (academicPrograms.get(3) == "") {
+	  if (academicPrograms.get(3).equals("")) {
 		  hasMinor2 = false;
 	  } 
 	  
@@ -258,28 +258,28 @@ public class JDBCDriver {
 		  if (rs.next()) {
 			  newDegreeID = rs.getInt("degreeID");
 		  }
-		  if (category == "primary major") {
+		  if (category.equals("primary major")) {
 			  ps = conn.prepareStatement("UPDATE Users SET degreeID=? WHERE email=?");
 			  ps.setInt(1, newDegreeID);
 			  ps.setString(2,  email);
 			  ps.executeUpdate();
 			  return true;
 		  }
-		  else if (category == "secondary major") {
+		  else if (category.equals("secondary major")) {
 			  ps = conn.prepareStatement("UPDATE Users SET degree2ID=? WHERE email=?");
 			  ps.setInt(1, newDegreeID);
 			  ps.setString(2,  email);
 			  ps.executeUpdate();
 			  return true;
 		  }
-		  else if (category == "primary minor") {
+		  else if (category.equals("primary minor")) {
 			  ps = conn.prepareStatement("UPDATE Users SET minorID=? WHERE email=?");
 			  ps.setInt(1, newDegreeID);
 			  ps.setString(2,  email);
 			  ps.executeQuery();
 			  return true;
 		  }
-		  else if (category == "secondary minor") {
+		  else if (category.equals("secondary minor")) {
 			  ps = conn.prepareStatement("UPDATE Users SET minor2ID=? WHERE email=?");
 			  ps.setInt(1, newDegreeID);
 			  ps.setString(2,  email);
@@ -305,19 +305,19 @@ public class JDBCDriver {
   public static boolean removeDegreeProgram(String email, String degreeProgramName, String category) {
 	  connect();
 	  try {
-		  if (category == "secondary major") {
+		  if (category.equals("secondary major")) {
 			  ps = conn.prepareStatement("UPDATE Users SET degree2ID=? WHERE email=?");
 			  ps.setNull(1, Types.INTEGER);
 			  ps.setString(2,  email);
 			  return true;
 		  }
-		  else if (category == "primary minor") {
+		  else if (category.equals("primary minor")) {
 			  ps = conn.prepareStatement("UPDATE Users SET minorID=? WHERE email=?");
 			  ps.setNull(1, Types.INTEGER);
 			  ps.setString(2,  email);
 			  return true;
 		  }
-		  else if (category == "secondary minor") {
+		  else if (category.equals("secondary minor")) {
 			  ps = conn.prepareStatement("UPDATE Users SET minor2ID=? WHERE email=?");
 			  ps.setNull(1, Types.INTEGER);
 			  ps.setString(2,  email);
