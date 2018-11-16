@@ -93,9 +93,12 @@ CREATE TABLE UserClasses (
 	userClassID INT(11) PRIMARY KEY AUTO_INCREMENT,
     classID INT(11) NOT NULL,
     userID INT(11) NOT NULL,
+    term VARCHAR(20) NOT NULL,
     currStatus VARCHAR(20) NULL,
     FOREIGN KEY fk7 (userID) REFERENCES Users(userID),
     FOREIGN KEY fk8 (classID) REFERENCES Class(classID)
 );
 
 # UserClasses: userClassID (P_K, AUTO_INC), userID (NOT NULL), classID (NOT NULL)
+
+
