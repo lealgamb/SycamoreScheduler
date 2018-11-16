@@ -202,11 +202,16 @@ public class JDBCDriver {
    * @param degreeProgramName the degree program name for which to get the schedule
    * @return null if the specified user information or the requested schedule cannot be found
    */
-  public static ArrayList<ArrayList<String>> getUserInformation(String email, String degreeProgramName) {
-//	  connect();
-//	  try {
-//		  ps = conn.prepareStatement("SELECT ")
-//	  }
+  public static Map<String, String> getUserInformation(String email) {
+	  // name key returns user's name
+	  // major1 key returns user's major1
+	  // major2 key returns user's major2
+	  // minor1 key returns user's minor1
+	  // minor2 key returns user's minor2
+	  connect();
+	  try {
+		  
+	  }
   }
   
   /**
@@ -303,10 +308,14 @@ public class JDBCDriver {
    * @param category the type of degree program: primary/secondary major/minor
    * @return false if the user's specified degree program is unable to be removed from the database
    */
-  public static boolean removeDegreeProgram(String email, String degreeProgramName, String category) {
+  public static boolean removeDegreeProgram(String email, String category) {
 	  connect();
 	  try {
-		  if (category.equals("secondary major")) {
+		  if (category.equals("primary major")) {
+			  return false;
+		  }
+		  
+		  else if (category.equals("secondary major")) {
 			  ps = conn.prepareStatement("UPDATE Users SET degree2ID=? WHERE email=?");
 			  ps.setNull(1, Types.INTEGER);
 			  ps.setString(2,  email);
