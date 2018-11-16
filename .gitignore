@@ -2,7 +2,8 @@
 # Compiled class file
 *.class
 
-*.classpath
+# JDT-specific (Eclipse Java Development Tools)     
+.classpath
 
 # Log file
 *.log
