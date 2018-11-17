@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import javax.servlet.ServletException;
@@ -8,6 +9,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.google.gson.Gson;
 
 import driver.JDBCDriver;
 
@@ -22,7 +25,26 @@ public class RegisterServlet extends HttpServlet {
    * Handles user registration requests to display all degree programs.
    */
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    // TODO
+    // Attempt to retrieve all of the degree program names
+    ArrayList<String> degreeProgramNames = JDBCDriver.getAllDegreePrograms();
+    
+    if (degreeProgramNames != null) {
+      // Successfully retrieved all of the degree program names
+      
+      // Communicate with the front-end
+      String degreeProgramNamesJSON = new Gson().toJson(degreeProgramNames);
+      response.setContentType("application/json");
+      response.setCharacterEncoding("UTF-8");
+      // Get the writer
+      PrintWriter pw = response.getWriter();
+      pw.write(degreeProgramNamesJSON);
+      pw.flush();
+    }
+    else {
+      // Failed to retrieve all of the degree program names
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST, 
+          "Failed to retreive all of the degree program names from the database.");
+    }
   }
   
   /**

@@ -61,65 +61,60 @@ public class ScheduleServlet extends HttpServlet {
    * Handles schedule update requests.
    */
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    // Get the writer
-    PrintWriter pw = response.getWriter();
-    
     // Get all of the main parameters
     String profileEmail = request.getParameter("profileEmail");
     String action = request.getParameter("action");
     
     // Check if the parameters are null and send an error message if so
     if (profileEmail == null || action == null) {
-      pw.write(HttpServletResponse.SC_BAD_REQUEST);
-      pw.flush();
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST, 
+          "Missing parameters to update schedule.");
     }
     else {
       // Only allow the logged in user to make changes to his/her schedule
       if (profileEmail.equals((String)request.getSession().getAttribute("email"))) {
         // Get the remaining parameters
         String className = request.getParameter("className");
-        String degreeProgramName = request.getParameter("degreeProgramName");
+        String term = request.getParameter("term");
         
         // Check if the parameters are null and send an error message if so
-        if (className == null || degreeProgramName == null) {
-          pw.write(HttpServletResponse.SC_BAD_REQUEST);
-          pw.flush();
+        if (className == null || term == null) {
+          response.sendError(HttpServletResponse.SC_BAD_REQUEST, 
+              "Missing class name and/or term parameters to update schedule.");
         }
         else {
           // Add a class
           if (action.equals("add")) {
             // Attempt to add the class
-            if (JDBCDriver.addClassToSchedule(profileEmail, className, degreeProgramName)) {
+            if (JDBCDriver.addClassToSchedule(profileEmail, className, term)) {
               // Successfully added the class
-              pw.write(HttpServletResponse.SC_OK);
-              pw.flush();
+              response.setStatus(HttpServletResponse.SC_OK);
             }
             else {
               // Unable to add the class
-              pw.write(HttpServletResponse.SC_BAD_REQUEST);
-              pw.flush();
+              response.sendError(HttpServletResponse.SC_BAD_REQUEST, 
+                  "Failed to add " + term + ": " + className + " for " + profileEmail + " to database.");
             }
           }
           // Remove a class
           else if (action.equals("remove")) {
             // Attempt to remove the class
-            if (JDBCDriver.removeClassFromSchedule(profileEmail, className, degreeProgramName)) {
+            if (JDBCDriver.removeClassFromSchedule(profileEmail, className, term)) {
               // Successfully removed the class
-              pw.write(HttpServletResponse.SC_OK);
-              pw.flush();
+              response.setStatus(HttpServletResponse.SC_OK);
             }
             else {
               // Unable to remove the class
-              pw.write(HttpServletResponse.SC_BAD_REQUEST);
-              pw.flush();
+              response.sendError(HttpServletResponse.SC_BAD_REQUEST, 
+                  "Failed to remove " + term + ": " + className + " for " + profileEmail + " from database.");
             }
           }
         }
       }
       else {
         // Other users should not be updating schedules on other's profile pages so send an error message
-        pw.write(HttpServletResponse.SC_BAD_REQUEST);
-        pw.flush();
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST, 
+            "Permission denied to edit another user's course plan.");
       }
     }
   }
