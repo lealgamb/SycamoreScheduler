@@ -25,12 +25,22 @@ public class ClassesServlet extends HttpServlet {
    * Handles requests for classes.
    */
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    // Get the writer
+    PrintWriter pw = response.getWriter();
+    
+    // Edit the response
+    response.setContentType("application/json");
+    response.setCharacterEncoding("UTF-8");
+    
     // Get the parameter
     String degreeProgramName = request.getParameter("degreeProgramName");
     
     // Check if the parameter is null and send an error message if so
     if (degreeProgramName == null) {
-      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing degree program name.");
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      String error = "Missing degree program name.";
+      pw.write(new Gson().toJson(error));
+      pw.flush();
     }
     else {
       ArrayList<ArrayList<String>> classes = JDBCDriver.getClasses(degreeProgramName);
@@ -40,18 +50,17 @@ public class ClassesServlet extends HttpServlet {
         // Successfully retrieved the classes
         
         // Communicate with the front-end
+        response.setStatus(HttpServletResponse.SC_OK);
         String classesJSON = new Gson().toJson(classes);
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        // Get the writer
-        PrintWriter pw = response.getWriter();
         pw.write(classesJSON);
         pw.flush();
       }
       else {
         // Failed to retrieve classes
-        response.sendError(HttpServletResponse.SC_BAD_REQUEST, 
-            "Failed to get classes for " + degreeProgramName + " from database.");
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        String error = "Failed to get classes for " + degreeProgramName + " from the database.";
+        pw.write(new Gson().toJson(error));
+        pw.flush();
       }
     }
   }
