@@ -29,6 +29,11 @@ class Landing extends Component {
 							duration: 500,
 							size: 'large'
 						}}
+						border={{
+							side: 'all',
+							size: 'small',
+							color: 'black'
+						}}
 						pad='small'
 						background='main'
 						style={{
