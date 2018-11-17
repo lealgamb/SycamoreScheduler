@@ -208,7 +208,7 @@ public class JDBCDriver {
 	  // major2 key returns user's major2
 	  // minor1 key returns user's minor1
 	  // minor2 key returns user's minor2
-	  connect();
+	  /*connect();
 	  Map<String, String> userInformation = new HashMap<String, String>();
 	  try {
 		  ps = conn.prepareStatement("SELECT * FROM Users WHERE email=?");
@@ -240,7 +240,11 @@ public class JDBCDriver {
 	  } finally {
 		  close();
 	  }
-	  return null;
+	  return null;*/
+	  Map<String, String> userInfo = new HashMap<String, String>();
+	  userInfo.put("full_name", "Sajeev Saluja");
+	  userInfo.put("major_1", "CSCI");
+	  return userInfo;
   }
   
   /**
@@ -601,8 +605,15 @@ public class JDBCDriver {
 	  }
 	  return null;
   }
-  public static ArrayList<String> getAllDegreePrograms() {
-	  return new ArrayList<String>();
+  public static Map<String, ArrayList<String>> getAllDegreePrograms() {
+	  ArrayList<String> testNames = new ArrayList<String>();
+	  testNames.add("CSCI");
+	  testNames.add("MATH");
+	  testNames.add("AME");
+	  testNames.add("EE");
+	  Map<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
+	  map.put("programs", testNames);
+	  return map;
   }
   
 }

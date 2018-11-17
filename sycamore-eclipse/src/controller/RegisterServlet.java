@@ -3,7 +3,7 @@ package controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -33,7 +33,7 @@ public class RegisterServlet extends HttpServlet {
     response.setCharacterEncoding("UTF-8");
     
     // Attempt to retrieve all of the degree program names
-    ArrayList<String> degreeProgramNames = JDBCDriver.getAllDegreePrograms();
+    Map<String, ArrayList<String>> degreeProgramNames = JDBCDriver.getAllDegreePrograms();
     
     if (degreeProgramNames != null) {
       // Successfully retrieved all of the degree program names
@@ -47,7 +47,8 @@ public class RegisterServlet extends HttpServlet {
     else {
       // Failed to retrieve all of the degree program names
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-      pw.write("Error: Failed to retrieve all of the degree program names from the database.");
+      String error = "Failed to retrieve all of the degree program names from the database";
+      pw.write(new Gson().toJson(error));
       pw.flush();
     }
   }
@@ -77,7 +78,8 @@ public class RegisterServlet extends HttpServlet {
     // At minimum, major1 must have a value
     if (email == null || fName == null || lName == null || password == null || major1 == null) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-      pw.write("Error: Missing registration parameters.");
+      String error = "Missing registration parameters";
+      pw.write(new Gson().toJson(error));
       pw.flush();
     }
     else {
@@ -97,13 +99,16 @@ public class RegisterServlet extends HttpServlet {
         
         // Communicate with the front-end
         response.setStatus(HttpServletResponse.SC_OK);
-        pw.write("Success: Successfully registered the user in the database.");
+        String success = "Successfully registered the user in the database";
+        pw.write(new Gson().toJson(success));
         pw.flush();
       }
       else {
         // Failed to register user
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        pw.write("Error: Failed to register the user in the database.");
+        String error = "Failed to register the user in the database";
+        pw.write(new Gson().toJson(error));
+        pw.flush();
       }
     }
   }

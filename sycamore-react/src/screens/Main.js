@@ -64,26 +64,37 @@ class Main extends Component {
 	render() {
 		const {showSidebar, display, whichClass} = this.state;
 		const doAjax = () => {
-            console.log("FIRST AJAX REQUEST");
-            fetch("/sycamore-scheduler/LoginServlet", {
-                method: 'POST',
-                body: 'email=sajeevsa@usc.edu&password=password'
-            })
-            .then((response) => { 
-                response.text().then((text) => {
-					console.log("TEXT: " + text);
-				});
-            });
-            
-            console.log("SECOND AJAX REQUEST");
-            fetch("/sycamore-scheduler/ClassesServlet?degreeProgramName=CSCI", {
-				method: 'GET'
+            console.log("Testing GET /ProfileServlet ...");
+            fetch("/sycamore-scheduler/ProfileServlet?profileEmail=sajeevsa@usc.edu", {
+                method: 'GET'
 			})
             .then((response) => {
-                return response.text().then((text) => {
-					console.log("TEXT: " + text);
-				});
-			});
+                return response.json();
+            })
+            .then((json) => {
+                var name = json['full_name'];
+                var major = json['major_1'];
+                console.log("NAME:\t" + name + "\nMAJOR:\t" + major);
+            });
+            console.log("Testing POST /RegisterServlet ...");
+            fetch("/sycamore-scheduler/RegisterServlet", {
+                method: 'POST',
+                body: {
+                    email: 'sajeevsa@usc.edu',
+                    fName: 'sajeev',
+                    lName: 'saluja',
+                    password: 'password',
+                    major1: 'csci'
+                }
+			})
+            .then((response) => {
+                return response.json();
+            })
+            .then((json) => {
+                console.log(json);
+                console.log("Testing accessing JSON");
+                console.log(typeof json);
+            });
         }; 
 		return (
 				<ResponsiveContext.Consumer>

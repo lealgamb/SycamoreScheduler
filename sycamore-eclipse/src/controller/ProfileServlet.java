@@ -44,6 +44,7 @@ public class ProfileServlet extends HttpServlet {
         String userInformationJSON = new Gson().toJson(userInformation);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+        response.setStatus(HttpServletResponse.SC_OK);
         // Get the writer
         PrintWriter pw = response.getWriter();
         pw.write(userInformationJSON);
