@@ -52,6 +52,8 @@ const DATA = [
 	}
 ]
 
+var i = 0;
+
 class CoursePlan extends Component {
 	render ( ) {
 		return (
@@ -85,6 +87,7 @@ class CoursePlan extends Component {
 				>
 					{DATA.map(item => (
 						<Box
+							key={i++}
 							flex
 							margin='large'
 						>
@@ -100,7 +103,7 @@ class CoursePlan extends Component {
 								</TableHeader>
 								<TableBody>
 									{item.classes.map(course => (
-										<TableRow>
+										<TableRow key={i++}>
 											<TableCell>
 												<Text size='large'>
 													{course}

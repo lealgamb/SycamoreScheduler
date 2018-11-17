@@ -2,28 +2,29 @@ import React, {Fragment} from 'react';
 import {BrowserRouter as Router, Route} from 'react-router-dom';
 import {
 	Box,
-	Grommet
+	Grommet,
 } from 'grommet';
 import {css} from 'styled-components';
 
 import Main from './screens/Main';
 import Landing from './screens/Landing';
+import SignIn from './screens/SignIn';
+import Register from './screens/Register';
 
 const theme = {
 	global: {
 		colors: {
-			main: '#ff3300'
+			main: '#ff3300',
+			darker: '#d21e32'
 		},
 		font: {
-			family: 'Source Sans Pro',
-			size: '14px',
-			height: '20px',
+			family: 'Karla',
 			color: '#ffffff'
 		},
 		hover: {
 			color: 'black',
 			background: 'inherit'
-		}
+		},
 	},
 	button: {
 		border: {
@@ -58,6 +59,7 @@ const theme = {
 			overflow-y: auto;
 			overflow-x: hidden;
 			padding-bottom: 10%;
+			font-family: 'Inconsolata';
 		}
         `
 	},
@@ -93,6 +95,8 @@ const Content = () => (
 	<Box fill>
 		<Route exact path='/' component={Landing} />
 		<Route path='/Main' component={Main} />
+		<Route path='/SignIn' component={SignIn} />
+		<Route path='/Register' component={Register} />
 	</Box>
 );
 

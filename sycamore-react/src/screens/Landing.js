@@ -2,7 +2,9 @@ import React, {Component} from 'react';
 import {
 	Box,
 	RoutedButton,
-	Heading
+	Heading,
+	Image,
+	Text
 } from 'grommet';
 
 class Landing extends Component {
@@ -10,34 +12,77 @@ class Landing extends Component {
 		return (
 			<Box
 				flex
-				direction='column'
-				justify='center'
+				direction='row'
 				align='center'
+				justify='center'
 			>
 				<Box 
+					height='small'
+					width='small'
+					margin={{
+						top: 'large',
+						right: 'medium'
+					}}
 					animation={{
-						type: 'slideDown',
+						type: 'slideRight',
 						delay: 0,
 						duration: 500,
 						size: 'large'
 					}}
 				>
-					<Heading level='1'>Welcome</Heading>
+					<Image fit='contain' src='/leaf.png' />
 				</Box>
 				<Box
-					animation={{
-						type: 'fadeIn',
-						delay: 0,
-						duration: 750,
-						size: 'xlarge'
-					}}
+					direction='column'
+					justify='center'
+					align='center'
 				>
-					<RoutedButton
-						path='/Main'
-						hoverIndicator
-						label='enter Sycamore Scheduler ... '
+					<Box 
+						animation={{
+							type: 'slideDown',
+							delay: 0,
+							duration: 500,
+							size: 'large'
+						}}
 					>
-					</RoutedButton>
+						<Heading level='1' color='black'>Sycamore Scheduler</Heading>
+					</Box>
+					<Box
+						direction='row'
+						align='center'
+						justify='center'
+						animation={{
+							type: 'slideUp',
+							delay: 0,
+							duration: 500,
+							size: 'large'
+						}}
+					>
+						<RoutedButton
+							path='/Register'
+							hoverIndicator
+							label={<Text size='large' style={{fontFamily: 'Inconsolata'}}><strong>register</strong></Text>}
+							margin={{
+								right: 'medium'
+							}}
+						>
+						</RoutedButton>
+						<RoutedButton
+							path='/SignIn'
+							hoverIndicator
+							label={<Text size='large' style={{fontFamily: 'Inconsolata'}}><strong>sign in</strong></Text>}
+							margin={{
+								right: 'medium'
+							}}
+						>
+						</RoutedButton>
+						<RoutedButton
+							path='/Main'
+							hoverIndicator
+							label={<Text size='large' style={{fontFamily: 'Inconsolata'}}><strong>guest</strong></Text>}
+						>
+						</RoutedButton>
+					</Box>
 				</Box>
 			</Box>
 		);

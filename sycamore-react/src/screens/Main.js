@@ -22,7 +22,7 @@ const Header = (props) => (
 		direction='row'
 		align='center'
 		justify='between'
-		background='main'
+		background='darker'
 		pad='large'
 		animation={{
 			type: 'slideDown',
@@ -91,9 +91,8 @@ class Main extends Component {
                 return response.json();
             })
             .then((json) => {
+				console.log("Testing accessing JSON");
                 console.log(json);
-                console.log("Testing accessing JSON");
-                console.log(typeof json);
             });
         }; 
 		return (
