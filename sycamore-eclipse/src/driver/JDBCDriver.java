@@ -294,6 +294,7 @@ public class JDBCDriver {
    */
   public static boolean updateUser(String email, Map<String, String> updates) {
     //TODO may not be necessary
+	  return true;
   }
   
   /**
@@ -431,12 +432,13 @@ public class JDBCDriver {
    * @return null if unable to get the user's schedule
    */
   public static Map<String, ArrayList<ArrayList<String>>> getSchedule(String email) {
+	  return new HashMap<String, ArrayList<ArrayList<String>>>();
 	  // TODO
 	  // We need to get all of the terms a user is enrolled in. We can store the terms in a set.
 	  // Iterate through the set and for each entry in the set, select the classes from UserClasses where
 	  // the term is equal to the current term in the set. Populate the ArrayList<ArrayList<String>> with
 	  // the class information.
-	  connect();
+	 /* connect();
 	  Map<String, ArrayList<ArrayList<String>>> userSchedule = new HashMap<String, ArrayList<ArrayList<String>>>();
 	  try {
 		  // Get the userID associated with the email
@@ -470,7 +472,7 @@ public class JDBCDriver {
 		  ArrayList<String> classInformation = new ArrayList<String>();
 	  } catch (SQLException sqle) {
 		  System.out.println("sqle: " + sqle.getMessage());
-	  }
+	  }*/
   }
   
   /**
@@ -482,6 +484,7 @@ public class JDBCDriver {
    */
   public static boolean updateSchedule(String email, String degreeProgramName, Map<String, String> updates) {
     //TODO may not be necessary
+	  return true;
   }
   
   /**
@@ -494,6 +497,7 @@ public class JDBCDriver {
    */
   public static boolean deleteSchedule(String email, String term) {
     //TODO
+	  return true;
   }
   
   /**
@@ -502,8 +506,7 @@ public class JDBCDriver {
    * @return null if no classID found from given className
    */
   private static int getClassIDFromClassName(String className) {
-	  //TODO
-	  connect();
+	  return 1;
   }
   
   /**
@@ -517,6 +520,7 @@ public class JDBCDriver {
    */
   public static boolean addClassToSchedule(String email, String className, String term) {
     //TODO
+	  return true;
   }
   
   /**
@@ -530,6 +534,7 @@ public class JDBCDriver {
    */
   public static boolean removeClassFromSchedule(String email, String className, String term) {
     //TODO
+	  return true;
   }
   
   /**
@@ -595,6 +600,9 @@ public class JDBCDriver {
 		  close();
 	  }
 	  return null;
+  }
+  public static ArrayList<String> getAllDegreePrograms() {
+	  return new ArrayList<String>();
   }
   
 }
