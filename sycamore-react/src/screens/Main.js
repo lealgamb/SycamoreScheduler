@@ -69,18 +69,21 @@ class Main extends Component {
                 method: 'POST',
                 body: 'email=sajeevsa@usc.edu&password=password'
             })
-            .then((status) => { 
-                console.log("STATUS: " + JSON.stringify(status)); 
-            })
-            .then((res) => {
-                console.log("JSON: " + JSON.stringify(res));
+            .then((response) => { 
+                response.text().then((text) => {
+					console.log("TEXT: " + text);
+				});
             });
-
+            
             console.log("SECOND AJAX REQUEST");
-            fetch("/sycamore-scheduler/ClassesServlet?degreeProgramName=CSCI")
-            .then((res) => {
-                console.log("JSON: " + JSON.stringify(res));
-            })
+            fetch("/sycamore-scheduler/ClassesServlet?degreeProgramName=CSCI", {
+				method: 'GET'
+			})
+            .then((response) => {
+                return response.text().then((text) => {
+					console.log("TEXT: " + text);
+				});
+			});
         }; 
 		return (
 				<ResponsiveContext.Consumer>
