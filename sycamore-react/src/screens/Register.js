@@ -21,8 +21,8 @@ class Register extends Component {
 	state = {
 		email: '',
 		password: '',
-		fname: '',
-		lname: '',
+		fName: '',
+		lName: '',
 		major1: '',
 		major2: '',
 		minor1: '',
@@ -31,20 +31,34 @@ class Register extends Component {
 	}
 
 	doRegister = (event) => {
-		/*fetch('/sycamore-scheduler/LoginServlet', {
-			method: 'POST',
-			body: {
-				email: this.state.email,
-				password: this.state.password
+		let bodystr = '';
+		let i = 0;
+		Object.keys(this.state).map((key) => {
+			if (i !== 0 && key !== 'programs') {
+				bodystr += '&';
 			}
+			i++;
+			if (key !== 'programs') {
+				bodystr += key;
+				bodystr += '=';
+				bodystr += this.state[key];
+			}
+			return 0;
+		});
+		console.log(bodystr);
+		fetch('/sycamore-scheduler/RegisterServlet', {
+			method: 'POST',
+			headers: {
+				'content-type': 'application/x-www-form-urlencoded'
+			},
+			body: bodystr
 		})
 		.then((response) => {
 			return response.json();
 		})
 		.then((json) => {
 			console.log(JSON.stringify(json));
-		});*/
-		console.log(event);
+		});
 	};
 
 	handleChange = (element, event) => {
@@ -148,6 +162,7 @@ class Register extends Component {
 							direction='row'
 							align='center'
 							justify='between'
+							gap='large'
 						>
 							<FormField
 							>
@@ -166,6 +181,7 @@ class Register extends Component {
 								<TextInput
 									id='password'
 									size='medium'
+									type='password'
 									focusIndicator
 									placeholder={<Text size='large'>password</Text>}
 									value={this.state.password}
@@ -180,6 +196,7 @@ class Register extends Component {
 							direction='row'
 							align='center'
 							justify='between'
+							gap='large'
 						>
 							<Select
 								size='small'

@@ -22,7 +22,6 @@ const theme = {
 			color: '#ffffff'
 		},
 		hover: {
-			color: 'black',
 			background: 'inherit'
 		},
 	},

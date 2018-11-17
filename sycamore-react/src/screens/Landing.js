@@ -15,75 +15,81 @@ class Landing extends Component {
 				direction='row'
 				align='center'
 				justify='center'
+				gap='large'
 			>
-				<Box 
-					height='small'
-					width='small'
-					margin={{
-						top: 'large',
-						right: 'medium'
-					}}
-					animation={{
-						type: 'slideRight',
-						delay: 0,
-						duration: 500,
-						size: 'large'
-					}}
-				>
-					<Image fit='contain' src='/leaf.png' />
-				</Box>
-				<Box
-					direction='column'
-					justify='center'
-					align='center'
-				>
 					<Box 
+						height='small'
+						width='small'
+						margin={{
+							top: 'large',
+						}}
 						animation={{
-							type: 'slideDown',
+							type: 'slideRight',
 							delay: 0,
 							duration: 500,
 							size: 'large'
 						}}
+						pad='small'
+						background='main'
+						style={{
+							borderRadius: '20px'
+						}}
 					>
-						<Heading level='1' color='black'>Sycamore Scheduler</Heading>
+						<Image fit='contain' src='/sycamore-scheduler/leaf.png' />
 					</Box>
 					<Box
-						direction='row'
-						align='center'
+						direction='column'
 						justify='center'
-						animation={{
-							type: 'slideUp',
-							delay: 0,
-							duration: 500,
-							size: 'large'
-						}}
+						align='center'
+
 					>
-						<RoutedButton
-							path='/Register'
-							hoverIndicator
-							label={<Text size='large' style={{fontFamily: 'Inconsolata'}}><strong>register</strong></Text>}
-							margin={{
-								right: 'medium'
+						<Box 
+							animation={{
+								type: 'slideDown',
+								delay: 0,
+								duration: 500,
+								size: 'large'
 							}}
 						>
-						</RoutedButton>
-						<RoutedButton
-							path='/SignIn'
-							hoverIndicator
-							label={<Text size='large' style={{fontFamily: 'Inconsolata'}}><strong>sign in</strong></Text>}
-							margin={{
-								right: 'medium'
+							<Heading level='1' color='black'>Sycamore Scheduler</Heading>
+						</Box>
+						<Box
+							direction='row'
+							align='center'
+							justify='center'
+							animation={{
+								type: 'slideUp',
+								delay: 0,
+								duration: 500,
+								size: 'large'
 							}}
 						>
-						</RoutedButton>
-						<RoutedButton
-							path='/Main'
-							hoverIndicator
-							label={<Text size='large' style={{fontFamily: 'Inconsolata'}}><strong>guest</strong></Text>}
-						>
-						</RoutedButton>
+							<RoutedButton
+								path='/Register'
+								hoverIndicator
+								label={<Text size='large' style={{fontFamily: 'Inconsolata'}}><strong>register</strong></Text>}
+								margin={{
+									right: 'medium'
+								}}
+							>
+							</RoutedButton>
+							<RoutedButton
+								path='/SignIn'
+								hoverIndicator
+								label={<Text size='large' style={{fontFamily: 'Inconsolata'}}><strong>sign in</strong></Text>}
+								margin={{
+									right: 'medium'
+								}}
+							>
+							</RoutedButton>
+							<RoutedButton
+								path='/Main'
+								hoverIndicator
+								label={<Text size='large' style={{fontFamily: 'Inconsolata'}}><strong>guest</strong></Text>}
+							>
+							</RoutedButton>
+						</Box>
 					</Box>
-				</Box>
 			</Box>
 		);
 	}

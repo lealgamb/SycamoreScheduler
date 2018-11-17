@@ -14,14 +14,14 @@ public class JDBCDriver {
   private static Connection conn = null;
   private static ResultSet rs = null;
   private static PreparedStatement ps = null;
-  private static final String CONNECTION_PATH = ""; // TODO Determine the connection path
+  private static final String CONNECTION_PATH = "jdbc:mysql://localhost:3306/scheduler?user=root&password=root&severTime=UTC"; // TODO Determine the connection path
   
   /**
    * Connects to the database.
    */
   private static void connect() {
     try {
-    	Class.forName("com.mysql.jdbc.Driver");
+    	Class.forName("com.mysql.cj.jdbc.Driver");
     	conn = DriverManager.getConnection(CONNECTION_PATH);
     } catch (ClassNotFoundException cnfe) {
     	System.out.println("cnfe: " + cnfe.getMessage());

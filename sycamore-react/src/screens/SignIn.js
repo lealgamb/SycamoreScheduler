@@ -98,6 +98,7 @@ class SignIn extends Component {
 						<TextInput
 							id='password'
 							size='medium'
+							type='password'
 							focusIndicator
 							placeholder={<Text size='large'>password</Text>}
 							value={this.state.password}

@@ -63,8 +63,7 @@ public class RegisterServlet extends HttpServlet {
     // Edit the response
     response.setContentType("application/json");
     response.setCharacterEncoding("UTF-8");
-    
-    // Get all of the parameters
+
     String email = request.getParameter("email");
     String fName = request.getParameter("fName");
     String lName = request.getParameter("lName");
@@ -73,6 +72,8 @@ public class RegisterServlet extends HttpServlet {
     String major2 = request.getParameter("major2");
     String minor1 = request.getParameter("minor1");
     String minor2 = request.getParameter("minor2");
+    
+    System.out.println(email+'\n'+fName+'\n'+lName+'\n'+password+'\n'+major1+'\n'+major2+'\n'+minor1+'\n'+minor2+'\n');
 	  
     // Check if any of the parameters are null and send an error message if so
     // At minimum, major1 must have a value
