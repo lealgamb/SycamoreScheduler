@@ -47,7 +47,7 @@ public class RegisterServlet extends HttpServlet {
     else {
       // Failed to retrieve all of the degree program names
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-      String error = "Failed to retrieve all of the degree program names from the database";
+      String error = "Failed to retrieve all of the degree program names from the database.";
       pw.write(new Gson().toJson(error));
       pw.flush();
     }
@@ -99,14 +99,14 @@ public class RegisterServlet extends HttpServlet {
         
         // Communicate with the front-end
         response.setStatus(HttpServletResponse.SC_OK);
-        String success = "Successfully registered the user in the database";
+        String success = "Successfully registered the user in the database.";
         pw.write(new Gson().toJson(success));
         pw.flush();
       }
       else {
         // Failed to register user
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        String error = "Failed to register the user in the database";
+        String error = "Failed to register the user in the database.";
         pw.write(new Gson().toJson(error));
         pw.flush();
       }
