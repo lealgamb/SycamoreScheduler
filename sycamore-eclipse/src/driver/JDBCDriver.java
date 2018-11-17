@@ -597,4 +597,12 @@ public class JDBCDriver {
 	  return null;
   }
   
+  /**
+   * Returns all of the possible degree programs
+   * @return null if degree programs cannot be retrieved from database
+   */
+  public static ArrayList<String> getAllDegreePrograms() {
+	  
+  }
+  
 }
