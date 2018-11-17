@@ -25,6 +25,13 @@ public class RegisterServlet extends HttpServlet {
    * Handles user registration requests to display all degree programs.
    */
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    // Get the writer
+    PrintWriter pw = response.getWriter();
+    
+    // Edit the response
+    response.setContentType("application/json");
+    response.setCharacterEncoding("UTF-8");
+    
     // Attempt to retrieve all of the degree program names
     ArrayList<String> degreeProgramNames = JDBCDriver.getAllDegreePrograms();
     
@@ -33,17 +40,15 @@ public class RegisterServlet extends HttpServlet {
       
       // Communicate with the front-end
       String degreeProgramNamesJSON = new Gson().toJson(degreeProgramNames);
-      response.setContentType("application/json");
-      response.setCharacterEncoding("UTF-8");
-      // Get the writer
-      PrintWriter pw = response.getWriter();
+      response.setStatus(HttpServletResponse.SC_OK);
       pw.write(degreeProgramNamesJSON);
       pw.flush();
     }
     else {
       // Failed to retrieve all of the degree program names
-      response.sendError(HttpServletResponse.SC_BAD_REQUEST, 
-          "Failed to retreive all of the degree program names from the database.");
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      pw.write("Error: Failed to retrieve all of the degree program names from the database.");
+      pw.flush();
     }
   }
   
@@ -51,6 +56,13 @@ public class RegisterServlet extends HttpServlet {
    * Handles user registration requests.
    */
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    // Get the writer
+    PrintWriter pw = response.getWriter();
+    
+    // Edit the response
+    response.setContentType("application/json");
+    response.setCharacterEncoding("UTF-8");
+    
     // Get all of the parameters
     String email = request.getParameter("email");
     String fName = request.getParameter("fName");
@@ -64,7 +76,9 @@ public class RegisterServlet extends HttpServlet {
     // Check if any of the parameters are null and send an error message if so
     // At minimum, major1 must have a value
     if (email == null || fName == null || lName == null || password == null || major1 == null) {
-      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing registration parameters.");
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      pw.write("Error: Missing registration parameters.");
+      pw.flush();
     }
     else {
       // Add the degree program names to the academicPrograms list
@@ -83,10 +97,13 @@ public class RegisterServlet extends HttpServlet {
         
         // Communicate with the front-end
         response.setStatus(HttpServletResponse.SC_OK);
+        pw.write("Success: Successfully registered the user in the database.");
+        pw.flush();
       }
       else {
         // Failed to register user
-        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Failed to register user in database.");
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        pw.write("Error: Failed to register the user in the database.");
       }
     }
   }
