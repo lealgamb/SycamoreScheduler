@@ -8,7 +8,11 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+
+import com.sun.org.apache.bcel.internal.generic.Select;
 
 public class JDBCDriver {
   private static Connection conn = null;
@@ -294,7 +298,6 @@ public class JDBCDriver {
    */
   public static boolean updateUser(String email, Map<String, String> updates) {
     //TODO may not be necessary
-	  return true;
   }
   
   /**
@@ -427,52 +430,94 @@ public class JDBCDriver {
   }
   
   /**
+   * Returns the user's ID within the database given their email
+   * @param email
+   * @return -1 if unable to get userID from email
+   */
+  private static int getUserIDFromEmail(String email) {
+	  try {
+		  ps = conn.prepareStatement("SELECT userID FROM Users WHERE email=?");
+		  ps.setString(1, email.toLowerCase());
+		  rs = ps.executeQuery();
+		  if (rs.next()) {
+			  return rs.getInt("userID");
+		  }
+	  } catch (SQLException sqle) {
+		  System.out.println("SQLException in getUserIDFromEmail()");
+		  System.out.println("sqle: " + sqle.getMessage());
+		  return -1;
+	  }
+	  return -1;
+  }
+  
+  /**
    * Returns the user's schedule for the requested degree program.
    * @param email the user's schedule
    * @return null if unable to get the user's schedule
    */
   public static Map<String, ArrayList<ArrayList<String>>> getSchedule(String email) {
-	  return new HashMap<String, ArrayList<ArrayList<String>>>();
-	  // TODO
 	  // We need to get all of the terms a user is enrolled in. We can store the terms in a set.
 	  // Iterate through the set and for each entry in the set, select the classes from UserClasses where
 	  // the term is equal to the current term in the set. Populate the ArrayList<ArrayList<String>> with
 	  // the class information.
-	 /* connect();
-	  Map<String, ArrayList<ArrayList<String>>> userSchedule = new HashMap<String, ArrayList<ArrayList<String>>>();
+	  connect();
 	  try {
-		  // Get the userID associated with the email
-		  int userID = -1;
-		  ps = conn.prepareStatement("SELECT userID FROM Users WHERE email=?");
-		  ps.setString(1, email);
-		  rs = ps.executeQuery();
-		  if (rs.next()) {
-			  userID = rs.getInt("userID");
-		  }
+		  // Stores the classes for a specified term
+		  ArrayList<ArrayList<String>> classes = new ArrayList<ArrayList<String>>();
+		  // Stores all of a user's terms and the classes associated with them
+		  // Key: term
+		  // Value: classes and their information
+		  Map<String, ArrayList<ArrayList<String>>> userSchedule = new HashMap<String, ArrayList<ArrayList<String>>>();
 		  
-		  // Get all of the classID's associated with the user
-		  ArrayList<Integer> listOfClasses = new ArrayList<Integer>(); // Stores all of the classID's
-		  ps = conn.prepareStatement("SELECT classID FROM UserClasses WHERE userID=?");
+		  // Get all of the user's terms
+		  Set<String> terms = new HashSet<String>();
+		  int userID = getUserIDFromEmail(email);
+		  ps = conn.prepareStatement("SELECT term FROM UserClasses WHERE userID=?");
 		  ps.setInt(1, userID);
 		  rs = ps.executeQuery();
 		  while (rs.next()) {
-			  listOfClasses.add(rs.getInt("classID"));
+			  terms.add(rs.getString("term"));
 		  }
 		  
-		  // Get the degreeID of the specified degree program
-		  int degreeID = -1;
-		  ps = conn.prepareStatement("SELECT degreeID FROM DegreeProgram WHERE degreeName=?");
-		  ps.setString(1, degreeProgramName);
-		  rs = ps.executeQuery();
-		  if (rs.next()) {
-			  degreeID = rs.getInt("degreeID");
+		  for (String term:terms) {
+			  ps = conn.prepareStatement("SELECT classID FROM UserClasses WHERE term=?");
+			  ps.setString(1, term);
+			  rs = ps.executeQuery();
+			  while (rs.next()) {
+				  int classID = rs.getInt("classID");
+				  ArrayList<String> classInformation = new ArrayList<>();
+				  classInformation.add(rs.getString("department"));
+				  classInformation.add(rs.getString("classNumber"));
+				  classInformation.add(rs.getString("className"));
+				  classInformation.add(Integer.toString(rs.getInt("units")));
+				  classInformation.add(rs.getString("section"));
+				  classInformation.add(Integer.toString(rs.getInt("sessionNum")));
+				  classInformation.add(rs.getString("typeName"));
+				  classInformation.add(rs.getString("timeStart"));
+				  classInformation.add(rs.getString("timeEnd"));
+				  classInformation.add(rs.getString("days"));
+				  classInformation.add(Integer.toString(rs.getInt("registered")));
+				  classInformation.add(Integer.toString(rs.getInt("registeredMax")));
+				  classInformation.add(rs.getString("instructor"));
+				  classInformation.add(rs.getString("location"));
+				  classInformation.add(rs.getString("syllabus"));
+				  classInformation.add(rs.getString("info"));
+				  classes.add(classInformation);
+			  }
+			  userSchedule.put(term, classes);
+		  }
+		  if (!userSchedule.isEmpty()) {
+			  return userSchedule;
 		  }
 		  
-		  // Get the class information for each classID for the specified degree program
-		  ArrayList<String> classInformation = new ArrayList<String>();
 	  } catch (SQLException sqle) {
+		  System.out.println("SQLException in getSchedule()");
 		  System.out.println("sqle: " + sqle.getMessage());
-	  }*/
+		  return null;
+	  } finally {
+		  close();
+	  }
+	  return null;
   }
   
   /**
@@ -484,7 +529,6 @@ public class JDBCDriver {
    */
   public static boolean updateSchedule(String email, String degreeProgramName, Map<String, String> updates) {
     //TODO may not be necessary
-	  return true;
   }
   
   /**
@@ -496,17 +540,44 @@ public class JDBCDriver {
    * @return false if the user's schedule is unable to be deleted from the database
    */
   public static boolean deleteSchedule(String email, String term) {
-    //TODO
-	  return true;
+	  connect();
+	  try {
+		  int userID = getUserIDFromEmail(email);
+		  ps = conn.prepareStatement("DELETE FROM UserClasses WHERE term=?");
+		  ps.setString(1, term);
+		  ps.executeUpdate();
+		  return true;
+	  } catch (SQLException sqle) {
+		  System.out.println("SQLException in deleteSchedule()");
+		  System.out.println("sqle: " + sqle.getMessage());
+		  return false;
+	  } finally {
+		  close();
+	  }
+	  return false;
   }
   
   /**
    * Gets the classID associated with the className from the database.
    * @param className Format: "departmentName classNumber"
-   * @return null if no classID found from given className
+   * @return -1 if no classID found for given className
    */
   private static int getClassIDFromClassName(String className) {
-	  return 1;
+	  try {
+		  String classNameArray[] = className.split(" ");
+		  ps = conn.prepareStatement("SELECT classID FROM Class WHERE department=? AND classNumber=?");
+		  ps.setString(1, classNameArray[0]);
+		  ps.setString(2, classNameArray[1]);
+		  rs = ps.executeQuery();
+		  if (rs.next()) {
+			  return rs.getInt("classID");
+		  }
+	  } catch (SQLException sqle) {
+		  System.out.println("SQLException in getClassIDFromClassName()");
+		  System.out.println("sqle: " + sqle.getMessage());
+		  return -1;
+	  }
+	  return -1;
   }
   
   /**
@@ -519,8 +590,34 @@ public class JDBCDriver {
    * @return false if the class is unable to be added
    */
   public static boolean addClassToSchedule(String email, String className, String term) {
-    //TODO
-	  return true;
+	  connect();
+	  try {
+		  int classID = getClassIDFromClassName(className);
+		  int userID = getUserIDFromEmail(email);
+		  ps = conn.prepareStatement("INSERT INTO UserClasses(classID, userID, term) VALUES (?, ?, ?);");
+		  ps.setInt(1, classID);
+		  ps.setInt(2, userID);
+		  ps.setString(3, term);
+		  ps.executeUpdate();
+		  
+		  // Check to see if class is now in the database
+		  ps = conn.prepareStatement("SELECT userClassID FROM UserClasses WHERE classID=? AND userID=? AND term=?");
+		  ps.setInt(1, classID);
+		  ps.setInt(2, userID);
+		  ps.setString(3, term);
+		  rs = ps.executeQuery();
+		  if (rs.next()) {
+			  return true;
+		  }
+		  
+	  } catch (SQLException sqle) {
+		  System.out.println("SQLException in addClassToSchedule()");
+		  System.out.println("sqle: " + sqle.getMessage());
+		  return false;
+	  } finally {
+		  close();
+	  }
+	  return false;
   }
   
   /**
@@ -533,7 +630,32 @@ public class JDBCDriver {
    * @return false if the class is unable to be removed
    */
   public static boolean removeClassFromSchedule(String email, String className, String term) {
-    //TODO
+	  connect();
+	  try {
+		  int classID = getClassIDFromClassName(className);
+		  int userID = getUserIDFromEmail(email);
+		  ps = conn.prepareStatement("DELETE FROM UserClasses WHERE userID=? AND classID=? AND term=?");
+		  ps.setInt(1, userID);
+		  ps.setInt(2, classID);
+		  ps.setString(3, term);
+		  ps.executeUpdate();
+		  
+		  // Check to see if class is now removed from the database
+		  ps = conn.prepareStatement("SELECT userClassID FROM UserClasses WHERE userID=? AND classID=? AND term=?");
+		  ps.setInt(1, userID);
+		  ps.setInt(2, classID);
+		  ps.setString(3, term);
+		  rs = ps.executeQuery();
+		  if (rs.next()) {
+			  return false;
+		  }
+	  } catch (SQLException sqle) {
+		  System.out.println("SQLException in removeClassFromSchedule()");
+		  System.out.println("sqle: " + sqle.getMessage());
+		  return false;
+	  } finally {
+		  close();
+	  }
 	  return true;
   }
   
@@ -601,8 +723,34 @@ public class JDBCDriver {
 	  }
 	  return null;
   }
-  public static ArrayList<String> getAllDegreePrograms() {
-	  return new ArrayList<String>();
+  
+  /**
+   * Returns all of the possible degree programs
+   * @return null if degree programs cannot be retrieved from database
+   */
+  public static Map<String, ArrayList<String>> getAllDegreePrograms() {
+	  connect();
+	  try {
+		  ArrayList<String> degreePrograms = new ArrayList<String>();
+		  ps = conn.prepareStatement("SELECT * FROM DegreeProgram");
+		  rs = ps.executeQuery();
+		  while (rs.next()) {
+			  degreePrograms.add(rs.getString("degreeName"));
+		  }
+		  
+		  Map<String, ArrayList<String>> degreeProgramsMap = new HashMap<String, ArrayList<String>>();
+		  degreeProgramsMap.put("programs", degreePrograms);
+		  
+		  if (!degreeProgramsMap.isEmpty()) {
+			  return degreeProgramsMap;
+		  }
+	  } catch (SQLException sqle) {
+		  System.out.println("SQLException in getAllDegrePrograms()");
+		  System.out.println("sqle: " + sqle.getMessage());
+	  } finally {
+		  close();
+	  }
+	  return null;
   }
   
 }
