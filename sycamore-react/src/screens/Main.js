@@ -76,24 +76,6 @@ class Main extends Component {
                 var major = json['major_1'];
                 console.log("NAME:\t" + name + "\nMAJOR:\t" + major);
             });
-            console.log("Testing POST /RegisterServlet ...");
-            fetch("/sycamore-scheduler/RegisterServlet", {
-                method: 'POST',
-                body: {
-                    email: 'sajeevsa@usc.edu',
-                    fName: 'sajeev',
-                    lName: 'saluja',
-                    password: 'password',
-                    major1: 'csci'
-                }
-			})
-            .then((response) => {
-                return response.json();
-            })
-            .then((json) => {
-				console.log("Testing accessing JSON");
-                console.log(json);
-            });
         }; 
 		return (
 				<ResponsiveContext.Consumer>

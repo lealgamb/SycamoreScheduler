@@ -26,6 +26,7 @@ const theme = {
 		},
 	},
 	button: {
+		color: 'dark-1',
 		border: {
 			color: 'main'
 		}

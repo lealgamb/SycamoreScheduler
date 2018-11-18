@@ -15,14 +15,11 @@ class Landing extends Component {
 				direction='row'
 				align='center'
 				justify='center'
-				gap='large'
+				gap='0'
 			>
 					<Box 
 						height='small'
 						width='small'
-						margin={{
-							top: 'large',
-						}}
 						animation={{
 							type: 'slideRight',
 							delay: 0,
@@ -32,7 +29,7 @@ class Landing extends Component {
 						border={{
 							side: 'all',
 							size: 'small',
-							color: 'black'
+							color: 'dark-1'
 						}}
 						pad='small'
 						background='main'
@@ -46,17 +43,54 @@ class Landing extends Component {
 						direction='column'
 						justify='center'
 						align='center'
-
+						height='small'
 					>
 						<Box 
-							animation={{
-								type: 'slideDown',
-								delay: 0,
-								duration: 500,
-								size: 'large'
+							flex
+							direction='row'
+							pad={{
+								top: 'medium',
+								horizontal: 'medium',
+								bottom: '0'
 							}}
+							gap='small'
 						>
-							<Heading level='1' color='black'>Sycamore Scheduler</Heading>
+							<Box 
+								pad='0' 
+								margin='0' 
+								animation={{
+									type:'slideDown',
+									delay:0,
+									duration:500,
+									size:'large'
+								}}
+							>
+								<Heading 
+									margin='0' 
+									level='1' 
+									color='black'
+								>
+									Sycamore
+								</Heading>
+							</Box>
+							<Box
+								pad='0'
+								margin='0'
+								animation={{
+									type: 'fadeIn',
+									delay: 100,
+									duration: 400,
+									size: 'large'
+								}}
+							>
+								<Heading 
+									margin='0' 
+									level='1' 
+									color='main'
+								>
+									Scheduler
+								</Heading>
+							</Box>
 						</Box>
 						<Box
 							direction='row'
@@ -68,11 +102,15 @@ class Landing extends Component {
 								duration: 500,
 								size: 'large'
 							}}
+							margin={{
+								bottom: 'large'
+							}}
 						>
 							<RoutedButton
 								path='/Register'
 								hoverIndicator
 								label={<Text size='large' style={{fontFamily: 'Inconsolata'}}><strong>register</strong></Text>}
+								color='main'
 								margin={{
 									right: 'medium'
 								}}
@@ -82,6 +120,7 @@ class Landing extends Component {
 								path='/SignIn'
 								hoverIndicator
 								label={<Text size='large' style={{fontFamily: 'Inconsolata'}}><strong>sign in</strong></Text>}
+								color='main'
 								margin={{
 									right: 'medium'
 								}}
@@ -91,6 +130,7 @@ class Landing extends Component {
 								path='/Main'
 								hoverIndicator
 								label={<Text size='large' style={{fontFamily: 'Inconsolata'}}><strong>guest</strong></Text>}
+								color='main'
 							>
 							</RoutedButton>
 						</Box>
