@@ -110,7 +110,7 @@ public class RegisterServlet extends HttpServlet {
         // Failed to register user
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         Map<String, String> error = new HashMap<String, String>();
-        error.put("error", "Failed to register the user in the database.");
+        error.put("error", "Sorry, " + email + " is already in use.");
         pw.write(new Gson().toJson(error));
         pw.flush();
       }
