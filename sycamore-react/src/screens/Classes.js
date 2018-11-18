@@ -11,6 +11,10 @@ import {
 	Tab
 } from 'grommet';
 
+import {
+	FormSearch
+} from 'grommet-icons';
+
 const majorClasses = Array(50)
   .fill()
   .map((_, i) => {
@@ -49,13 +53,14 @@ const Course = props => (
 	</Box>
 );
 
+var i = 0; 
 const CourseBox = props => (
 	<InfiniteScroll items={props.list} step={20}>
 	  {item => (
 		<Box
 		  align="center"
 		  pad='small'
-		  key={item}
+		  key={(i++).toString()}
 		>
 		  <Course clickFunc = {props.clickFunc} name={item} id={item}></Course>
 		</Box>
@@ -64,8 +69,8 @@ const CourseBox = props => (
 );
 
 const RichTabTitle = ({label}) => (
-    <Box direction="row" align="center" gap="xsmall" margin="xsmall">
-      <Text size="large">
+    <Box direction="row" align="center" justify='center' margin="xsmall" pad='2%'>
+      <Text size="xlarge">
         <strong>{label}</strong>
       </Text>
     </Box>
@@ -89,6 +94,22 @@ class Classes extends Component {
 					this.setState({ courseTab: i });
 				}}
 			>
+				<Tab
+					title={<FormSearch size='large'></FormSearch>}
+				>
+					<Box
+						direction='column'
+						align='center'
+						justify='start'
+						pad='small'
+						animation={{
+							type: 'fadeIn',
+							size: 'xlarge'
+						}}
+					>
+						<Heading level='2'>search bar</Heading>
+					</Box>
+				</Tab>
                 <Tab 
                     title={
                         <RichTabTitle
@@ -106,26 +127,6 @@ class Classes extends Component {
                     }
                 >
 					<CourseBox clickFunc = {this.props.clickFunc} list={minorClasses} />
-				</Tab>
-				<Tab
-					title={
-						<RichTabTitle
-							label="Search"
-						/>
-					}
-				>
-					<Box
-						direction='column'
-						align='center'
-						justify='start'
-						pad='small'
-						animation={{
-							type: 'fadeIn',
-							size: 'xlarge'
-						}}
-					>
-						<Heading level='2'>search bar</Heading>
-					</Box>
 				</Tab>
 			</Tabs>
 		);

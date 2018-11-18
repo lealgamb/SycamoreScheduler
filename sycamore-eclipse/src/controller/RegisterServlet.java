@@ -3,7 +3,7 @@ package controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -25,25 +25,31 @@ public class RegisterServlet extends HttpServlet {
    * Handles user registration requests to display all degree programs.
    */
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    // Get the writer
+    PrintWriter pw = response.getWriter();
+    
+    // Edit the response
+    response.setContentType("application/json");
+    response.setCharacterEncoding("UTF-8");
+    
     // Attempt to retrieve all of the degree program names
-    ArrayList<String> degreeProgramNames = JDBCDriver.getAllDegreePrograms();
+    Map<String, ArrayList<String>> degreeProgramNames = JDBCDriver.getAllDegreePrograms();
     
     if (degreeProgramNames != null) {
       // Successfully retrieved all of the degree program names
       
       // Communicate with the front-end
       String degreeProgramNamesJSON = new Gson().toJson(degreeProgramNames);
-      response.setContentType("application/json");
-      response.setCharacterEncoding("UTF-8");
-      // Get the writer
-      PrintWriter pw = response.getWriter();
+      response.setStatus(HttpServletResponse.SC_OK);
       pw.write(degreeProgramNamesJSON);
       pw.flush();
     }
     else {
       // Failed to retrieve all of the degree program names
-      response.sendError(HttpServletResponse.SC_BAD_REQUEST, 
-          "Failed to retreive all of the degree program names from the database.");
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      String error = "Failed to retrieve all of the degree program names from the database.";
+      pw.write(new Gson().toJson(error));
+      pw.flush();
     }
   }
   
@@ -51,7 +57,13 @@ public class RegisterServlet extends HttpServlet {
    * Handles user registration requests.
    */
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    // Get all of the parameters
+    // Get the writer
+    PrintWriter pw = response.getWriter();
+    
+    // Edit the response
+    response.setContentType("application/json");
+    response.setCharacterEncoding("UTF-8");
+
     String email = request.getParameter("email");
     String fName = request.getParameter("fName");
     String lName = request.getParameter("lName");
@@ -60,11 +72,16 @@ public class RegisterServlet extends HttpServlet {
     String major2 = request.getParameter("major2");
     String minor1 = request.getParameter("minor1");
     String minor2 = request.getParameter("minor2");
+    
+    System.out.println(email+'\n'+fName+'\n'+lName+'\n'+password+'\n'+major1+'\n'+major2+'\n'+minor1+'\n'+minor2+'\n');
 	  
     // Check if any of the parameters are null and send an error message if so
     // At minimum, major1 must have a value
     if (email == null || fName == null || lName == null || password == null || major1 == null) {
-      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing registration parameters.");
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      String error = "Missing registration parameters";
+      pw.write(new Gson().toJson(error));
+      pw.flush();
     }
     else {
       // Add the degree program names to the academicPrograms list
@@ -83,10 +100,16 @@ public class RegisterServlet extends HttpServlet {
         
         // Communicate with the front-end
         response.setStatus(HttpServletResponse.SC_OK);
+        String success = "Successfully registered the user in the database.";
+        pw.write(new Gson().toJson(success));
+        pw.flush();
       }
       else {
         // Failed to register user
-        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Failed to register user in database.");
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        String error = "Failed to register the user in the database.";
+        pw.write(new Gson().toJson(error));
+        pw.flush();
       }
     }
   }

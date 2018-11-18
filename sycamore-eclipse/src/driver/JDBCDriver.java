@@ -18,14 +18,14 @@ public class JDBCDriver {
   private static Connection conn = null;
   private static ResultSet rs = null;
   private static PreparedStatement ps = null;
-  private static final String CONNECTION_PATH = ""; // TODO Determine the connection path
+  private static final String CONNECTION_PATH = "jdbc:mysql://localhost:3306/scheduler?user=root&password=root&severTime=UTC"; // TODO Determine the connection path
   
   /**
    * Connects to the database.
    */
   private static void connect() {
     try {
-    	Class.forName("com.mysql.jdbc.Driver");
+    	Class.forName("com.mysql.cj.jdbc.Driver");
     	conn = DriverManager.getConnection(CONNECTION_PATH);
     } catch (ClassNotFoundException cnfe) {
     	System.out.println("cnfe: " + cnfe.getMessage());
@@ -212,7 +212,7 @@ public class JDBCDriver {
 	  // major2 key returns user's major2
 	  // minor1 key returns user's minor1
 	  // minor2 key returns user's minor2
-	  connect();
+	  /*connect();
 	  Map<String, String> userInformation = new HashMap<String, String>();
 	  try {
 		  ps = conn.prepareStatement("SELECT * FROM Users WHERE email=?");
@@ -244,7 +244,11 @@ public class JDBCDriver {
 	  } finally {
 		  close();
 	  }
-	  return null;
+	  return null;*/
+	  Map<String, String> userInfo = new HashMap<String, String>();
+	  userInfo.put("full_name", "Sajeev Saluja");
+	  userInfo.put("major_1", "CSCI");
+	  return userInfo;
   }
   
   /**
@@ -723,6 +727,7 @@ public class JDBCDriver {
 	  }
 	  return null;
   }
+<<<<<<< HEAD
   
   /**
    * Returns all of the possible degree programs
@@ -751,6 +756,17 @@ public class JDBCDriver {
 		  close();
 	  }
 	  return null;
+=======
+  public static Map<String, ArrayList<String>> getAllDegreePrograms() {
+	  ArrayList<String> testNames = new ArrayList<String>();
+	  testNames.add("CSCI");
+	  testNames.add("MATH");
+	  testNames.add("AME");
+	  testNames.add("EE");
+	  Map<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
+	  map.put("programs", testNames);
+	  return map;
+>>>>>>> 71c1b47191b4fb9c2a22671a0774ee1800e2a601
   }
   
 }
