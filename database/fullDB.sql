@@ -9,7 +9,7 @@ USE Scheduler;
 CREATE TABLE Instructor (
 	instructorID INT(11) PRIMARY KEY,
     instructorName VARCHAR(50) NOT NULL,
-    rmpRating DECIMAL NULL
+    rmpRating DECIMAL(10,  3) NULL
 );
 
 # Instructor: instructorID (P_K, AUTO_INC), instructorName (NOT NULL) ratemyprofessorLink (NULL)
