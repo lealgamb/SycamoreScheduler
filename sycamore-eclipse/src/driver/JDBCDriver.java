@@ -18,14 +18,14 @@ public class JDBCDriver {
   private static Connection conn = null;
   private static ResultSet rs = null;
   private static PreparedStatement ps = null;
-  private static final String CONNECTION_PATH = ""; // TODO Determine the connection path
+  private static final String CONNECTION_PATH = "jdbc:mysql://localhost:3306/scheduler?user=root&password=root&serverTime=UTC"; // TODO Determine the connection path
   
   /**
    * Connects to the database.
    */
   private static void connect() {
     try {
-    	Class.forName("com.mysql.jdbc.Driver");
+    	Class.forName("com.mysql.cj.jdbc.Driver");
     	conn = DriverManager.getConnection(CONNECTION_PATH);
     } catch (ClassNotFoundException cnfe) {
     	System.out.println("cnfe: " + cnfe.getMessage());
@@ -76,13 +76,14 @@ public class JDBCDriver {
 	  boolean hasMajor2 = true;
 	  boolean hasMinor = true;
 	  boolean hasMinor2 = true;
-	  if (academicPrograms.get(1) == null) {
+	  System.out.println(academicPrograms.get(1) == "");
+	  if (academicPrograms.get(1) == null || academicPrograms.get(1) == "") {
 		  hasMajor2 = false;
 	  }
-	  if (academicPrograms.get(2) == null) {
+	  if (academicPrograms.get(2) == null || academicPrograms.get(2) == "") {
 		  hasMinor = false;
 	  }
-	  if (academicPrograms.get(3) == null) {
+	  if (academicPrograms.get(3) == null || academicPrograms.get(3) == "") {
 		  hasMinor2 = false;
 	  } 
 	  
@@ -127,7 +128,7 @@ public class JDBCDriver {
 		  }
 		  
 		  
-		  ps = conn.prepareStatement("INSERT INTO Users(email, fname, lname, pass, degreeID, degree2ID, minorID, minor2ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);");
+		  ps = conn.prepareStatement("INSERT INTO Users(email, fname, lname, pass, degreeID, degree2ID, minorID, minor2ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
 		  ps.setString(1, email.toLowerCase());
 		  ps.setString(2, fName);
 		  ps.setString(3, lName);
@@ -146,10 +147,10 @@ public class JDBCDriver {
 			  ps.setNull(7, Types.INTEGER);
 		  }
 		  if (hasMinor2 == true) {
-			  ps.setInt(6, minor2DegreeID);
+			  ps.setInt(8, minor2DegreeID);
 		  }
 		  else {
-			  ps.setNull(6, Types.INTEGER);
+			  ps.setNull(8, Types.INTEGER);
 		  }
 		  ps.executeUpdate();
 		  

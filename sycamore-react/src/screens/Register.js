@@ -139,7 +139,7 @@ class Register extends Component {
 									focusIndicator
 									placeholder={<Text size='large'>first name</Text>}
 									value={this.state.fname}
-									onChange={(event) => {this.setState({fname: event.target.value});}}
+									onChange={(event) => {this.setState({fName: event.target.value});}}
 								>
 								</TextInput>
 							</FormField>
@@ -151,7 +151,7 @@ class Register extends Component {
 									focusIndicator
 									placeholder={<Text size='large'>last name</Text>}
 									value={this.state.lname}
-									onChange={(event) => {this.setState({lname: event.target.value});}}
+									onChange={(event) => {this.setState({lName: event.target.value});}}
 								>
 								</TextInput>
 							</FormField>
