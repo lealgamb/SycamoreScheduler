@@ -297,7 +297,8 @@ public class JDBCDriver {
    * @return false if the user's information is unable to be updated in the database
    */
   public static boolean updateUser(String email, Map<String, String> updates) {
-    //TODO may not be necessary
+	//TODO may not be necessary
+	return true;
   }
   
   /**
@@ -528,7 +529,8 @@ public class JDBCDriver {
    * @return false if the user's schedule is unable to be updated in the database
    */
   public static boolean updateSchedule(String email, String degreeProgramName, Map<String, String> updates) {
-    //TODO may not be necessary
+	//TODO may not be necessary
+	return true;
   }
   
   /**
@@ -554,7 +556,6 @@ public class JDBCDriver {
 	  } finally {
 		  close();
 	  }
-	  return false;
   }
   
   /**
