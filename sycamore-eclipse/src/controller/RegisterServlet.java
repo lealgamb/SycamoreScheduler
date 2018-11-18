@@ -57,6 +57,7 @@ public class RegisterServlet extends HttpServlet {
    * Handles user registration requests.
    */
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	  System.out.println("POST RegisterServlet");
     // Get the writer
     PrintWriter pw = response.getWriter();
     
@@ -72,9 +73,7 @@ public class RegisterServlet extends HttpServlet {
     String major2 = request.getParameter("major2");
     String minor1 = request.getParameter("minor1");
     String minor2 = request.getParameter("minor2");
-    
-    System.out.println(email+'\n'+fName+'\n'+lName+'\n'+password+'\n'+major1+'\n'+major2+'\n'+minor1+'\n'+minor2+'\n');
-	  
+    	  
     // Check if any of the parameters are null and send an error message if so
     // At minimum, major1 must have a value
     if (email == null || fName == null || lName == null || password == null || major1 == null) {

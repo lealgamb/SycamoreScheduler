@@ -15,25 +15,49 @@ import {
 } from 'grommet-icons';
 
 class SignIn extends Component {
-	state = {
-		email: "",
-		password: ""
-	}
 
+	constructor(props) {
+		super(props);
+		this.state = {
+			email: '',
+			password: ''
+		}
+		this.emailRef = React.createRef();
+		this.passwordRef = React.createRef();
+		this.focusSomething = function (obj) {
+			obj.current.focus();
+		}
+		this.focusSomething.bind(this);
+	}
+	
 	doLogin = (event) => {
-		fetch('/sycamore-scheduler/LoginServlet', {
-			method: 'POST',
-			body: {
-				email: this.state.email,
-				password: this.state.password
-			}
-		})
-		.then((response) => {
-			return response.json();
-		})
-		.then((json) => {
-			console.log(JSON.stringify(json));
-		});
+		let error = false;
+		if (this.state.email === '') {
+			console.log("MISSING EMAIL IN SIGNIN");
+			this.setState({missingEmail: true});
+			error = true;
+		} 
+		if (this.state.password === '') {
+			console.log("MISSING PASSWORD IN SIGNIN");
+			this.setState({missingPassword: true});
+			error = true;
+		} 
+		console.log("ERROR:\t" + error);
+		if (!error) {
+			fetch('/sycamore-scheduler/LoginServlet', {
+				method: 'POST',
+				body: {
+					email: this.state.email,
+					password: this.state.password
+				}
+			})
+			.then((response) => {
+				return response.json();
+			})
+			.then((json) => {
+				console.log(JSON.stringify(json));
+			});
+		}
 	};
 
 	handleChange = (element, event) => {
@@ -85,9 +109,10 @@ class SignIn extends Component {
 					>
 						<TextInput
 							id='email'
+							ref={this.emailRef}
 							size='medium'
 							focusIndicator
-							placeholder={<Text size='large'>email</Text>}
+							placeholder={<Box onClick={() => {this.focusSomething(this.emailRef)}} direction='row' align='center' justify='between' gap='small'><Text style={{fontFamily: 'Inconsolata'}} size='large'>email</Text><Text style={{fontFamily: 'Inconsolata'}} size='large' color='main'>*</Text></Box>}
 							value={this.state.email}
 							onChange={(event) => {this.handleChange('email', event);}}
 						>
@@ -97,10 +122,11 @@ class SignIn extends Component {
 					>
 						<TextInput
 							id='password'
+							ref={this.passwordRef}
 							size='medium'
 							type='password'
 							focusIndicator
-							placeholder={<Text size='large'>password</Text>}
+							placeholder={<Box onClick={() => {this.focusSomething(this.passwordRef)}} direction='row' align='center' justify='between' gap='small'><Text style={{fontFamily: 'Inconsolata'}} size='large'>password</Text><Text style={{fontFamily: 'Inconsolata'}} size='large' color='main'>*</Text></Box>}
 							value={this.state.password}
 							onChange={(event) => {this.handleChange('password', event)}}
 						>

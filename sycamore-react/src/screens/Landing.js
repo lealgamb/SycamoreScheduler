@@ -15,7 +15,7 @@ class Landing extends Component {
 				direction='row'
 				align='center'
 				justify='center'
-				gap='0'
+				gap='small'
 			>
 					<Box 
 						height='small'
@@ -78,7 +78,7 @@ class Landing extends Component {
 								margin='0'
 								animation={{
 									type: 'fadeIn',
-									delay: 100,
+									delay: 200,
 									duration: 400,
 									size: 'large'
 								}}
@@ -109,7 +109,7 @@ class Landing extends Component {
 							<RoutedButton
 								path='/Register'
 								hoverIndicator
-								label={<Text size='large' style={{fontFamily: 'Inconsolata'}}><strong>register</strong></Text>}
+								label={<Text size='large'><strong>Register</strong></Text>}
 								color='main'
 								margin={{
 									right: 'medium'
@@ -119,7 +119,7 @@ class Landing extends Component {
 							<RoutedButton
 								path='/SignIn'
 								hoverIndicator
-								label={<Text size='large' style={{fontFamily: 'Inconsolata'}}><strong>sign in</strong></Text>}
+								label={<Text size='large'><strong>Sign In</strong></Text>}
 								color='main'
 								margin={{
 									right: 'medium'
@@ -129,7 +129,7 @@ class Landing extends Component {
 							<RoutedButton
 								path='/Main'
 								hoverIndicator
-								label={<Text size='large' style={{fontFamily: 'Inconsolata'}}><strong>guest</strong></Text>}
+								label={<Text size='large'><strong>Guest</strong></Text>}
 								color='main'
 							>
 							</RoutedButton>

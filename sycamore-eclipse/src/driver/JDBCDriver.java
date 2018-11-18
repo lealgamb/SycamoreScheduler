@@ -18,7 +18,7 @@ public class JDBCDriver {
   private static Connection conn = null;
   private static ResultSet rs = null;
   private static PreparedStatement ps = null;
-  private static final String CONNECTION_PATH = "jdbc:mysql://localhost:3306/scheduler?user=root&password=root&serverTime=UTC"; // TODO Determine the connection path
+  private static final String CONNECTION_PATH = "jdbc:mysql://localhost:3306/scheduler?user=root&password=root&serverTime=UTC&useSSL=false"; // TODO Determine the connection path
   
   /**
    * Connects to the database.
@@ -76,7 +76,9 @@ public class JDBCDriver {
 	  boolean hasMajor2 = true;
 	  boolean hasMinor = true;
 	  boolean hasMinor2 = true;
-	  System.out.println(academicPrograms.get(1) == "");
+	  for (String str: academicPrograms) {
+		  System.out.println(str);
+	  }
 	  if (academicPrograms.get(1) == null || academicPrograms.get(1) == "") {
 		  hasMajor2 = false;
 	  }
@@ -157,7 +159,7 @@ public class JDBCDriver {
 		  // Check to see if user is in the database
 		  ps = conn.prepareStatement("SELECT email FROM Users WHERE email=?");
 		  ps.setString(1, email);
-		  
+		  rs = ps.executeQuery();
 		  if (rs.next()) {
 			  if (email.equals(rs.getString("email"))) {
 				  return true;
