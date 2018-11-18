@@ -283,6 +283,21 @@ class Register extends Component {
 
 						</Select>
 					</Box>
+					{this.state.error && 
+						<Box
+							flex
+							background='main'
+							direction='column'
+							align='center'
+							justify='center'
+							pad='medium'
+							style={{
+								borderRadius: '10px'
+							}}
+						>
+							<Text color='white'>{this.state.errormsg}</Text>
+						</Box>
+					}
 					<Box
 						flex
 						width='100%'
@@ -290,9 +305,6 @@ class Register extends Component {
 						align='center'
 						justify='center'
 						gap='medium'
-						margin={{
-							top: 'small'
-						}}
 					>
 						<RoutedButton
 							path='/'
@@ -309,21 +321,6 @@ class Register extends Component {
 						>
 						</Button>
 					</Box>
-					{this.state.error && 
-						<Box
-							flex
-							background='lightpink'
-							direction='column'
-							align='center'
-							justify='center'
-							pad='medium'
-							style={{
-								borderRadius: '10px'
-							}}
-						>
-							<Text color='dark-1' size='medium'>{this.state.errormsg}</Text>
-						</Box>
-					}
 				</Box>
 			</Box>
 		);
