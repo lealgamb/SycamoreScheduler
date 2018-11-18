@@ -3,6 +3,7 @@ package controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -78,7 +79,8 @@ public class RegisterServlet extends HttpServlet {
     // At minimum, major1 must have a value
     if (email == null || fName == null || lName == null || password == null || major1 == null) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-      String error = "Missing registration parameters";
+      Map<String, String> error = new HashMap<String, String>();
+      error.put("error", "Missing registration parameters.");
       pw.write(new Gson().toJson(error));
       pw.flush();
     }
@@ -99,14 +101,16 @@ public class RegisterServlet extends HttpServlet {
         
         // Communicate with the front-end
         response.setStatus(HttpServletResponse.SC_OK);
-        String success = "Successfully registered the user in the database.";
+        Map<String, String> success = new HashMap<String, String>();
+        success.put("success", "Successfully registered the user in the database.");
         pw.write(new Gson().toJson(success));
         pw.flush();
       }
       else {
         // Failed to register user
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        String error = "Failed to register the user in the database.";
+        Map<String, String> error = new HashMap<String, String>();
+        error.put("error", "Failed to register the user in the database.");
         pw.write(new Gson().toJson(error));
         pw.flush();
       }

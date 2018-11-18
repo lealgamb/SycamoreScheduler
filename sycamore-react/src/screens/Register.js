@@ -56,7 +56,6 @@ class Register extends Component {
 		var message = 'Please enter your ';
 		var errorkeys = [];
 		required.map(key => {
-			console.log(key+':\t'+this.state[key]);
 			if (this.state[key] === '') {
 				console.log(key + ' is missing');
 				error = true;
@@ -69,8 +68,6 @@ class Register extends Component {
 			}
 			return 0;
 		});
-
-		console.log("error = " + error + " in Register.js");
 		
 		if (error) {
 			for (let i = 0; i < errorkeys.length; i++) {
@@ -97,7 +94,8 @@ class Register extends Component {
 					bodystr += key + '=' + this.state[key];
 				}
 			}
-			console.log(bodystr);
+            console.log(bodystr);
+            var ok = false;
 			fetch('/sycamore-scheduler/RegisterServlet', {
 				method: 'POST',
 				headers: {
@@ -106,22 +104,26 @@ class Register extends Component {
 				body: bodystr
 			})
 			.then((response) => {
-				if (response.ok) {
-					return (response.json(), true);
-				} else {
-					return (response.json(), false);
-				}
+                ok = response.ok;
+				return response.json();
 			})
-			.then((json, ok) => {
+			.then(json => {
 				if (ok) {
 					console.log("OK!");
-					console.log(JSON.stringify(json));
+                    console.log("JSON:\t"+JSON.stringify(json));
+                    console.log("OK:\t"+ok);
+                    this.setState({
+                        error: false,
+                        errormsg: ''
+                    });
+                    
 				} else {
 					console.log("NOT OK!");
-					console.log(JSON.stringify(json));
+                    console.log("JSON:\t"+JSON.stringify(json));
+                    console.log("OK:\t"+ok);
 					this.setState({
 						error: true,
-						errormsg: JSON.stringify(json)
+						errormsg: json.error
 					});
 				}
 			});

@@ -18,7 +18,7 @@ public class JDBCDriver {
   private static Connection conn = null;
   private static ResultSet rs = null;
   private static PreparedStatement ps = null;
-  private static final String CONNECTION_PATH = "jdbc:mysql://localhost:3306/scheduler?user=root&password=root&serverTime=UTC&useSSL=false"; // TODO Determine the connection path
+  private static final String CONNECTION_PATH = "jdbc:mysql://localhost:3306/scheduler?user=root&password=root&serverTimezone=UTC"; // TODO Determine the connection path
   
   /**
    * Connects to the database.

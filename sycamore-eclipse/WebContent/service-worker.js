@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/sycamore-scheduler/precache-manifest.07af0fd4fce5700fe981438955e29825.js"
+  "/sycamore-scheduler/precache-manifest.dbf78d26bffaaab9915e58ce0bb924ca.js"
 );
 
 workbox.clientsClaim();
