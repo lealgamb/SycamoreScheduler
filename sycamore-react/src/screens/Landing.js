@@ -127,7 +127,7 @@ class Landing extends Component {
 							>
 							</RoutedButton>
 							<RoutedButton
-								path='/Main'
+								path='/Guest'
 								hoverIndicator
 								label={<Text size='large'><strong>Guest</strong></Text>}
 								color='main'

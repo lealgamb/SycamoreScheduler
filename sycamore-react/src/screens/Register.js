@@ -29,7 +29,6 @@ class Register extends Component {
 			obj.current.focus();
 		}
 		this.focusSomething.bind(this);
-
 	}
 
 	state = {
@@ -43,6 +42,7 @@ class Register extends Component {
 		minor2: '',
 		error: false,
 		errormsg: '',
+		success: false,
 		programs: default_programs
 	}
 	
@@ -55,16 +55,22 @@ class Register extends Component {
 		var error = false;
 		var message = 'Please enter your ';
 		var errorkeys = [];
+		if (this.state.email.indexOf('@') === -1 || this.state.email.indexOf('.') === -1 || (this.state.email.indexOf('.')-this.state.email.indexOf('@')) < 2) {
+			this.setState({
+				success: false,
+				error: true,
+				errormsg: 'Email is not formatted correctly.'
+			});
+			return;
+		}
 		required.map(key => {
 			if (this.state[key] === '') {
-				console.log(key + ' is missing');
 				error = true;
 				if (key === 'fName') errorkeys.push('first name');
 				else if (key === 'lName') errorkeys.push('last name');
 				else if (key === 'email') errorkeys.push('email');
 				else if (key === 'password') errorkeys.push('password');
 				else if (key === 'major1') errorkeys.push('major')
-				console.log(JSON.stringify(errorkeys));
 			}
 			return 0;
 		});
@@ -94,7 +100,6 @@ class Register extends Component {
 					bodystr += key + '=' + this.state[key];
 				}
 			}
-            console.log(bodystr);
             var ok = false;
 			fetch('/sycamore-scheduler/RegisterServlet', {
 				method: 'POST',
@@ -109,21 +114,18 @@ class Register extends Component {
 			})
 			.then(json => {
 				if (ok) {
-					console.log("OK!");
-                    console.log("JSON:\t"+JSON.stringify(json));
-                    console.log("OK:\t"+ok);
-                    this.setState({
-                        error: false,
-                        errormsg: ''
-                    });
-                    
+					this.setState({
+						error: false,
+						errormsg: '',
+						success: true
+					}, () => {
+						setTimeout(() => {this.props.history.push('/SignIn');}, 1000);
+					})
 				} else {
-					console.log("NOT OK!");
-                    console.log("JSON:\t"+JSON.stringify(json));
-                    console.log("OK:\t"+ok);
 					this.setState({
 						error: true,
-						errormsg: json.error
+						errormsg: json.error,
+						success: false
 					});
 				}
 			});
@@ -298,6 +300,27 @@ class Register extends Component {
 							}}
 						>
 							<Text color='white'>{this.state.errormsg}</Text>
+						</Box>
+					}
+					{this.state.success &&
+						<Box
+							flex
+							background='neutral-3'
+							animation={{
+								type: 'fadeIn',
+								delay: 0,
+								duration: 700,
+								size: 'large'
+							}}
+							direction='column'
+							align='center'
+							justify='center'
+							pad='small'
+							style={{
+								borderRadius: '10px'
+							}}
+						>
+							<Text color='white'>Success!</Text>
 						</Box>
 					}
 					<Box

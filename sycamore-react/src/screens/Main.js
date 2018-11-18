@@ -51,10 +51,12 @@ const PageLink = (props) => (
 
 
 class Main extends Component {
+
 	state = {
 		showSidebar: true,
 		display: 'none',
-		whichClass: 'none'
+		whichClass: 'none',
+		signedIn: this.props.signedIn
 	};
 
 	displayClass = (id) => {
@@ -104,8 +106,8 @@ class Main extends Component {
 								justify='end'
 							>
 								<PageLink margin={{right: 'large'}} text='Classes' func={() => this.setState({showSidebar: !this.state.showSidebar})}></PageLink>
-								<PageLink margin={{right: 'large'}} text='Course Plan' func={() => this.setState({display: 'coursePlan'})}></PageLink>
-								<PageLink text='Profile' func={() => this.setState({display: 'profile'})}></PageLink>
+								{this.state.signedIn && <PageLink margin={{right: 'large'}} text='Course Plan' func={() => this.setState({display: 'coursePlan'})}></PageLink>}
+								{this.state.signedIn && <PageLink text='Profile' func={() => this.setState({display: 'profile'})}></PageLink>}
 							</Box>
 						</Header> 
 						<Box

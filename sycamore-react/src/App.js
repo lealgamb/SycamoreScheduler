@@ -1,5 +1,5 @@
-import React, {Fragment} from 'react';
-import {BrowserRouter as Router, Route} from 'react-router-dom';
+import React, {Component, Fragment} from 'react';
+import {BrowserRouter as Router, Route, browserHistory} from 'react-router-dom';
 import {
 	Box,
 	Grommet,
@@ -91,22 +91,44 @@ const theme = {
 	  },
 };
 
-const Content = () => (
-	<Box fill>
-		<Route exact path='/' component={Landing} />
-		<Route path='/Main' component={Main} />
-		<Route path='/SignIn' component={SignIn} />
-		<Route path='/Register' component={Register} />
-	</Box>
-);
+class App extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			signedIn: false,
+			userEmail: '',
+		}
+		this.onSignIn = (email) => {
+			this.setState({
+				signedIn: true,
+				userEmail: email
+			});
+			setTimeout(() => {
+				browserHistory.push('/Main')
+			}, 1000);
+		}
+		this.onSignIn.bind(this);
+	}
+	render() {	
+		const Content = () => (
+			<Box fill>
+				<Route exact path='/' component={Landing} />
+				<Route path='/Guest' render={() => (<Main signedIn={this.state.signedIn} user={this.state.user}></Main>)} />
+				<Route path='/Main' render={() => (<Main signedIn={this.state.signedIn} user={this.state.user}></Main>)} />
+				<Route path='/SignIn' render={() => (<SignIn onSignIn={this.onSignIn}></SignIn>)} />
+				<Route path='/Register' component={Register} />
+			</Box>
+		);
+		return (
+			<Router basename="/sycamore-scheduler">
+				<Grommet theme={theme} full>
+					<Fragment>
+					<Content />
+					</Fragment>
+				</Grommet>
+			</Router>
+		);
+	}
+}
 
-
-export default () => (
-	<Router basename="/sycamore-scheduler">
-		<Grommet theme={theme} full>
-			<Fragment>
-			<Content />
-			</Fragment>
-		</Grommet>
-	</Router>
-)
+export default App;

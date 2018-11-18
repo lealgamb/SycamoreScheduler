@@ -20,7 +20,10 @@ class SignIn extends Component {
 		super(props);
 		this.state = {
 			email: '',
-			password: ''
+			password: '',
+			error: false,
+			errormsg: '',
+			success: false
 		}
 		this.emailRef = React.createRef();
 		this.passwordRef = React.createRef();
@@ -31,33 +34,60 @@ class SignIn extends Component {
 	}
 	
 	doLogin = (event) => {
-		let error = false;
-		if (this.state.email === '') {
-			console.log("MISSING EMAIL IN SIGNIN");
-			this.setState({missingEmail: true});
-			error = true;
-		} 
-		if (this.state.password === '') {
-			console.log("MISSING PASSWORD IN SIGNIN");
-			this.setState({missingPassword: true});
-			error = true;
-		} 
-		console.log("ERROR:\t" + error);
-		if (!error) {
-			fetch('/sycamore-scheduler/LoginServlet', {
-				method: 'POST',
-				body: {
-					email: this.state.email,
-					password: this.state.password
-				}
-			})
-			.then((response) => {
-				return response.json();
-			})
-			.then((json) => {
-				console.log(JSON.stringify(json));
+		if (this.state.email === '' || this.state.password === '') {
+			let msg = 'Please enter your ';
+			if (this.state.email === '') {
+				msg += 'email';
+			}
+			if (this.state.password === '') {
+				msg += ' and password.';
+			} else {
+				msg += '.';
+			}
+			this.setState({
+				error: true,
+				errormsg: msg
 			});
+			return;
 		}
+		if (this.state.email.indexOf('@') === -1 || this.state.email.indexOf('.') === -1 || (this.state.email.indexOf('.')-this.state.email.indexOf('@')) < 2) {
+			this.setState({
+				success: false,
+				error: true,
+				errormsg: 'Email is not formatted correctly.'
+			});
+			return;
+		}
+		let bodystr = 'email='+this.state.email+'&password='+this.state.password;
+		let ok = false;
+		fetch('/sycamore-scheduler/LoginServlet', {
+			method: 'POST',
+			headers: {
+				'content-type': 'application/x-www-form-urlencoded'
+			},
+			body: bodystr
+		})
+		.then((response) => {
+			ok = response.ok
+			return response.json();
+		})
+		.then((json) => {
+			if (ok) {
+				this.setState({
+					success: true,
+					error: false,
+					errormsg: ''
+				}, () => {
+					this.props.onSignIn(this.state.email);
+				});
+			} else {
+				this.setState({
+					success: false,
+					error: true,
+					errormsg: json.error
+				})
+			}
+		});
 	};
 
 	handleChange = (element, event) => {
@@ -132,6 +162,42 @@ class SignIn extends Component {
 						>
 						</TextInput>
 					</FormField>
+					{this.state.error && 
+						<Box
+							flex
+							background='main'
+							direction='column'
+							align='center'
+							justify='center'
+							pad='medium'
+							style={{
+								borderRadius: '10px'
+							}}
+						>
+							<Text color='white'>{this.state.errormsg}</Text>
+						</Box>
+					}
+					{this.state.success &&
+						<Box
+							flex
+							background='neutral-3'
+							animation={{
+								type: 'fadeIn',
+								delay: 0,
+								duration: 700,
+								size: 'large'
+							}}
+							direction='column'
+							align='center'
+							justify='center'
+							pad='small'
+							style={{
+								borderRadius: '10px'
+							}}
+						>
+							<Text color='white'>Success!</Text>
+						</Box>
+					}
 					<Box
 						direction='row'
 						align='center'

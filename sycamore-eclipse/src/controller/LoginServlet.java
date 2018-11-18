@@ -2,6 +2,8 @@ package controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -24,6 +26,7 @@ public class LoginServlet extends HttpServlet {
    * Handles user login requests.
    */
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	  System.out.println("POST LoginServlet");
     // Get the writer
     PrintWriter pw = response.getWriter();
     
@@ -37,7 +40,8 @@ public class LoginServlet extends HttpServlet {
 	  // Check if any of the parameters are null and send an error message if so
     if (email == null || password == null) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-      String error = "Missing login parameters.";
+      Map<String, String> error = new HashMap<String, String>();
+      error.put("error", "Missing login parameters.");
       pw.write(new Gson().toJson(error));
       pw.flush();
     }
@@ -51,14 +55,16 @@ public class LoginServlet extends HttpServlet {
         
         // Communicate with the front-end
         response.setStatus(HttpServletResponse.SC_OK);
-        String success = "Successfully authenticated the user.";
+        Map<String, String> success = new HashMap<String, String>();
+        success.put("success", "Successfully authenticated the user.");
         pw.write(new Gson().toJson(success));
         pw.flush();
       }
       else {
         // Failed to authenticate the user
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        String error = "Failed to authenticate user.";
+        Map<String, String> error = new HashMap<String, String>();
+        error.put("error", "Failed to authenticate user.");
         pw.write(new Gson().toJson(error));
         pw.flush();
       }

@@ -76,9 +76,7 @@ public class JDBCDriver {
 	  boolean hasMajor2 = true;
 	  boolean hasMinor = true;
 	  boolean hasMinor2 = true;
-	  for (String str: academicPrograms) {
-		  System.out.println(str);
-	  }
+
 	  if (academicPrograms.get(1) == null || academicPrograms.get(1) == "") {
 		  hasMajor2 = false;
 	  }
@@ -138,20 +136,17 @@ public class JDBCDriver {
 		  ps.setInt(5, majorDegreeID);
 		  if (hasMajor2 == true) {
 			  ps.setInt(6, major2DegreeID);
-		  }
-		  else {
+		  } else {
 			  ps.setNull(6, Types.INTEGER);
 		  }
 		  if (hasMinor == true) {
 			  ps.setInt(7, minorDegreeID);
-		  }
-		  else {
+		  } else {
 			  ps.setNull(7, Types.INTEGER);
 		  }
 		  if (hasMinor2 == true) {
 			  ps.setInt(8, minor2DegreeID);
-		  }
-		  else {
+		  } else {
 			  ps.setNull(8, Types.INTEGER);
 		  }
 		  ps.executeUpdate();
