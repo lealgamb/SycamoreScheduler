@@ -101,7 +101,7 @@ class Register extends Component {
 				}
 			}
             var ok = false;
-			fetch('/sycamore-scheduler/RegisterServlet', {
+			fetch('/SycamoreScheduler/RegisterServlet', {
 				method: 'POST',
 				headers: {
 					'content-type': 'application/x-www-form-urlencoded'

@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react';
-import {BrowserRouter as Router, Route, browserHistory} from 'react-router-dom';
+import {BrowserRouter as Router, Route} from 'react-router-dom';
 import {
 	Box,
 	Grommet,
@@ -98,29 +98,33 @@ class App extends Component {
 			signedIn: false,
 			userEmail: '',
 		}
-		this.onSignIn = (email) => {
+	}
+	onSignIn = (email) => {
+		setTimeout(() => {
 			this.setState({
 				signedIn: true,
 				userEmail: email
 			});
-			setTimeout(() => {
-				browserHistory.push('/Main')
-			}, 1000);
-		}
-		this.onSignIn.bind(this);
+		}, 1000);
 	}
+	onSignOut = () => {
+		this.setState({
+			signedIn: false,
+			userEmail: ''
+		});
+	}
+
 	render() {	
 		const Content = () => (
 			<Box fill>
-				<Route exact path='/' component={Landing} />
-				<Route path='/Guest' render={() => (<Main signedIn={this.state.signedIn} user={this.state.user}></Main>)} />
-				<Route path='/Main' render={() => (<Main signedIn={this.state.signedIn} user={this.state.user}></Main>)} />
-				<Route path='/SignIn' render={() => (<SignIn onSignIn={this.onSignIn}></SignIn>)} />
+				<Route exact path='/' render={(props) => <Landing onSignOut={this.onSignOut} signedIn={this.state.signedIn} {...props}></Landing>} />
+				<Route path='/Home' render={(props) => <Main signedIn={this.state.signedIn} email={this.state.userEmail} {...props}></Main>} />
+				<Route path='/SignIn' render={(props) => (<SignIn onSignIn={this.onSignIn} {...props}></SignIn>)} />
 				<Route path='/Register' component={Register} />
 			</Box>
 		);
 		return (
-			<Router basename="/sycamore-scheduler">
+			<Router basename="/SycamoreScheduler">
 				<Grommet theme={theme} full>
 					<Fragment>
 					<Content />

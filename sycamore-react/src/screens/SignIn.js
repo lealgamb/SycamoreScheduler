@@ -23,7 +23,7 @@ class SignIn extends Component {
 			password: '',
 			error: false,
 			errormsg: '',
-			success: false
+			success: false,
 		}
 		this.emailRef = React.createRef();
 		this.passwordRef = React.createRef();
@@ -60,7 +60,7 @@ class SignIn extends Component {
 		}
 		let bodystr = 'email='+this.state.email+'&password='+this.state.password;
 		let ok = false;
-		fetch('/sycamore-scheduler/LoginServlet', {
+		fetch('/SycamoreScheduler/LoginServlet', {
 			method: 'POST',
 			headers: {
 				'content-type': 'application/x-www-form-urlencoded'
@@ -79,6 +79,9 @@ class SignIn extends Component {
 					errormsg: ''
 				}, () => {
 					this.props.onSignIn(this.state.email);
+					setTimeout(() => {
+						this.props.history.push('/Home');
+					}, 1000);
 				});
 			} else {
 				this.setState({
@@ -93,10 +96,8 @@ class SignIn extends Component {
 	handleChange = (element, event) => {
 		if (element === 'email') {
 			this.setState({email: event.target.value});
-			console.log(this.state.email);
 		} else if (element === 'password') {
 			this.setState({password: event.target.value});
-			console.log(this.state.password);
 		}
 	}
 	

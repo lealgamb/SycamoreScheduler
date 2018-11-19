@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {
 	Box,
+	Button,
 	RoutedButton,
 	Heading,
 	Image,
@@ -8,6 +9,12 @@ import {
 } from 'grommet';
 
 class Landing extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			signedIn: this.props.signedIn
+		}
+	}
 	render ( ) {
 		return (
 			<Box
@@ -37,7 +44,7 @@ class Landing extends Component {
 							borderRadius: '20px'
 						}}
 					>
-						<Image fit='contain' src='/sycamore-scheduler/leaf.png' />
+						<Image fit='contain' src='/SycamoreScheduler/leaf.png' />
 					</Box>
 					<Box
 						direction='column'
@@ -106,33 +113,60 @@ class Landing extends Component {
 								bottom: 'large'
 							}}
 						>
-							<RoutedButton
-								path='/Register'
-								hoverIndicator
-								label={<Text size='large'><strong>Register</strong></Text>}
-								color='main'
-								margin={{
-									right: 'medium'
-								}}
-							>
-							</RoutedButton>
-							<RoutedButton
-								path='/SignIn'
-								hoverIndicator
-								label={<Text size='large'><strong>Sign In</strong></Text>}
-								color='main'
-								margin={{
-									right: 'medium'
-								}}
-							>
-							</RoutedButton>
-							<RoutedButton
-								path='/Guest'
-								hoverIndicator
-								label={<Text size='large'><strong>Guest</strong></Text>}
-								color='main'
-							>
-							</RoutedButton>
+							{!this.state.signedIn && 
+								<RoutedButton
+									path='/Register'
+									hoverIndicator
+									label={<Text size='large'><strong>Register</strong></Text>}
+									color='main'
+									margin={{
+										right: 'medium'
+									}}
+								>
+								</RoutedButton>
+							}
+							{!this.state.signedIn && 
+								<RoutedButton
+									path='/SignIn'
+									hoverIndicator
+									label={<Text size='large'><strong>Sign In</strong></Text>}
+									color='main'
+									margin={{
+										right: 'medium'
+									}}
+								>
+								</RoutedButton>
+							}
+							{this.state.signedIn && 
+								<Button
+									hoverIndicator
+									label={<Text size='large'><strong>Sign Out</strong></Text>}
+									color='main'
+									onClick={() => {this.props.onSignOut();}}
+									margin={{
+										right: 'medium'
+									}}
+								>
+								</Button>
+							}
+							{!this.state.signedIn && 
+								<RoutedButton
+									path='/Home'
+									hoverIndicator
+									label={<Text size='large'><strong>Guest</strong></Text>}
+									color='main'
+								>
+								</RoutedButton>
+							}
+							{this.state.signedIn && 
+								<RoutedButton
+									path='/Home'
+									hoverIndicator
+									label={<Text size='large'><strong>Home</strong></Text>}
+									color='main'
+								>
+								</RoutedButton>
+							}
 						</Box>
 					</Box>
 			</Box>

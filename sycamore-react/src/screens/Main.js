@@ -7,7 +7,8 @@ import {
 	Collapsible,
 	Heading,
 	ResponsiveContext,
-	RoutedButton
+	RoutedButton, 
+	Text
 } from 'grommet';
 
 import Classes from './Classes';
@@ -52,22 +53,26 @@ const PageLink = (props) => (
 
 class Main extends Component {
 
-	state = {
-		showSidebar: true,
-		display: 'none',
-		whichClass: 'none',
-		signedIn: this.props.signedIn
-	};
+	constructor(props) {
+		super(props);
+		this.state = {
+			showSidebar: true,
+			display: 'none',
+			whichClass: 'none',
+			signedIn: props.signedIn,
+			email: props.email
+		};
+	}
 
 	displayClass = (id) => {
 		this.setState({display: 'class', whichClass: id});
 	};
 
 	render() {
-		const {showSidebar, display, whichClass} = this.state;
+		const {showSidebar, display, whichClass, signedIn, email} = this.state;
 		const doAjax = () => {
             console.log("Testing GET /ProfileServlet ...");
-            fetch("/sycamore-scheduler/ProfileServlet?profileEmail=sajeevsa@usc.edu", {
+            fetch("/SycamoreScheduler/ProfileServlet?profileEmail=sajeevsa@usc.edu", {
                 method: 'GET'
 			})
             .then((response) => {
@@ -158,6 +163,8 @@ class Main extends Component {
 									}}
 								>
 									<Heading level='1'>Click on a class to view details</Heading>
+									<Heading level='1'>{signedIn===true}</Heading>
+									<Heading level='1'>{email}</Heading>
 									<Button
                                         hoverIndicator
                                         onClick={() => {doAjax()}}
