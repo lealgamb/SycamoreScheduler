@@ -15,13 +15,6 @@ import {
 	FormSearch
 } from 'grommet-icons';
 
-const majorClasses = Array(50)
-  .fill()
-  .map((_, i) => {
-	  var id = Math.floor(Math.random() * (700 - 100 + 1) ) + 100
-	  return `MAJR ${id}`;
-	});
-
 const minorClasses = Array(2)
   .fill()
   .map((_, i) => {
@@ -31,10 +24,10 @@ const minorClasses = Array(2)
 
 const Course = props => (
 	<Box
-		flex
 		direction='column'
 		align='center'
 		justify='center'
+		width='40%'
 	>
 		<Button 
 			fill
@@ -82,8 +75,13 @@ RichTabTitle.propTypes = {
   
   
 class Classes extends Component {
-	state = {
-		courseTab: 0
+
+	constructor(props) {
+		super(props);
+		this.state = {
+			courseTab: 0
+		}
+		this.allClasses = props.classes;
 	}
 	render () {
 		const {courseTab} = this.state;
@@ -117,7 +115,7 @@ class Classes extends Component {
                         />
                     }
                 >
-					<CourseBox clickFunc = {this.props.clickFunc} list={majorClasses} />
+					<CourseBox clickFunc = {this.props.clickFunc} list={this.allClasses} />
 				</Tab>
                 <Tab 
                     title={

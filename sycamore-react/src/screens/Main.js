@@ -8,7 +8,6 @@ import {
 	Heading,
 	ResponsiveContext,
 	RoutedButton, 
-	Text
 } from 'grommet';
 
 import Classes from './Classes';
@@ -58,18 +57,59 @@ class Main extends Component {
 		this.state = {
 			showSidebar: true,
 			display: 'none',
-			whichClass: 'none',
+			whichClass: null,
 			signedIn: props.signedIn,
-			email: props.email
+			email: props.email,
+			classes: null,
+			classNames: null
 		};
+		let ok = false;
+		this.loadClasses = function() { 
+			fetch('/SycamoreScheduler/ClassesServlet', {
+				method: 'GET'
+			})
+			.then((response) => {
+				ok = response.ok;
+				return response.json();
+			})
+			.then((json) => {
+				if (ok) {
+					console.log(json);
+					let classNames = json.map((degClass) => {
+						let thekey = Object.keys(degClass)[0];
+						return (degClass[thekey].degreeName + ' ' + degClass[thekey].classNumber);
+					});
+					this.setState({
+						classes: json,
+						classNames: classNames
+					}, () => {
+						console.log('ClassesServlet returned status 200');
+						console.log('Classes stored in this.state.classes');
+						console.log('Class names:\n');
+						console.log(this.state.classNames);	
+					});
+				} else {
+					console.log('ClassesServlet did not return status 200.');
+					console.log(JSON.stringify(json));
+				}
+			});
+		}.bind(this);
+		this.loadClasses();
 	}
 
 	displayClass = (id) => {
-		this.setState({display: 'class', whichClass: id});
+		var allclasses = this.state.classes;
+		for (var i = 0; i < allclasses.length; i++) {
+			let key = Object.keys(allclasses[i])[0];
+			if (key === id) {
+				console.log("Display " + key);
+				this.setState({display: 'class', whichClass: allclasses[i][key]});
+			}
+		}
 	};
 
 	render() {
-		const {showSidebar, display, whichClass, signedIn, email} = this.state;
+		const {showSidebar, display, email} = this.state;
 		const doAjax = () => {
             console.log("Testing GET /ProfileServlet ...");
             fetch("/SycamoreScheduler/ProfileServlet?profileEmail=sajeevsa@usc.edu", {
@@ -127,26 +167,28 @@ class Main extends Component {
 								size: 'large'
 							}}
 						>
-							<Collapsible
-								direction='horizontal'
-								open={showSidebar}
-							>
-								<Box 
-									width='medium'
-									animation={{
-										type: 'slideRight',
-										delay: 500,
-										duration: 500,
-										size: 'large'
-									}}
-									style={{
-										minHeight: '100%'
-									}}
-									background='light-2'
+							{this.state.classNames !== null && 
+								<Collapsible
+									direction='horizontal'
+									open={showSidebar}
 								>
-									<Classes clickFunc={this.displayClass}></Classes>
-								</Box>
-							</Collapsible>
+									<Box 
+										width='medium'
+										animation={{
+											type: 'slideRight',
+											delay: 500,
+											duration: 500,
+											size: 'large'
+										}}
+										style={{
+											minHeight: '100%'
+										}}
+										background='light-2'
+									>
+										<Classes classes={this.state.classNames} fullInfo = {this.state.classes} clickFunc={this.displayClass}></Classes>
+									</Box>
+								</Collapsible>
+							}
 							{display==='coursePlan' && <CoursePlan></CoursePlan>}
 							{display==='profile' && <Profile></Profile>}
 							{display==='none' && 
@@ -163,18 +205,17 @@ class Main extends Component {
 									}}
 								>
 									<Heading level='1'>Click on a class to view details</Heading>
-									<Heading level='1'>{signedIn===true}</Heading>
-									<Heading level='1'>{email}</Heading>
+									{this.state.signedIn === true && <Heading level='1'>{email}</Heading>}
 									<Button
                                         hoverIndicator
-                                        onClick={() => {doAjax()}}
-                                        label='Do some AJAX'
+                                        onClick={() => this.setState({signedIn: false})}
+                                        label='Signout'
 									>
 									</Button>
 								</Box>
 							}
-							{display==='class' && 
-								<ClassView id={whichClass}></ClassView>
+							{display==='class' && this.state.whichClass !== null &&
+								<ClassView defaultInfo={this.state.whichClass} classInfo={this.state.whichClass}></ClassView>
 							}
 						</Box>
 					</Box>

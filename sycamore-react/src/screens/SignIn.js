@@ -40,7 +40,8 @@ class SignIn extends Component {
 				msg += 'email';
 			}
 			if (this.state.password === '') {
-				msg += ' and password.';
+				if (this.state.email === '') msg += ' and ';
+				msg += 'password.';
 			} else {
 				msg += '.';
 			}

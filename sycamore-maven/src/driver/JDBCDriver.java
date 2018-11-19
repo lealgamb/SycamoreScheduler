@@ -651,6 +651,31 @@ public class JDBCDriver {
 	  }
 	  return true;
   }
+
+  /**
+   * Returns every single class in the database.
+   * @return null if unable to get classes from the database for the specified degree program name
+   */
+  public static ArrayList<Map<String, DegreeClass>> getAllClasses() {
+	  connect();
+	  try {
+		ArrayList<Map<String, DegreeClass>> classes = new ArrayList<Map<String, DegreeClass>>();
+		ps = conn.prepareStatement("select * from degreeclass");
+		rs = ps.executeQuery();
+		while (rs.next()) {
+			DegreeClass dc = new DegreeClass(rs.getInt("degreeClassID"), rs.getString("degreeName"), rs.getString("classNumber"), rs.getString("className"), rs.getInt("units"), rs.getString("instructorName"), rs.getInt("instructorId"), rs.getString("info"));
+			Map<String, DegreeClass> kv = new HashMap<String, DegreeClass>();
+			kv.put(dc.degreeName+" "+dc.classNumber, dc);
+			classes.add(kv);
+		}
+		return classes;
+	  } catch (SQLException e) {
+		  System.out.println("sqle: " + e.getMessage());
+	  } finally {
+		  close();
+	  }
+	  return null;
+  }
   
   /**
    * Returns the classes for the specified degree program.
@@ -710,7 +735,6 @@ public class JDBCDriver {
 	  } catch (SQLException sqle) {
 		  System.out.println("SQLException in getClasses()");
 		  System.out.println("sqle: " + sqle.getMessage());
-		  return null;
 	  } finally {
 		  close();
 	  }

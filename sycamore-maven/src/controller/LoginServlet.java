@@ -64,7 +64,7 @@ public class LoginServlet extends HttpServlet {
         // Failed to authenticate the user
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         Map<String, String> error = new HashMap<String, String>();
-        error.put("error", "Please register before signing in.");
+        error.put("error", "Incorrect email or password.");
         pw.write(new Gson().toJson(error));
         pw.flush();
       }

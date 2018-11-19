@@ -1,13 +1,24 @@
 import React, {Component} from 'react';
 import {
 	Box, 
-	Button,
+	RoutedButton,
 	Heading,
+	Paragraph,
 	Text
 } from 'grommet';
 
 class ClassView extends Component {
+
+	state = {
+		classInfo: this.props.defaultInfo
+	}
+
+	componentWillReceiveProps(props) {
+		this.setState({ classInfo: props.classInfo });
+	}
+	
 	render ( ) {
+		const classInfo = this.state.classInfo;
 		return (
 			<Box
 				flex
@@ -22,10 +33,21 @@ class ClassView extends Component {
 					size: 'large'
 				}}
 			>
-				<Heading level='1'>{this.props.id}</Heading>
-				<Text size='large' margin={{bottom: 'large'}}>More details will go here</Text>
-				<Button
-					href='/Main'
+				<Box direction='column' align='start' justify='start'>
+					<Heading level='1'>{classInfo.degreeName+' '+classInfo.classNumber}</Heading>
+					<Heading level='2'>{classInfo.className}</Heading>
+				</Box>
+				<Box 
+					style={{
+						maxWidth: '20%'
+					}}
+				>
+					<Paragraph>
+						{classInfo.summary}
+					</Paragraph>
+				</Box>
+				<RoutedButton
+					path='/Home'
 					hoverIndicator
 					label='Reload this page ... '
 					alignSelf='center'
@@ -33,7 +55,7 @@ class ClassView extends Component {
 						top:  '10%'
 					}}
 				>
-				</Button>
+				</RoutedButton>
 			</Box>
 		);
 	}

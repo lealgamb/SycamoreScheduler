@@ -3,6 +3,8 @@ package controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
 
 import driver.JDBCDriver;
+import driver.DegreeClass;
 
 /**
  * Servlet implementation class ClassesServlet
@@ -33,7 +36,7 @@ public class ClassesServlet extends HttpServlet {
     response.setCharacterEncoding("UTF-8");
     
     // Get the parameter
-    String degreeProgramName = request.getParameter("degreeProgramName");
+    /*String degreeProgramName = request.getParameter("degreeProgramName");
     
     // Check if the parameter is null and send an error message if so
     if (degreeProgramName == null) {
@@ -42,8 +45,8 @@ public class ClassesServlet extends HttpServlet {
       pw.write(new Gson().toJson(error));
       pw.flush();
     }
-    else {
-      ArrayList<ArrayList<String>> classes = JDBCDriver.getClasses(degreeProgramName);
+    else {*/
+      ArrayList<Map<String, DegreeClass>> classes = JDBCDriver.getAllClasses();
       
       // Check if the classes can be retrieved
       if (classes != null) {
@@ -57,12 +60,13 @@ public class ClassesServlet extends HttpServlet {
       }
       else {
         // Failed to retrieve classes
-        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        String error = "Failed to get classes for " + degreeProgramName + " from the database.";
+		response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+		Map<String, String> error = new HashMap<String, String>();
+		error.put("error", "Failed to get classes from the database.");
         pw.write(new Gson().toJson(error));
         pw.flush();
       }
-    }
+    //}
   }
 
 }
