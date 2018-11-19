@@ -1,7 +1,0 @@
-controller\LoginServlet.class
-controller\ClassesServlet.class
-controller\LogoutServlet.class
-controller\ProfileServlet.class
-controller\ScheduleServlet.class
-controller\RegisterServlet.class
-driver\JDBCDriver.class
