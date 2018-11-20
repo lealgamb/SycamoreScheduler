@@ -15,9 +15,9 @@ To ignore, add // eslint-disable-next-line to the line before.
 
 File sizes after gzip:
 
-  84.69 KB (-114 B)  build\static\js\1.416f6c6a.chunk.js
-  6.08 KB (+1 B)     build\static\js\main.d8103816.chunk.js
-  773 B              build\static\js\runtime~main.12aac4d1.js
+  84.69 KB        build\static\js\1.416f6c6a.chunk.js
+  6.09 KB (+6 B)  build\static\js\main.842dd58b.chunk.js
+  773 B           build\static\js\runtime~main.12aac4d1.js
 
 The project was built assuming it is hosted at /SycamoreScheduler/.
 You can control this with the homepage field in your package.json.

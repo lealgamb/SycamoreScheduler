@@ -4,15 +4,15 @@ self.__precacheManifest = [
     "url": "/SycamoreScheduler/static/js/runtime~main.12aac4d1.js"
   },
   {
-    "revision": "d81038163421e835eda8",
-    "url": "/SycamoreScheduler/static/js/main.d8103816.chunk.js"
+    "revision": "842dd58ba2da56f7e80f",
+    "url": "/SycamoreScheduler/static/js/main.842dd58b.chunk.js"
   },
   {
     "revision": "416f6c6a053ad6e0352b",
     "url": "/SycamoreScheduler/static/js/1.416f6c6a.chunk.js"
   },
   {
-    "revision": "bda78b1bb8196b02bea92139e17f625a",
+    "revision": "fb0e89fcb8ff493f56a74872d8e07178",
     "url": "/SycamoreScheduler/index.html"
   }
 ];
