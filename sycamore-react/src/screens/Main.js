@@ -16,7 +16,6 @@ import CoursePlan from './CoursePlan';
 import Profile from './Profile';
 import ClassView from './ClassView';
 
-
 const Header = (props) => (
 	<Box
 		flex
@@ -55,6 +54,21 @@ class Main extends Component {
 
 	constructor(props) {
 		super(props);
+		this.ws = new Sockette('ws://localhost:2000', {
+			timeout: 5e3,
+			maxAttempts: 10,
+			onopen: e => console.log('Connected!', e),
+			onmessage: e => {
+				console.log('Received:', e);
+				this.setState({
+					socketdata: JSON.stringify(e)
+				});
+			},
+			onreconnect: e => console.log('Reconnecting...', e),
+			onmaximum: e => console.log('Stop Attempting!', e),
+			onclose: e => console.log('Closed!', e),
+			onerror: e => console.log('Error:', e)
+		})
 		this.state = {
 			showSidebar: true,
 			display: 'none',
@@ -109,29 +123,13 @@ class Main extends Component {
 		}
 	};
 
-	getSocketData = function () {
+	sendSocketData = function (class_added) {
 		console.log("----------------------------------");
-		console.log("Creating socket");
-		const ws = new Sockette('ws://localhost:2000', {
-		timeout: 5e3,
-		maxAttempts: 10,
-		onopen: e => console.log('Connected!', e),
-		onmessage: e => {
-			console.log('Received:', e);
-			this.setState({
-				socketdata: JSON.stringify(e)
-			});
-		},
-		onreconnect: e => console.log('Reconnecting...', e),
-		onmaximum: e => console.log('Stop Attempting!', e),
-		onclose: e => console.log('Closed!', e),
-		onerror: e => console.log('Error:', e)
-		});
-		ws.send('Hello, world!');
-		ws.json({type: 'ping'});
-		ws.close();
+		console.log("Sending socket data for class " + class_added.degreeName + ' ' + class_added.classNumber);
+		this.ws.send('('+this.state.email+', '+class_added.degreeName + ' ' + class_added.classNumber+', 2018-3, add)');
+		this.ws.close();
 		// Reconnect 1s later
-		setTimeout(ws.reconnect, 1000);
+		setTimeout(this.ws.reconnect, 1000);
 	};
 
 	render() {
@@ -218,22 +216,10 @@ class Main extends Component {
 									}}
 								>
 									<Heading level='1'>Click on a class to view details</Heading>
-									<Button
-										hoverIndicator
-										label="Try Websocket"
-										onClick={() => {
-											this.getSocketData();
-										}}
-									>
-									</Button>
-									<Paragraph>
-										websocket data:
-										{this.state.socketdata}
-									</Paragraph>
 								</Box>
 							}
 							{display==='class' && this.state.whichClass !== null &&
-								<ClassView defaultInfo={this.state.whichClass} classInfo={this.state.whichClass}></ClassView>
+								<ClassView socketFunc={this.sendSocketData} defaultInfo={this.state.whichClass} classInfo={this.state.whichClass}></ClassView>
 							}
 						</Box>
 					</Box>

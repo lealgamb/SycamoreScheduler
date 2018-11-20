@@ -6,16 +6,18 @@ Creating an optimized production build...
 Compiled with warnings.
 
 ./src/screens/Main.js
-  Line 138:  'email' is assigned a value but never used  no-unused-vars
+  Line 6:     'Button' is defined but never used          no-unused-vars
+  Line 9:     'Paragraph' is defined but never used       no-unused-vars
+  Line 136:  'email' is assigned a value but never used  no-unused-vars
 
 Search for the keywords to learn more about each warning.
 To ignore, add // eslint-disable-next-line to the line before.
 
 File sizes after gzip:
 
-  84.69 KB        build\static\js\1.416f6c6a.chunk.js
-  6.08 KB (+1 B)  build\static\js\main.e0c2d256.chunk.js
-  773 B           build\static\js\runtime~main.12aac4d1.js
+  84.69 KB (-114 B)  build\static\js\1.416f6c6a.chunk.js
+  6.08 KB (+1 B)     build\static\js\main.d8103816.chunk.js
+  773 B              build\static\js\runtime~main.12aac4d1.js
 
 The project was built assuming it is hosted at /SycamoreScheduler/.
 You can control this with the homepage field in your package.json.

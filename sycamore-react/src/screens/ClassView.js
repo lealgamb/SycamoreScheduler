@@ -44,11 +44,7 @@ class ClassView extends Component {
 					</Paragraph>
 				</Box>
 				<Button
-					onClick={
-						() => {
-
-						}
-					}
+					onClick={() => this.props.socketFunc(classInfo)}
 					hoverIndicator
 					label='Add to course plan ... '
 					margin={{
