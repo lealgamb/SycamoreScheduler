@@ -1,3 +1,3 @@
 # sycamore-scheduler
 
-Issues with multithreading implementation, requires bug fixes
+Issues with multithreading implementation (present, but requires bug fixes)
