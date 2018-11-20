@@ -1,10 +1,9 @@
 import React, {Component} from 'react';
 import {
 	Box, 
-	RoutedButton,
+	Button,
 	Heading,
 	Paragraph,
-	Text
 } from 'grommet';
 
 class ClassView extends Component {
@@ -38,24 +37,25 @@ class ClassView extends Component {
 					<Heading level='2'>{classInfo.className}</Heading>
 				</Box>
 				<Box 
-					style={{
-						maxWidth: '20%'
-					}}
+					width='large'
 				>
 					<Paragraph>
 						{classInfo.summary}
 					</Paragraph>
 				</Box>
-				<RoutedButton
-					path='/Home'
+				<Button
+					onClick={
+						() => {
+
+						}
+					}
 					hoverIndicator
-					label='Reload this page ... '
-					alignSelf='center'
+					label='Add to course plan ... '
 					margin={{
 						top:  '10%'
 					}}
 				>
-				</RoutedButton>
+				</Button>
 			</Box>
 		);
 	}

@@ -37,11 +37,6 @@ const theme = {
 			textDecoration: 'none'
 		}
 	},
-	box: {
-		extend: {
-			whiteSpace: 'nowrap',
-		}
-	},
 	tabs: {
 		background: "light-2",
 		header: {
@@ -51,6 +46,7 @@ const theme = {
 			padding-top: ${theme.global.edgeSize.medium};
 			padding-bottom: ${theme.global.edgeSize.medium};
 			box-shadow: 0;
+			flex-wrap: nowrap;
 		  `
 		},
         gap: "medium",
@@ -60,6 +56,10 @@ const theme = {
 			overflow-x: hidden;
 			padding-bottom: 10%;
 			font-family: 'Inconsolata';
+			flex-wrap: nowrap;
+		}
+		div[role='tabpanel'] * {
+			white-space: nowrap;
 		}
         `
 	},

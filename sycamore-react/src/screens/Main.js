@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
-
+import Sockette from 'sockette';
 import {
 	Anchor,
     Box,
-    Button, 
+	Button, 
 	Collapsible,
 	Heading,
+	Paragraph,
 	ResponsiveContext,
 	RoutedButton, 
 } from 'grommet';
@@ -108,22 +109,28 @@ class Main extends Component {
 		}
 	};
 
+	getSocketData = function () {
+		console.log("----------------------------------");
+		console.log("Creating socket");
+		const ws = new Sockette('ws://localhost:2000', {
+		timeout: 5e3,
+		maxAttempts: 10,
+		onopen: e => console.log('Connected!', e),
+		onmessage: e => console.log('Received:', e),
+		onreconnect: e => console.log('Reconnecting...', e),
+		onmaximum: e => console.log('Stop Attempting!', e),
+		onclose: e => console.log('Closed!', e),
+		onerror: e => console.log('Error:', e)
+		});
+		ws.send('Hello, world!');
+		ws.json({type: 'ping'});
+		ws.close();
+		// Reconnect 1s later
+		setTimeout(ws.reconnect, 1000);
+	};
+
 	render() {
 		const {showSidebar, display, email} = this.state;
-		const doAjax = () => {
-            console.log("Testing GET /ProfileServlet ...");
-            fetch("/SycamoreScheduler/ProfileServlet?profileEmail=sajeevsa@usc.edu", {
-                method: 'GET'
-			})
-            .then((response) => {
-                return response.json();
-            })
-            .then((json) => {
-                var name = json['full_name'];
-                var major = json['major_1'];
-                console.log("NAME:\t" + name + "\nMAJOR:\t" + major);
-            });
-        }; 
 		return (
 				<ResponsiveContext.Consumer>
 				{size => (
@@ -181,11 +188,12 @@ class Main extends Component {
 											size: 'large'
 										}}
 										style={{
+											flexWrap: 'nowrap',
 											minHeight: '100%'
 										}}
 										background='light-2'
 									>
-										<Classes classes={this.state.classNames} fullInfo = {this.state.classes} clickFunc={this.displayClass}></Classes>
+										<Classes classes={this.state.classNames} fullInfo={this.state.classes} clickFunc={this.displayClass}></Classes>
 									</Box>
 								</Collapsible>
 							}
@@ -205,13 +213,18 @@ class Main extends Component {
 									}}
 								>
 									<Heading level='1'>Click on a class to view details</Heading>
-									{this.state.signedIn === true && <Heading level='1'>{email}</Heading>}
 									<Button
-                                        hoverIndicator
-                                        onClick={() => this.setState({signedIn: false})}
-                                        label='Signout'
+										hoverIndicator
+										label="Try Websocket"
+										onClick={() => {
+											this.getSocketData();
+										}}
 									>
 									</Button>
+									<Paragraph>
+										websocket data:
+										{this.state.socketdata}
+									</Paragraph>
 								</Box>
 							}
 							{display==='class' && this.state.whichClass !== null &&

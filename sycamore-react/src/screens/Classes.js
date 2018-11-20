@@ -7,7 +7,8 @@ import {
 	Heading,
 	InfiniteScroll,
     Tabs, 
-    Text,
+	Text,
+	TextInput,
 	Tab
 } from 'grommet';
 
@@ -15,19 +16,13 @@ import {
 	FormSearch
 } from 'grommet-icons';
 
-const minorClasses = Array(2)
-  .fill()
-  .map((_, i) => {
-	var id = Math.floor(Math.random() * (700 - 100 + 1) ) + 100
-	return `MINR ${id}`;
-  });
-
-const Course = props => (
+const CourseButton = props => (
 	<Box
 		direction='column'
 		align='center'
 		justify='center'
-		width='40%'
+		width='medium'
+		height='xsmall'
 	>
 		<Button 
 			fill
@@ -36,7 +31,6 @@ const Course = props => (
             hoverIndicator
 			style={{
                 background: 'white',
-				padding: '30% 100% 30% 100%',
 				radius: '4px',
 				border: '3px solid main',
 				fontSize: '30px'
@@ -46,20 +40,38 @@ const Course = props => (
 	</Box>
 );
 
-var i = 0; 
-const CourseBox = props => (
-	<InfiniteScroll items={props.list} step={20}>
-	  {item => (
-		<Box
-		  align="center"
-		  pad='small'
-		  key={(i++).toString()}
-		>
-		  <Course clickFunc = {props.clickFunc} name={item} id={item}></Course>
-		</Box>
-	  )}
-	</InfiniteScroll>
-);
+class CourseList extends Component {
+
+	state = {
+		clickFunc: this.props.clickFunc,
+		list: this.props.defList
+	}
+
+	componentWillReceiveProps(props) {
+		this.setState({
+			list: props.list
+		});
+	}
+
+	render() {
+		let i = 0;
+		return (
+			this.state.list !== null && 
+				<InfiniteScroll items={this.state.list} step={20}>
+				{item => (
+					<Box
+					align="center"
+					pad='small'
+					key={(i++).toString()}
+					>
+					<CourseButton clickFunc={this.state.clickFunc} name={item} id={item}></CourseButton>
+					</Box>
+				)}
+				</InfiniteScroll>
+			
+		);
+	}
+}
 
 const RichTabTitle = ({label}) => (
     <Box direction="row" align="center" justify='center' margin="xsmall" pad='2%'>
@@ -79,9 +91,19 @@ class Classes extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			courseTab: 0
+			courseTab: 0,
+			search: '',
+			allClasses: props.classes,
+			searchClasses: props.classes
 		}
-		this.allClasses = props.classes;
+		this.onSearch = function (query) {
+			console.log('New search query:\t'+query);
+			const exp = new RegExp(query, 'i');
+			this.setState({
+				search: query,
+				searchClasses: this.state.allClasses.filter(s => exp.test(s))
+			});
+		}.bind(this);
 	}
 	render () {
 		const {courseTab} = this.state;
@@ -99,23 +121,52 @@ class Classes extends Component {
 						direction='column'
 						align='center'
 						justify='start'
+						style={{
+							position: 'sticky',
+							top: '0',
+							zIndex: 500
+						}}
+						background='light-2'
+						pad={{
+							horizontal: 'medium',
+							bottom: 'medium'
+						}}
+					>
+						<Heading level='2'>find any class</Heading>
+							<TextInput
+								placeholder="search"
+								background='white'
+								value={this.state.search}
+								onChange={(event) => {
+									const nextSearch = event.target.value;
+									this.onSearch(nextSearch);
+								}}
+								style={{
+									fontFamily: 'Inconsolata'
+								}}
+						/>
+					</Box>
+					<Box
+						className='classBox'
+						direction='column'
+						align='center'
+						justify='start'
 						pad='small'
 						animation={{
 							type: 'fadeIn',
 							size: 'xlarge'
 						}}
 					>
-						<Heading level='2'>search bar</Heading>
+						<CourseList clickFunc={this.props.clickFunc} defList={this.state.allClasses} list={this.state.searchClasses} />	
 					</Box>
 				</Tab>
-                <Tab 
+           		<Tab 
                     title={
                         <RichTabTitle
                       		label="Major"
                         />
                     }
                 >
-					<CourseBox clickFunc = {this.props.clickFunc} list={this.allClasses} />
 				</Tab>
                 <Tab 
                     title={
@@ -124,7 +175,6 @@ class Classes extends Component {
                         />
                     }
                 >
-					<CourseBox clickFunc = {this.props.clickFunc} list={minorClasses} />
 				</Tab>
 			</Tabs>
 		);
