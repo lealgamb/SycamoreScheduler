@@ -54,7 +54,7 @@ class Main extends Component {
 
 	constructor(props) {
 		super(props);
-		this.ws = new Sockette('ws://localhost:8080/SycamoreScheduler/ss1', {
+		this.ws = new Sockette('ws://localhost:2000/SycamoreScheduler/ss1', {
 			timeout: 5e3,
 			maxAttempts: 10,
 			onopen: e => console.log('Connected!', e),
