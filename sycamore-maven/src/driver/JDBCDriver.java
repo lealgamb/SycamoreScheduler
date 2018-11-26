@@ -12,6 +12,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import models.*;
+
 public class JDBCDriver {
   private static Connection conn = null;
   private static ResultSet rs = null;

@@ -1,7 +1,10 @@
-controller\LoginServlet.class
-controller\ClassesServlet.class
-controller\LogoutServlet.class
-controller\ProfileServlet.class
-controller\ScheduleServlet.class
-controller\RegisterServlet.class
-driver\JDBCDriver.class
+socket/ServerSocket.class
+driver/JDBCDriver.class
+socket/ServerThread.class
+socket/ChatClient.class
+controller/ClassesServlet.class
+controller/ScheduleServlet.class
+controller/LoginServlet.class
+controller/RegisterServlet.class
+controller/LogoutServlet.class
+controller/ProfileServlet.class

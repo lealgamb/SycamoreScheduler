@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import Sockette from 'sockette';
 import {
 	Anchor,
     Box,
@@ -51,24 +50,24 @@ const PageLink = (props) => (
 
 
 class Main extends Component {
-
 	constructor(props) {
-		super(props);
-		this.ws = new Sockette('ws://localhost:8080/SycamoreScheduler/ss1', {
-			timeout: 5e3,
-			maxAttempts: 10,
-			onopen: e => console.log('Connected!', e),
-			onmessage: e => {
-				console.log('Received:', e);
-				this.setState({
-					socketdata: JSON.stringify(e)
-				});
-			},
-			onreconnect: e => console.log('Reconnecting...', e),
-			onmaximum: e => console.log('Stop Attempting!', e),
-			onclose: e => console.log('Closed!', e),
-			onerror: e => console.log('Error:', e)
-		})
+        super(props);
+        var ws = new WebSocket('ws://localhost:8080/SycamoreScheduler/ss1');
+        ws.onopen = e => {
+            console.log('WebSocket Connected!', e);
+        };
+		ws.onmessage = e => {
+            console.log('Received:', e);
+            this.setState({
+                socketdata: JSON.stringify(e)
+            });
+		};
+		ws.onclose = e => {
+            console.log('Closed!', e);
+        };
+        ws.onerror = e => {
+            console.log('Error:', e);
+		};
 		this.state = {
 			showSidebar: true,
 			display: 'none',
@@ -76,7 +75,9 @@ class Main extends Component {
 			signedIn: props.signedIn,
 			email: props.email,
 			classes: null,
-			classNames: null
+            classNames: null,
+            socket: ws,
+            socketdata: ''
 		};
 		let ok = false;
 		this.loadClasses = function() { 
@@ -109,7 +110,7 @@ class Main extends Component {
 				}
 			});
 		}.bind(this);
-		this.loadClasses();
+        this.loadClasses();
 	}
 
 	displayClass = (id) => {
@@ -125,12 +126,10 @@ class Main extends Component {
 
 	sendSocketData = function (class_added) {
 		console.log("----------------------------------");
-		console.log("Sending socket data for class " + class_added.degreeName + ' ' + class_added.classNumber);
-		this.ws.send('('+this.state.email+', '+class_added.degreeName + ' ' + class_added.classNumber+', 2018-3, add)');
-		this.ws.close();
-		// Reconnect 1s later
-		setTimeout(this.ws.reconnect, 1000);
-	};
+        console.log("Sending socket data for class " + class_added.degreeName + ' ' + class_added.classNumber);
+        console.log(this.state.socket);
+		this.state.socket.send('('+(this.state.email || 'guest')+', '+class_added.degreeName + ' ' + class_added.classNumber+', 2018-3, add)');
+	}.bind(this);
 
 	render() {
 		const {showSidebar, display, email} = this.state;

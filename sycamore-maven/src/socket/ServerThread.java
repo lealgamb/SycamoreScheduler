@@ -21,80 +21,33 @@ import com.google.gson.Gson;
 //deal with threads
 public class ServerThread extends Thread{
 	
-	private ObjectInputStream ois;
-	private ObjectOutputStream oos;
-	private ServerSocket ss;
+    private Session session;
 	
-	private BufferedWriter bw;
-	private BufferedReader br;
-	
-	public ServerThread(ServerSocket  ss, BufferedWriter bw, BufferedReader br) {
-		this.ss = ss;
-		this.br = br;
-		this.bw = bw;
-
+	public ServerThread(Session s) {
+        this.session = s;
+        System.out.println("\n\nBuilding new ServerThread(Session s) with ID="+s.getId());
 		this.start();
-	}
+    }
+    
+    public String getSessionID() {
+        return this.session.getId();
+    }
 
-	public String sendMessage(String info) {
-		try{
-			System.out.println("sendMessage in ServerThread before write: "+ info);
-			bw.write(info);
-			bw.flush();
-			System.out.println("sendMessage in ServerThread: " + info);
-			
-			//ArrayList<String> classes = new ArrayList<String>();
-				// Get the parameter
-				String[] infoArr = info.split(",");
-			    String email = infoArr[0];
-			    
-			    // Check if the parameter is null and send an error message if so
-			    
-			   // if (email == null) {
-			    //  response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing course plan email parameter.");
-			    //}
-			   // else {
-			      Map<String, ArrayList<ArrayList<String>>> schedule = JDBCDriver.getSchedule(email);
-			      
-			      // Check if the schedule can be retrieved
-			    //  if (schedule != null) {
-			        // Successfully retrieved the schedule
-			        
-			        // Communicate with the front-end
-			        String scheduleJSON = new Gson().toJson(schedule);
-			       // response.setContentType("application/json");
-			        //response.setCharacterEncoding("UTF-8");
-			        // Get the writer
-			      //  PrintWriter pw = response.getWriter();
-			       // pw.write(scheduleJSON);
-			       // pw.flush();
-			   //   }
-			     // else {
-			        // Failed to retrieve classes
-			     //   response.sendError(HttpServletResponse.SC_BAD_REQUEST, 
-			     //       "Failed to retreive classes for " + email + " from the database.");
-			     // }
-			   // }
-					
-			return scheduleJSON;
-		}catch(IOException ioe) {
-			System.out.println("ioe in sendMessage: " + ioe.getMessage());
-		}
-		return "";
+	public void sendMessage(String message) {
+        System.out.println("sendMessage() in ServerThread.java");
+        try {
+            this.session.getBasicRemote().sendText("(pong) "+message);
+        } catch (IOException e) {
+            System.out.println("ioe in ServerThread.sendMessage(String):\t" + e.getMessage());
+        }
 	}
 	public void run() {
-			while(true) {
-				String info;
-				try {
-					info = br.readLine();
-					
-					if(info != null) {
-						System.out.println("run in ServerThread:" + info);
-						ss.broadcast(info, this);
-					}
-				} catch (IOException ioe) {
-					System.out.println("ioe in ST.run(): " + ioe.getMessage());
-				}		
-			}
-	}
+            System.out.println("Starting run() in a ServerThread");
+    }
+    
+    @Override
+    public String toString ( ) {
+        String str = "ID="+this.session.getId();
+        return str;
+    }
 }

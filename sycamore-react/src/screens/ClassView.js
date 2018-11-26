@@ -30,28 +30,28 @@ class ClassView extends Component {
 					delay: 50,
 					duration: 750,
 					size: 'large'
-				}}
+                }}
+                style={{
+                    overflow: 'auto'
+                }}
 			>
-				<Box direction='column' align='start' justify='start'>
+				<Box flex direction='column' align='start' justify='start'>
 					<Heading level='1'>{classInfo.degreeName+' '+classInfo.classNumber}</Heading>
 					<Heading level='2'>{classInfo.className}</Heading>
-				</Box>
-				<Box 
-					width='large'
-				>
 					<Paragraph>
 						{classInfo.summary}
 					</Paragraph>
+                    <Button
+                        onClick={() => this.props.socketFunc(classInfo)}
+                        hoverIndicator
+                        label='Add to course plan ... '
+                        margin={{
+                            top:  '10%'
+                        }}
+                        pad='large'
+                    >
+                    </Button>
 				</Box>
-				<Button
-					onClick={() => this.props.socketFunc(classInfo)}
-					hoverIndicator
-					label='Add to course plan ... '
-					margin={{
-						top:  '10%'
-					}}
-				>
-				</Button>
 			</Box>
 		);
 	}

@@ -15,6 +15,8 @@ import java.io.StringWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.websocket.OnClose;
@@ -27,59 +29,41 @@ import javax.websocket.server.ServerEndpoint;
 
 @ServerEndpoint("/ss1")
 public class ServerSocket {
-	private Vector<ServerThread> serverThreads;
-	private static Vector<Session> sessionVector = new Vector<Session>();
-	public ObjectOutputStream oos;
-	public ObjectInputStream ois;
-	
-	public BufferedReader in;
-	public FileWriter fstream;
-	public BufferedWriter out;
+    // static so that ServerSocket functions like a singleton WebSocket utility class
+    private static Vector<ServerThread> threads = new Vector<ServerThread>(); 
 
 	public ServerSocket(){
-		serverThreads = new Vector<ServerThread>();
+        
 	}
 	
 	@OnOpen
 	public void open(Session session) {
-		System.out.println("Connection made!");
-		sessionVector.add(session);
-		try {
-			fstream = new FileWriter("file.txt");
-			out = new BufferedWriter(fstream);
-			in = new BufferedReader(new FileReader("file.txt"));
-
-			ChatClient c = new ChatClient(out, in);
-			
-			ServerThread st = new ServerThread(this, out, in);
-			serverThreads.add(st);
-			
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        System.out.println("Connection made! ID=" + session.getId());
+		ServerThread st = new ServerThread(session);
+        threads.add(st);
+        System.out.println("Threads after connect:\n"+threads.toString()+"\n");
 	}
 	
 	@OnMessage
 	public void onMessage(String message, Session session) {
-		try {
-			System.out.println("onMessage: " + message);
-	
-			out.write(message);
-			out.flush();
-			
-		} catch (IOException ioe) {
-			System.out.println("ioe: " + ioe.getMessage());
-			close(session);
-		}
+        System.out.println("Message! ID=" + session.getId()+"\tMESSAGE="+message);
+        for (ServerThread st : threads) {
+            st.sendMessage(message);
+        }
+        System.out.println("Threads after message:\n"+threads.toString()+"\n");
+
 	}
 	
 	
 	@OnClose
 	public void close(Session session) {
-		System.out.println("Disconnecting!");
-		sessionVector.remove(session);
+        System.out.println("Disconnecting! ID=" + session.getId());
+        for (int i = 0; i < threads.size(); i++) {
+            if (threads.get(i).getSessionID().equals(session.getId())) {
+                threads.remove(i);
+            }
+        }
+        System.out.println("Threads after remove:\n"+threads.toString()+"\n");
 	}
 	
 	@OnError
@@ -88,19 +72,6 @@ public class ServerSocket {
 	}
 	
 	public void broadcast(String action, ServerThread st) {
-		if(action != null) {
-			for(ServerThread thread : serverThreads) {
-				System.out.println("broadcast, iterating through threads");
-				System.out.println("thread send in ServerSocket: " + action);
-				String res = thread.sendMessage(action);
-				for(Session s : sessionVector) {
-					try {
-						s.getBasicRemote().sendText(res);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
+		// fill in broadcast here
 	}	
 }

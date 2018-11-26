@@ -16,8 +16,7 @@ import com.google.gson.Gson;
 
 
 public class ChatClient extends Thread {
-	private ObjectInputStream ois;
-	private ObjectOutputStream oos;
+
 	public  String line;
 	public String user;
 	private Socket s;
@@ -26,30 +25,10 @@ public class ChatClient extends Thread {
 	private BufferedReader br;
 	
 	public ChatClient (BufferedWriter bw, BufferedReader br) {
-		try {
-			this.bw = bw;
-			this.br = br;
-
-			System.out.println("Connected!");
-			
-			this.start();
-			
-		} finally {
-			try {
-				if(ois != null) {
-					ois.close();
-				}
-				if(oos != null) {
-					oos.close();
-				}
-				if(s != null) {
-					s.close();
-				}
-			} catch(IOException ioe) {
-				System.out.println("ioe closing s: " + ioe.getMessage());
-			}
-			
-		}
+		this.bw = bw;
+		this.br = br;
+		System.out.println("Connected! [ in ChatClient() ]");
+		this.start();
 	}
 	public void run() {
 		try {
@@ -118,22 +97,5 @@ public class ChatClient extends Thread {
 		}catch(IOException ioe) {
 			System.out.println("ioe in run: " + ioe.getMessage());
 	   }
-	}
-	
-	public void close(){
-		try {
-			if(ois != null) {
-				ois.close();
-			}
-			if(oos != null) {
-				oos.close();
-			}
-			if(s != null) {
-				s.close();
-			}
-		} catch(IOException ioe) {
-			System.out.println("ioe closing s: " + ioe.getMessage());
-		}
-		
 	}
 }
