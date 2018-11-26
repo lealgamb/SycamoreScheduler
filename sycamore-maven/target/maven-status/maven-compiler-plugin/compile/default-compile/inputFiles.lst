@@ -5,6 +5,7 @@
 /Users/sajeev/git/sycamore-scheduler/sycamore-maven/src/driver/JDBCDriver.java
 /Users/sajeev/git/sycamore-scheduler/sycamore-maven/src/controller/LogoutServlet.java
 /Users/sajeev/git/sycamore-scheduler/sycamore-maven/src/controller/ProfileServlet.java
+/Users/sajeev/git/sycamore-scheduler/sycamore-maven/src/models/Schedule.java
 /Users/sajeev/git/sycamore-scheduler/sycamore-maven/src/models/DegreeClass.java
 /Users/sajeev/git/sycamore-scheduler/sycamore-maven/src/controller/LoginServlet.java
 /Users/sajeev/git/sycamore-scheduler/sycamore-maven/src/socket/ChatClient.java

@@ -2,10 +2,8 @@ import React, {Component} from 'react';
 import {
 	Anchor,
     Box,
-	Button, 
 	Collapsible,
 	Heading,
-	Paragraph,
 	ResponsiveContext,
 	RoutedButton, 
 } from 'grommet';
@@ -52,23 +50,7 @@ const PageLink = (props) => (
 class Main extends Component {
 	constructor(props) {
         super(props);
-        var ws = new WebSocket('ws://localhost:8080/SycamoreScheduler/ss1');
-        ws.onopen = e => {
-            console.log('WebSocket Connected!', e);
-        };
-		ws.onmessage = e => {
-            console.log('Received:', e);
-            this.setState({
-                socketdata: JSON.stringify(e)
-            });
-		};
-		ws.onclose = e => {
-            console.log('Closed!', e);
-        };
-        ws.onerror = e => {
-            console.log('Error:', e);
-		};
-		this.state = {
+        this.state = {
 			showSidebar: true,
 			display: 'none',
 			whichClass: null,
@@ -76,9 +58,18 @@ class Main extends Component {
 			email: props.email,
 			classes: null,
             classNames: null,
-            socket: ws,
-            socketdata: ''
-		};
+        };
+        this.info = {
+            fName: 'John', 
+            lName: 'Smith',
+            password: 'password',
+            email: 'john@gmail.com',
+            major1: 'CSCI',
+            major2: '',
+            minor1: 'MATH',
+            minor2: '' 
+        }
+        
 		let ok = false;
 		this.loadClasses = function() { 
 			fetch('/SycamoreScheduler/ClassesServlet', {
@@ -124,15 +115,8 @@ class Main extends Component {
 		}
 	};
 
-	sendSocketData = function (class_added) {
-		console.log("----------------------------------");
-        console.log("Sending socket data for class " + class_added.degreeName + ' ' + class_added.classNumber);
-        console.log(this.state.socket);
-		this.state.socket.send('('+(this.state.email || 'guest')+', '+class_added.degreeName + ' ' + class_added.classNumber+', 2018-3, add)');
-	}.bind(this);
-
 	render() {
-		const {showSidebar, display, email} = this.state;
+		const {showSidebar, display} = this.state;
 		return (
 				<ResponsiveContext.Consumer>
 				{size => (
@@ -200,7 +184,7 @@ class Main extends Component {
 								</Collapsible>
 							}
 							{display==='coursePlan' && <CoursePlan></CoursePlan>}
-							{display==='profile' && <Profile></Profile>}
+							{display==='profile' && <Profile info={this.info}></Profile>}
 							{display==='none' && 
 								<Box
 									flex
@@ -218,7 +202,7 @@ class Main extends Component {
 								</Box>
 							}
 							{display==='class' && this.state.whichClass !== null &&
-								<ClassView socketFunc={this.sendSocketData} defaultInfo={this.state.whichClass} classInfo={this.state.whichClass}></ClassView>
+								<ClassView socketFunc={this.props.socketFunc} defaultInfo={this.state.whichClass} classInfo={this.state.whichClass}></ClassView>
 							}
 						</Box>
 					</Box>

@@ -97,8 +97,9 @@ class App extends Component {
 		this.state = {
 			signedIn: false,
 			userEmail: '',
-		}
-	}
+        }
+    }
+
 	onSignIn = (email) => {
 		setTimeout(() => {
 			this.setState({

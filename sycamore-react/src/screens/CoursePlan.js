@@ -55,6 +55,25 @@ const DATA = [
 var i = 0;
 
 class CoursePlan extends Component {
+    constructor(props) {
+        super(props);
+        var ws = new WebSocket('ws://localhost:8080/SycamoreScheduler/ss1');
+        ws.onopen = e => {
+            console.log('WebSocket Connected!', e);
+        };
+        ws.onmessage = e => {
+            console.log('Received:', e);
+        };
+        ws.onclose = e => {
+            console.log('Closed!', e);
+        };
+        ws.onerror = e => {
+            console.log('Error:', e);
+        };
+        this.setState({
+            socket: ws
+        });
+    }
 	render ( ) {
 		return (
 			<Box
