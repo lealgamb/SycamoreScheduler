@@ -44,7 +44,9 @@ class CourseList extends Component {
 
 	state = {
 		clickFunc: this.props.clickFunc,
-		list: this.props.defList
+        list: this.props.defList,
+        major: this.props.major,
+        minor: this.props.minor
 	}
 
 	componentWillReceiveProps(props) {
@@ -95,10 +97,6 @@ class Classes extends Component {
 			search: '',
 			allClasses: props.classes,
 			searchClasses: props.classes,
-			allMajorClasses: props.classes.filter(s => new RegExp('CSCI', 'i').test(s)),
-			searchMajorClasses: props.classes.filter(s => new RegExp('CSCI', 'i').test(s)),
-			allMinorClasses: props.classes.filter(s => new RegExp('MATH', 'i').test(s)),
-			searchMinorClasses: props.classes.filter(s => new RegExp('MATH', 'i').test(s)),
 		}
 		this.onSearch = function (query) {
 			const exp = new RegExp(query, 'i');
@@ -107,7 +105,18 @@ class Classes extends Component {
 				searchClasses: this.state.allClasses.filter(s => exp.test(s))
 			});
 		}.bind(this);
-	}
+    }
+    
+    componentWillReceiveProps(props) {
+        if (props.info !== null) {
+            this.setState({
+                allMajorClasses: props.classes.filter(s => new RegExp(props.info.major1, 'i').test(s)),
+                searchMajorClasses: props.classes.filter(s => new RegExp(props.info.major1, 'i').test(s)),
+                allMinorClasses: props.classes.filter(s => new RegExp(props.info.minor1, 'i').test(s)),
+                searchMinorClasses: props.classes.filter(s => new RegExp(props.info.minor1, 'i').test(s)),
+            })
+        }
+    }
 	render () {
 		const {courseTab} = this.state;
 		return (
@@ -162,24 +171,6 @@ class Classes extends Component {
 					>
 						<CourseList clickFunc={this.props.clickFunc} defList={this.state.allClasses} list={this.state.searchClasses} />	
 					</Box>
-				</Tab>
-           		<Tab 
-                    title={
-                        <RichTabTitle
-                      		label="CSCI"
-                        />
-                    }
-                >
-					<CourseList clickFunc={this.props.clickFunc} defList={this.state.allMajorClasses} list={this.state.searchMajorClasses} />	
-				</Tab>
-                <Tab 
-                    title={
-                        <RichTabTitle
-                            label="MATH"
-                        />
-                    }
-                >
-					<CourseList clickFunc={this.props.clickFunc} defList={this.state.allMinorClasses} list={this.state.searchMinorClasses} />	
 				</Tab>
 			</Tabs>
 		);

@@ -9,7 +9,7 @@ USE Scheduler;
 CREATE TABLE Instructor (
 	instructorID INT(11) PRIMARY KEY,
     instructorName VARCHAR(50) NOT NULL,
-    rmpRating DECIMAL NULL
+    rmpRating DECIMAL(10, 3) NULL
 );
 
 # Instructor: instructorID (P_K, AUTO_INC), instructorName (NOT NULL) ratemyprofessorLink (NULL)
@@ -47,6 +47,8 @@ CREATE TABLE Users (
     degree2ID INT(10) NULL,
     minorID INT(10) NULL,
     minor2ID INT(10) NULL,
+    startTerm VARCHAR(5) NOT NULL,
+    endTerm VARCHAR(5) NOT NULL,
     FOREIGN KEY fk3 (degreeID) REFERENCES DegreeProgram(degreeID),
     FOREIGN KEY fk4 (degree2ID) REFERENCES DegreeProgram(degreeID),
     FOREIGN KEY fk5 (minorID) REFERENCES DegreeProgram(degreeID),
@@ -5776,7 +5778,7 @@ INSERT INTO DegreeClass (degreeName, classNumber, className, instructorName, ins
 INSERT INTO DegreeClass (degreeName, classNumber, className, instructorName, instructorID, instructorRating, info, units) VALUES ('CSCI', '104L', 'Data Structures and Object Oriented Design', 'Sandra Batista', 2284407, 2.6, 'Introduces the student to standard data structures (linear structures such as linked lists, (balanced) trees, priority queues, and hashtables), using the C++ programming language.Prerequisite: CSCI 103. Corequisite: CSCI 170.', 4);
 INSERT INTO DegreeClass (degreeName, classNumber, className, instructorName, instructorID, instructorRating, info, units) VALUES ('CSCI', '109', 'Introduction to Computer Science', 'Andrew Goodney', 2163737, 3.8, 'An introduction to, and overview of, Computer Science; both as a discipline and a body of knowledge.', 2);
 INSERT INTO DegreeClass (degreeName, classNumber, className, instructorName, instructorID, instructorRating, info, units) VALUES ('CSCI', '170', 'Discrete Methods in Computer Science', 'Michael Shindler', 1853365, 3.98, 'Sets, functions, series. Big-O notation and algorithm analysis. Propositional and first-order logic. Counting and discrete probability. Graphs and basic graph algorithms. Basic number theory.', 4);
-INSERT INTO DegreeClass (degreeName, classNumber, className, instructorName, instructorID, instructorRating, info, units) VALUES ('CSCI', '201', 'Principles of Software Development', 'Jeffrey Miller', 1894993, 3.3, 'Object-oriented paradigm for programming-in-the-large in Java; writing sophisticated concurrent applications with animation and graphic user interfaces; using professional tools on team project. Prerequisite: CSCI 104L.', 4);
+INSERT INTO DegreeClass (degreeName, classNumber, className, instructorName, instructorID, instructorRating, info, units) VALUES ('CSCI', '201', 'Principles of Software Development', 'Jeffrey Miller', 1894993, 6.0, 'Object-oriented paradigm for programming-in-the-large in Java; writing sophisticated concurrent applications with animation and graphic user interfaces; using professional tools on team project. Prerequisite: CSCI 104L.', 4);
 INSERT INTO DegreeClass (degreeName, classNumber, className, instructorName, instructorID, instructorRating, info, units) VALUES ('CSCI', '270', 'Introduction to Algorithms and Theory of Computing', 'Aaron Cote', 1634254, 4.0, 'Algorithm analysis. Greedy algorithms, divide and conquer, dynamic programming, graph algorithms. NP-completeness and basic recursion theory and undecidability. Sorting lower bounds. Number-theory based cryptography.', 4);
 INSERT INTO DegreeClass (degreeName, classNumber, className, instructorName, instructorID, instructorRating, info, units) VALUES ('CSCI', '281', 'Pipelines for Games and Interactives', 'Scott Easley', 1307919, 4.6, 'Explores the aesthetic development/technical implementation necessary to achieve unique, compelling, intuitive visual design in games. Students will develop group visual game design portfolios.', 4);
 INSERT INTO DegreeClass (degreeName, classNumber, className, instructorName, instructorID, instructorRating, info, units) VALUES ('CSCI', '310', 'Software Engineering', 'William Halfond', 1870652, 1.41, 'Introduction to the software engineering process and software lifecycle. Covers project management, requirements, architecture, design, implementation, testing, and maintenance phase activities in team based projects. Prerequisites: CSCI 201. Duplicates credit in former CSCI 377.', 4);

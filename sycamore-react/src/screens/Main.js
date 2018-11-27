@@ -97,6 +97,7 @@ class Main extends Component {
 		}.bind(this);
 
 		this.loadProfile = function() {
+            console.log("in loadProfile");
 			fetch('/SycamoreScheduler/ProfileServlet?profileEmail='+props.email, {
 				method: 'GET',
 			}).then((response) => {
@@ -104,9 +105,33 @@ class Main extends Component {
 				return response.json();
 			})
 			.then(json => {
-				console.log(json);
+                console.log(json);
+                var startYear = parseInt(json.startTerm.substring(0, 4));
+                var startTerm = parseInt(json.startTerm.charAt(4)) === 3 ? 'Fall' : 'Spring';
+                var endYear = parseInt(json.endTerm.substring(0, 4));
+                var endTerm = parseInt(json.endTerm.charAt(4)) === 3 ? 'Fall' : 'Spring';
+                var keyList = [], titleList = [];
+                for (var yr = startYear; yr <= endYear; yr++) {
+                    for (var sp = 1; sp >= 0; sp--) {
+                        var key = '';
+                        var title = '';
+                        if (sp === 1 && !(yr === startYear && startTerm === 'Fall')) { // fall
+                            key += yr+'1';
+                            title += 'Spring ' + yr;
+                        } else if (sp === 0 && !(yr === endYear && endTerm === 'Spring')) { // spring
+                            key += yr+'3';
+                            title += 'Fall ' + yr;
+                        }
+                        if (key !== '' && title !== '') {
+                            keyList.push(key);
+                            titleList.push(title);
+                        }
+                    }
+                }
 				this.setState({
-					info: json
+                    info: json,
+                    keyList: keyList,
+                    titleList: titleList
 				})
 			});
 
@@ -171,7 +196,7 @@ class Main extends Component {
 								size: 'large'
 							}}
 						>
-							{this.state.classNames !== null && 
+							{this.state.classNames !== null &&
 								<Collapsible
 									direction='horizontal'
 									open={showSidebar}
@@ -190,12 +215,12 @@ class Main extends Component {
 										}}
 										background='light-2'
 									>
-										<Classes classes={this.state.classNames} fullInfo={this.state.classes} clickFunc={this.displayClass}></Classes>
+										<Classes info={this.state.info} classes={this.state.classNames} fullInfo={this.state.classes} clickFunc={this.displayClass}></Classes>
 									</Box>
 								</Collapsible>
 							}
-							{display==='coursePlan' && <CoursePlan></CoursePlan>}
-							{display==='profile' && <Profile info={this.state.info}></Profile>}
+							{display==='coursePlan' && <CoursePlan info={this.state.info} email={this.state.email}></CoursePlan>}
+							{display==='profile' && <Profile reloadFunc={this.loadProfile} info={this.state.info}></Profile>}
 							{display==='none' && 
 								<Box
 									flex
@@ -213,7 +238,7 @@ class Main extends Component {
 								</Box>
 							}
 							{display==='class' && this.state.whichClass !== null &&
-								<ClassView isSignedIn={this.state.signedIn} socketFunc={this.props.socketFunc} defaultInfo={this.state.whichClass} classInfo={this.state.whichClass}></ClassView>
+								<ClassView keyList={this.state.keyList} titleList={this.state.titleList} email={this.state.email} isSignedIn={this.state.signedIn} socketFunc={this.props.socketFunc} defaultInfo={this.state.whichClass} classInfo={this.state.whichClass}></ClassView>
 							}
 						</Box>
 					</Box>

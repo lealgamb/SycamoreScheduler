@@ -7,7 +7,8 @@ import {
 	Image,
 	Paragraph,
 	Meter,
-	Stack,
+    Stack,
+    Select,
 	Text
 } from 'grommet';
 
@@ -19,11 +20,51 @@ class ClassView extends Component {
 
 	state = {
 		classInfo: this.props.defaultInfo,
-		open: false,
-	}
+        open: false,
+        selectedTerm: ''
+    }
+    
+    addClass = () => {
+        if (this.state.selectedTerm === '') {
+            return;
+        } else {
+            var termKey = '';
+            termKey += parseInt(this.state.selectedTerm.substring(this.state.selectedTerm.length-4));
+            if (this.state.selectedTerm.substring(0, 4) === 'Fall') {
+                termKey += '3';
+            } else {
+                termKey += '1';
+            }
+            var bodystr = "profileEmail="+this.props.email+"&action=add&className="+this.state.classInfo.longName+"&term="+termKey;
+            console.log(bodystr);
+            var ok = false;
+            fetch('/SycamoreScheduler/ScheduleServlet', {
+                method: 'POST',
+                headers: {
+					'content-type': 'application/x-www-form-urlencoded'
+                },
+                body: bodystr
+            })
+            .then((response) => {
+                ok = response.ok;
+                return response.json();
+            })
+            .then((json) => {
+                if (ok) {
+                    this.setState({
+                        open: false,
+                        selectedTerm: ''
+                    })
+                }
+            })
+        }
+    }
 
 	componentWillReceiveProps(props) {
-		this.setState({ classInfo: props.classInfo });
+		this.setState({ 
+            classInfo: props.classInfo,
+            userInfo: props.userInfo
+        });
 	}
 	
 	render ( ) {
@@ -92,7 +133,7 @@ class ClassView extends Component {
 								type="circle"
 								background="light-2"
 								values={[{
-									value: 70,
+									value: classInfo.instructorRating/5*100,
 									color: 'main',
 									highlight: true,
 								}]}
@@ -101,7 +142,7 @@ class ClassView extends Component {
 								/>
 								<Box direction="row" align="center" pad={{ bottom: "xsmall" }}>
 								<Text size="xlarge" weight="bold">
-									3.5
+									{classInfo.instructorRating}
 								</Text>
 								<Text size="small">/5</Text>
 								</Box>
@@ -127,10 +168,18 @@ class ClassView extends Component {
 					>
 						<Box pad="medium" gap="small" width="medium">
 						<Heading level={3} margin="none">
-							Confirm
+							Add {classInfo.longName}
 						</Heading>
-						<Text>Add {classInfo.degreeName+' '+classInfo.classNumber} to course plan</Text>
-						<Box
+						<Text>Select a term to add {classInfo.longName}</Text>
+                        <Select
+							size='small'
+							placeholder={<Text size='large'>term</Text>}
+							value={this.state.selectedTerm}
+							options={this.props.titleList}
+							onChange={(option) => {this.setState({selectedTerm: option.value});}}
+						>
+						</Select>
+                        <Box
 							tag="footer"
 							gap="small"
 							direction="row"
@@ -154,10 +203,7 @@ class ClassView extends Component {
 									</Text>
 								}
 								onClick={() => {
-									console.log("Adding");
-									this.setState({
-										open: false,
-									})
+                                    this.addClass();
 								}}
 								primary
 								color="main"

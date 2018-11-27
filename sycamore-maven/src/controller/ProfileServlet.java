@@ -78,18 +78,31 @@ public class ProfileServlet extends HttpServlet {
     response.setCharacterEncoding("UTF-8");
     
     // Get the main parameters
-    String profileEmail = request.getParameter("profileEmail");
-    String action = request.getParameter("action");
+    String email = request.getParameter("email");
+    String key = request.getParameter("key");
+    String value = request.getParameter("value");
     
     // Check if the parameters are null and send an error message if so
-    if (profileEmail == null || action == null) {
+    if (email == null || key == null || value == null) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       String error = "Missing profile update parameters.";
       pw.write(new Gson().toJson(error));
       pw.flush();
     }
     else {
-      // Only allow the logged in user to make changes to his/her profile
+        if (JDBCDriver.updateAnything(email, key, value)) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            String success = "Successfully updated "+key;
+            pw.write(new Gson().toJson(success));
+            pw.flush();
+        } else {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            String error = "Failed to update "+key;
+            pw.write(new Gson().toJson(error));
+            pw.flush();
+        }
+    }
+      /*// Only allow the logged in user to make changes to his/her profile
       if (profileEmail.equals((String)request.getSession().getAttribute("email"))) {
         // Update or remove the user's degree program
         if (action.equals("updateDegreeProgram") || action.equals("removeDegreeProgram")) {
@@ -163,7 +176,7 @@ public class ProfileServlet extends HttpServlet {
           String newPassword = request.getParameter("newPassword");
           
           // Check if the parameters are null and send an error message if so
-          if (oldPassword == null || newPassword == null) {
+          if (newPassword == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             String error = "Missing password update parameters.";
             pw.write(new Gson().toJson(error));
@@ -195,7 +208,7 @@ public class ProfileServlet extends HttpServlet {
         pw.write(new Gson().toJson(error));
         pw.flush();
       }
-    }
+    }*/
   }
 
 }

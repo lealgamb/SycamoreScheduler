@@ -24,7 +24,7 @@ public class ServerThread extends Thread{
 	public void sendMessage(String message) {
         System.out.println("sendMessage() in ServerThread.java");
         try {
-            this.session.getBasicRemote().sendText("(pong) "+message);
+            this.session.getBasicRemote().sendText(message);
         } catch (IOException e) {
             System.out.println("ioe in ServerThread.sendMessage(String):\t" + e.getMessage());
         }

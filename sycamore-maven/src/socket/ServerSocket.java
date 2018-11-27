@@ -29,9 +29,6 @@ public class ServerSocket {
 	@OnMessage
 	public void onMessage(String message, Session session) {
         System.out.println("Message! ID=" + session.getId()+"\tMESSAGE="+message);
-        for (ServerThread st : threads) {
-            st.sendMessage(message);
-        }
         System.out.println("Threads after message:\n"+threads.toString()+"\n");
 
 	}
@@ -53,7 +50,10 @@ public class ServerSocket {
 		System.out.println("Error!");
 	}
 	
-	public void broadcast(String action, ServerThread st) {
-		// fill in broadcast here
+	public static void broadcast() {
+        System.out.println("in broadcast");
+        for (ServerThread thread: threads) {
+            thread.sendMessage("you should fetch updates from the server");
+        }
 	}	
 }

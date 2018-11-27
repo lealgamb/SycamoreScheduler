@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 import models.*;
+import socket.*;
 
 public class JDBCDriver {
   private static Connection conn = null;
@@ -24,14 +25,17 @@ public class JDBCDriver {
    * Connects to the database.
    */
   private static void connect() {
-    try {
-    	Class.forName("com.mysql.cj.jdbc.Driver");
-    	conn = DriverManager.getConnection(CONNECTION_PATH);
-    } catch (ClassNotFoundException cnfe) {
-    	System.out.println("cnfe: " + cnfe.getMessage());
-    } catch (SQLException sqle) {
-    	System.out.println("sqle: " + sqle.getMessage());
-    }
+      if (conn != null) {
+          //close();
+      }
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            conn = DriverManager.getConnection(CONNECTION_PATH);
+        } catch (ClassNotFoundException cnfe) {
+            System.out.println("cnfe: " + cnfe.getMessage());
+        } catch (SQLException sqle) {
+            System.out.println("sqle: " + sqle.getMessage());
+        }
   }
   
   /**
@@ -169,7 +173,7 @@ public class JDBCDriver {
 		  System.out.println("sqle: " + sqle.getMessage());
 		  return false;
 	  } finally {
-		  close();
+		  //close();
 	  }
 	  return false;
   }
@@ -196,7 +200,7 @@ public class JDBCDriver {
 		  System.out.println("sqle: " + sqle.getMessage());
 		  return false;
 	  } finally {
-		  close();
+		  //close();
 	  }
 	  return false;
   }
@@ -253,7 +257,7 @@ public class JDBCDriver {
 		  System.out.println("sqle: " + sqle.getMessage());
 		  return null;
 	  } finally {
-		  close();
+		  //close();
 	  }
 	  return null;
   }
@@ -296,7 +300,7 @@ public class JDBCDriver {
 		  System.out.println("SQLException in getPrimaryMajor()");
 		  System.out.println("sqle: " + sqle.getMessage());
 	  } finally {
-		  close();
+		  //close();
 	  }
 	  return null;
   }
@@ -362,7 +366,7 @@ public class JDBCDriver {
 		  System.out.println("sqle: " + sqle.getMessage());
 		  return false;
 	  } finally {
-		  close();
+		  //close();
 	  }
 	  return false;
   }
@@ -402,7 +406,7 @@ public class JDBCDriver {
 		  System.out.println("SQLException in removeDegreeProgram()");
 		  System.out.println("sqle: " + sqle.getMessage());
 	  } finally {
-		  close();
+		  //close();
 	  }
 	  return false;
   }
@@ -417,25 +421,44 @@ public class JDBCDriver {
   public static boolean updatePassword(String email, String oldPassword, String newPassword) {
     connect();
     try {
+        System.out.println("updating password, email="+email+" oldpass="+oldPassword+" newpass="+newPassword);
     	ps = conn.prepareStatement("SELECT pass FROM Users WHERE email=?");
     	ps.setString(1, email);
     	rs = ps.executeQuery();
-    	if (rs.next()) {
-    		if (oldPassword.equals(rs.getString("pass"))) {
-    			ps = conn.prepareStatement("UPDATE Users SET pass=? WHERE email=?");
-    			ps.setString(1, newPassword);
-    			ps.setString(2, email);
-    			return true;
-    		}
-    		else {
-    			return false;
-    		}
+    	if (rs.next()) {		
+            ps = conn.prepareStatement("UPDATE Users SET pass=? WHERE email=?");
+            ps.setString(1, newPassword);
+            ps.setString(2, email);
+            ps.execute();
+            return true;
     	}
     } catch (SQLException sqle) {
     	System.out.println("SQLException in updatePassword");
     	System.out.println("sqle: " + sqle.getMessage());
     } finally {
-    	close();
+    	//close();
+    }
+    return false;
+  }
+
+  public static boolean updateAnything(String email, String key, String value) {
+    connect();
+    try {
+    	ps = conn.prepareStatement("SELECT "+key+" FROM Users WHERE email=?");
+    	ps.setString(1, email);
+    	rs = ps.executeQuery();
+    	if (rs.next()) {		
+            ps = conn.prepareStatement("UPDATE Users SET "+key+"=? WHERE email=?");
+            ps.setString(1, value);
+            ps.setString(2, email);
+            ps.execute();
+            return true;
+    	}
+    } catch (SQLException sqle) {
+    	System.out.println("SQLException in updateAnything");
+    	System.out.println("sqle: " + sqle.getMessage());
+    } finally {
+    	//close();
     }
     return false;
   }
@@ -466,19 +489,15 @@ public class JDBCDriver {
    * @param email the user's schedule
    * @return null if unable to get the user's schedule
    */
-  public static Map<String, ArrayList<ArrayList<String>>> getSchedule(String email) {
+  public static Map<String, ArrayList<DegreeClass>> getSchedule(String email) {
 	  // We need to get all of the terms a user is enrolled in. We can store the terms in a set.
 	  // Iterate through the set and for each entry in the set, select the classes from UserClasses where
 	  // the term is equal to the current term in the set. Populate the ArrayList<ArrayList<String>> with
 	  // the class information.
 	  connect();
 	  try {
-		  // Stores the classes for a specified term
-		  ArrayList<ArrayList<String>> classes = new ArrayList<ArrayList<String>>();
-		  // Stores all of a user's terms and the classes associated with them
-		  // Key: term
-		  // Value: classes and their information
-		  Map<String, ArrayList<ArrayList<String>>> userSchedule = new HashMap<String, ArrayList<ArrayList<String>>>();
+
+		  Map<String, ArrayList<DegreeClass>> userSchedule = new HashMap<String, ArrayList<DegreeClass>>();
 		  
 		  // Get all of the user's terms
 		  Set<String> terms = new HashSet<String>();
@@ -491,30 +510,16 @@ public class JDBCDriver {
 		  }
 		  
 		  for (String term:terms) {
-			  ps = conn.prepareStatement("SELECT classID FROM UserClasses WHERE term=?");
-			  ps.setString(1, term);
+              ArrayList<DegreeClass> termClasses = new ArrayList<DegreeClass>();
+			  ps = conn.prepareStatement("SELECT dc.degreeClassID, dc.degreeName, dc.classNumber, dc.className, dc.units, dc.instructorName, dc.instructorId, dc.info, dc.instructorRating FROM DegreeClass dc, UserClasses uc WHERE uc.term=? and dc.degreeClassID=uc.classID and uc.userID=?");
+              ps.setString(1, term);
+              ps.setInt(2, userID);
 			  rs = ps.executeQuery();
 			  while (rs.next()) {
-				  ArrayList<String> classInformation = new ArrayList<>();
-				  classInformation.add(rs.getString("department"));
-				  classInformation.add(rs.getString("classNumber"));
-				  classInformation.add(rs.getString("className"));
-				  classInformation.add(Integer.toString(rs.getInt("units")));
-				  classInformation.add(rs.getString("section"));
-				  classInformation.add(Integer.toString(rs.getInt("sessionNum")));
-				  classInformation.add(rs.getString("typeName"));
-				  classInformation.add(rs.getString("timeStart"));
-				  classInformation.add(rs.getString("timeEnd"));
-				  classInformation.add(rs.getString("days"));
-				  classInformation.add(Integer.toString(rs.getInt("registered")));
-				  classInformation.add(Integer.toString(rs.getInt("registeredMax")));
-				  classInformation.add(rs.getString("instructor"));
-				  classInformation.add(rs.getString("location"));
-				  classInformation.add(rs.getString("syllabus"));
-				  classInformation.add(rs.getString("info"));
-				  classes.add(classInformation);
+                    DegreeClass dc = new DegreeClass(rs.getInt("degreeClassID"), rs.getString("degreeName"), rs.getString("classNumber"), rs.getString("className"), rs.getInt("units"), rs.getString("instructorName"), rs.getInt("instructorId"), rs.getString("info"), rs.getDouble("instructorRating"));
+                    termClasses.add(dc);
 			  }
-			  userSchedule.put(term, classes);
+			  userSchedule.put(term, termClasses);
 		  }
 		  if (!userSchedule.isEmpty()) {
 			  return userSchedule;
@@ -523,10 +528,10 @@ public class JDBCDriver {
 	  } catch (SQLException sqle) {
 		  System.out.println("SQLException in getSchedule()");
 		  System.out.println("sqle: " + sqle.getMessage());
-		  return null;
+          return null;
 	  } finally {
-		  close();
-	  }
+		  //close();
+      }
 	  return null;
   }
   
@@ -561,7 +566,7 @@ public class JDBCDriver {
 		  System.out.println("sqle: " + sqle.getMessage());
 		  return false;
 	  } finally {
-		  close();
+		  //close();
 	  }
   }
   
@@ -573,12 +578,12 @@ public class JDBCDriver {
   private static int getClassIDFromClassName(String className) {
 	  try {
 		  String classNameArray[] = className.split(" ");
-		  ps = conn.prepareStatement("SELECT classID FROM Class WHERE department=? AND classNumber=?");
+		  ps = conn.prepareStatement("SELECT degreeClassID FROM DegreeClass WHERE degreeName=? AND classNumber=?");
 		  ps.setString(1, classNameArray[0]);
 		  ps.setString(2, classNameArray[1]);
 		  rs = ps.executeQuery();
 		  if (rs.next()) {
-			  return rs.getInt("classID");
+			  return rs.getInt("degreeClassID");
 		  }
 	  } catch (SQLException sqle) {
 		  System.out.println("SQLException in getClassIDFromClassName()");
@@ -623,7 +628,7 @@ public class JDBCDriver {
 		  System.out.println("sqle: " + sqle.getMessage());
 		  return false;
 	  } finally {
-		  close();
+		//  close();
 	  }
 	  return false;
   }
@@ -645,9 +650,9 @@ public class JDBCDriver {
 		  ps = conn.prepareStatement("DELETE FROM UserClasses WHERE userID=? AND classID=? AND term=?");
 		  ps.setInt(1, userID);
 		  ps.setInt(2, classID);
-		  ps.setString(3, term);
+          ps.setString(3, term);
 		  ps.executeUpdate();
-		  
+		  System.out.println(conn+"\n"+ps);
 		  // Check to see if class is now removed from the database
 		  ps = conn.prepareStatement("SELECT userClassID FROM UserClasses WHERE userID=? AND classID=? AND term=?");
 		  ps.setInt(1, userID);
@@ -662,7 +667,7 @@ public class JDBCDriver {
 		  System.out.println("sqle: " + sqle.getMessage());
 		  return false;
 	  } finally {
-		  close();
+		  //close();
 	  }
 	  return true;
   }
@@ -678,7 +683,7 @@ public class JDBCDriver {
 		ps = conn.prepareStatement("select * from degreeclass");
 		rs = ps.executeQuery();
 		while (rs.next()) {
-			DegreeClass dc = new DegreeClass(rs.getInt("degreeClassID"), rs.getString("degreeName"), rs.getString("classNumber"), rs.getString("className"), rs.getInt("units"), rs.getString("instructorName"), rs.getInt("instructorId"), rs.getString("info"));
+			DegreeClass dc = new DegreeClass(rs.getInt("degreeClassID"), rs.getString("degreeName"), rs.getString("classNumber"), rs.getString("className"), rs.getInt("units"), rs.getString("instructorName"), rs.getInt("instructorId"), rs.getString("info"), rs.getDouble("instructorRating"));
 			Map<String, DegreeClass> kv = new HashMap<String, DegreeClass>();
 			kv.put(dc.degreeName+" "+dc.classNumber, dc);
 			classes.add(kv);
@@ -687,71 +692,7 @@ public class JDBCDriver {
 	  } catch (SQLException e) {
 		  System.out.println("sqle: " + e.getMessage());
 	  } finally {
-		  close();
-	  }
-	  return null;
-  }
-  
-  /**
-   * Returns the classes for the specified degree program.
-   * @param degreeProgramName the degree program name for which to get classes for
-   * @return null if unable to get classes from the database for the specified degree program name
-   */
-  public static ArrayList<ArrayList<String>> getClasses(String degreeProgramName) {
-	  connect();
-	  try {
-		  ArrayList<ArrayList<String>> allClasses = new ArrayList<ArrayList<String>>();
-		  // Get the degreeID associated with the degree program name
-		  int degreeID = -1;
-		  ps = conn.prepareStatement("SELECT degreeID FROM DegreeProgram WHERE degreeName=?");
-		  ps.setString(1, degreeProgramName);
-		  rs = ps.executeQuery();
-		  if (rs.next()) {
-			  degreeID = rs.getInt("degreeID");
-		  }
-		  
-		  // Get all of the classes that have the degreeID
-		  ps = conn.prepareStatement("SELECT classID FROM DegreeClassID WHERE degreeID=?");
-		  ps.setInt(1, degreeID);
-		  rs = ps.executeQuery();
-		  ArrayList<Integer> allClassID = new ArrayList<Integer>(); // Stores all classes with the degreeID
-		  while (rs.next()) {
-			  allClassID.add(rs.getInt("classID"));
-		  }
-		  
-		  for (int i = 0; i < allClassID.size(); i++) {
-			  ArrayList<String> classInformation = new ArrayList<String>();
-			  ps = conn.prepareStatement("SELECT * FROM Class WHERE classID=?");
-			  ps.setInt(1, allClassID.get(i));
-			  rs = ps.executeQuery();
-			  if (rs.next()) {
-				  classInformation.add(rs.getString("department"));
-				  classInformation.add(rs.getString("classNumber"));
-				  classInformation.add(rs.getString("className"));
-				  classInformation.add(Integer.toString(rs.getInt("units")));
-				  classInformation.add(rs.getString("section"));
-				  classInformation.add(Integer.toString(rs.getInt("sessionNum")));
-				  classInformation.add(rs.getString("typeName"));
-				  classInformation.add(rs.getString("timeStart"));
-				  classInformation.add(rs.getString("timeEnd"));
-				  classInformation.add(rs.getString("days"));
-				  classInformation.add(Integer.toString(rs.getInt("registered")));
-				  classInformation.add(Integer.toString(rs.getInt("registeredMax")));
-				  classInformation.add(rs.getString("instructor"));
-				  classInformation.add(rs.getString("location"));
-				  classInformation.add(rs.getString("syllabus"));
-				  classInformation.add(rs.getString("info"));
-				  allClasses.add(classInformation);
-			  }
-		  }
-		  if (!allClasses.isEmpty()) {
-			  return allClasses;
-		  }
-	  } catch (SQLException sqle) {
-		  System.out.println("SQLException in getClasses()");
-		  System.out.println("sqle: " + sqle.getMessage());
-	  } finally {
-		  close();
+		  //close();
 	  }
 	  return null;
   }
@@ -780,7 +721,7 @@ public class JDBCDriver {
 		  System.out.println("SQLException in getAllDegrePrograms()");
 		  System.out.println("sqle: " + sqle.getMessage());
 	  } finally {
-		  close();
+		  //close();
 	  }
 	  return null;
   }

@@ -15,6 +15,7 @@ import com.google.gson.Gson;
 
 import driver.JDBCDriver;
 import models.*;
+import socket.*;
 
 /**
  * Servlet implementation class ScheduleServlet
@@ -26,7 +27,7 @@ public class ScheduleServlet extends HttpServlet {
   /**
    * Handles schedule retrieval requests.
    */
-  protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {    
+  protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { 
     // Get the writer
     PrintWriter pw = response.getWriter();
     
@@ -45,7 +46,7 @@ public class ScheduleServlet extends HttpServlet {
       pw.flush();
     }
     else {
-      Map<String, ArrayList<ArrayList<String>>> schedule = JDBCDriver.getSchedule(email);
+      Map<String, ArrayList<DegreeClass>> schedule = JDBCDriver.getSchedule(email);
       
       // Check if the schedule can be retrieved
       if (schedule != null) {
@@ -115,6 +116,7 @@ public class ScheduleServlet extends HttpServlet {
                   + " to " + profileEmail + "'s course plan.";
               pw.write(new Gson().toJson(success));
               pw.flush();
+              ServerSocket.broadcast();
             }
             else {
               // Unable to add the class
@@ -137,6 +139,7 @@ public class ScheduleServlet extends HttpServlet {
                   + " from " + profileEmail + "'s course plan.";
               pw.write(new Gson().toJson(success));
               pw.flush();
+              ServerSocket.broadcast();
             }
             else {
               // Unable to remove the class
