@@ -88,7 +88,44 @@ const theme = {
 		extend: ({ theme }) => css`
 			border-radius: ${theme.global.control.border.radius};
 		`
-	  },
+	},
+	textInput: {
+		extend:`
+			font-family: 'Inconsolata';
+		`
+	},
+	select: {
+		extend:`
+			font-family: 'Inconsolata';
+		`
+	},
+	radioButton: {
+		size: "18px",
+		border: {
+			color: 'darker'
+		},
+		color: 'darker',
+		hover: {
+			border: {
+			color: "main"
+			}
+		},
+		check: {
+			border: {
+				color: "main"
+			},
+			color: {
+			light: "main"
+			}
+		},
+		icon: {
+			size: "full"
+		},
+		extend:`
+			font-family: 'Inconsolata';
+			font-weight: normal;
+		` 
+	}
 };
 
 class App extends Component {

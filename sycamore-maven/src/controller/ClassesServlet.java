@@ -28,6 +28,7 @@ public class ClassesServlet extends HttpServlet {
    * Handles requests for classes.
    */
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	  System.out.println("GET /ClassesServlet Session ID:\t" + request.getSession().getId());
     // Get the writer
     PrintWriter pw = response.getWriter();
     

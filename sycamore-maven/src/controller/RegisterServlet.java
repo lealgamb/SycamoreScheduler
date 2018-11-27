@@ -73,11 +73,13 @@ public class RegisterServlet extends HttpServlet {
     String major1 = request.getParameter("major1");
     String major2 = request.getParameter("major2");
     String minor1 = request.getParameter("minor1");
-    String minor2 = request.getParameter("minor2");
+	String minor2 = request.getParameter("minor2");
+	String startTerm = request.getParameter("startTerm");
+	String endTerm = request.getParameter("endTerm");
     	  
     // Check if any of the parameters are null and send an error message if so
     // At minimum, major1 must have a value
-    if (email == null || fName == null || lName == null || password == null || major1 == null) {
+    if (startTerm == null || endTerm == null || email == null || fName == null || lName == null || password == null || major1 == null) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       Map<String, String> error = new HashMap<String, String>();
       error.put("error", "Missing registration parameters.");
@@ -93,7 +95,7 @@ public class RegisterServlet extends HttpServlet {
       academicPrograms.add(minor2);
 	    
       // Attempt to register the user
-      if (JDBCDriver.addUser(email, fName, lName, password, academicPrograms)) {
+      if (JDBCDriver.addUser(email, fName, lName, password, academicPrograms, startTerm, endTerm)) {
         // Successfully registered user
         
         // Store the email as a session attribute

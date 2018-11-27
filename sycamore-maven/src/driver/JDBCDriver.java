@@ -66,7 +66,7 @@ public class JDBCDriver {
    * @param academicPrograms the list of the the user's academic programs
    * @return false if user is unable to be added to the database
    */
-  public static boolean addUser(String email, String fName, String lName, String password, ArrayList<String> academicPrograms) {
+  public static boolean addUser(String email, String fName, String lName, String password, ArrayList<String> academicPrograms, String startTerm, String endTerm) {
 	  // Assume:
 	  // 0th index represents degreeID (aka major) - we always assume that this exists
 	  // 1st index represents degree2ID (aka major 2) - an empty string "" represents no major2
@@ -128,7 +128,7 @@ public class JDBCDriver {
 		  }
 		  
 		  
-		  ps = conn.prepareStatement("INSERT INTO Users(email, fname, lname, pass, degreeID, degree2ID, minorID, minor2ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
+		  ps = conn.prepareStatement("INSERT INTO Users(email, fname, lname, pass, degreeID, degree2ID, minorID, minor2ID, startTerm, endTerm) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
 		  ps.setString(1, email.toLowerCase());
 		  ps.setString(2, fName);
 		  ps.setString(3, lName);
@@ -149,6 +149,8 @@ public class JDBCDriver {
 		  } else {
 			  ps.setNull(8, Types.INTEGER);
 		  }
+		  ps.setString(9, startTerm);
+		  ps.setString(10, endTerm);
 		  ps.executeUpdate();
 		  
 		  // Check to see if user is in the database
@@ -218,19 +220,30 @@ public class JDBCDriver {
 		  rs = ps.executeQuery();
 		  if (rs.next()) {
 			  // Get fname and lname from database and combines them
-			  String fullname = rs.getString("fname") + " " + rs.getString("lname");
-			  userInformation.put("fullname", fullname);
+			  userInformation.put("fName", rs.getString("fName"));
+			  userInformation.put("lName", rs.getString("lName"));
+			  userInformation.put("email", rs.getString("email"));
+			  userInformation.put("password", rs.getString("pass"));
+			  userInformation.put("startTerm", rs.getString("startTerm"));
+			  userInformation.put("endTerm", rs.getString("endTerm"));
 			  
 			  // Get the degreeName associated with the degreeID
 			  String major1 = getDegreeProgramNameFromID(rs.getInt("degreeID"));
-			  String major2 = getDegreeProgramNameFromID(rs.getInt("degree2ID"));
-			  String minor1 = getDegreeProgramNameFromID(rs.getInt("minorID"));
-			  String minor2 = getDegreeProgramNameFromID(rs.getInt("minor2ID"));
+			  /*String major2 = "", minor1 = "", minor2 = "";
+			  if (rs.getInt("degree2ID") != 0) {
+				major2 = getDegreeProgramNameFromID(rs.getInt("degree2ID"));
+			  }
+			  if (rs.getInt("minorID") != 0) {
+			  	minor1 = getDegreeProgramNameFromID(rs.getInt("minorID"));
+			  }
+			  if (rs.getInt("minor2ID") != 0) {
+				minor2 = getDegreeProgramNameFromID(rs.getInt("minor2ID"));
+			  }*/
 			  
 			  userInformation.put("major1", major1);
-			  userInformation.put("major2", major2);
+			  /*userInformation.put("major2", major2);
 			  userInformation.put("minor1", minor1);
-			  userInformation.put("minor2", minor2);
+			  userInformation.put("minor2", minor2);*/
 		  }
 		  if (!userInformation.isEmpty()) {
 			  return userInformation;

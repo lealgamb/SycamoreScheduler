@@ -46,6 +46,8 @@ CREATE TABLE Users (
     degree2ID INT(10) NULL,
     minorID INT(10) NULL,
     minor2ID INT(10) NULL,
+    startTerm VARCHAR(5) NOT NULL,
+    endTerm VARCHAR(5) NOT NULL,
     FOREIGN KEY fk3 (degreeID) REFERENCES DegreeProgram(degreeID),
     FOREIGN KEY fk4 (degree2ID) REFERENCES DegreeProgram(degreeID),
     FOREIGN KEY fk5 (minorID) REFERENCES DegreeProgram(degreeID),
@@ -58,7 +60,7 @@ CREATE TABLE UserClasses (
 	userClassID INT(11) PRIMARY KEY AUTO_INCREMENT,
     classID INT(11) NOT NULL,
     userID INT(11) NOT NULL,
-    term VARCHAR(20) NOT NULL,
+    term VARCHAR(5) NOT NULL,
     currStatus VARCHAR(20) NULL,
     FOREIGN KEY fk8 (userID) REFERENCES Users(userID),
     FOREIGN KEY fk9 (classID) REFERENCES DegreeClass(degreeClassID)

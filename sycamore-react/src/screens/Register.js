@@ -7,7 +7,9 @@ import {
 	RoutedButton,
 	Select,
 	Text,
-	TextInput
+	TextInput,
+	RadioButton,
+
 } from 'grommet';
 
 import {
@@ -25,6 +27,8 @@ class Register extends Component {
 		this.lNameRef = React.createRef();
 		this.emailRef = React.createRef();
 		this.passwordRef = React.createRef();
+		this.startyearref = React.createRef();
+		this.endyearref = React.createRef();
 		this.focusSomething = function (obj) {
 			obj.current.focus();
 		}
@@ -43,6 +47,10 @@ class Register extends Component {
 		error: false,
 		errormsg: '',
 		success: false,
+		startRadio: 'fall',
+		endRadio: 'spring',
+		startYear: 2017,
+		endYear: 2021,
 		programs: default_programs
 	}
 	
@@ -100,6 +108,8 @@ class Register extends Component {
 					bodystr += key + '=' + this.state[key];
 				}
 			}
+			bodystr += "&startTerm="+this.state.startYear.toString()+(this.state.startRadio === 'fall'? '3': '1');
+			bodystr += "&endTerm="+this.state.endYear.toString()+(this.state.endRadio === 'fall'? '3': '1');
             var ok = false;
 			fetch('/SycamoreScheduler/RegisterServlet', {
 				method: 'POST',
@@ -249,6 +259,122 @@ class Register extends Component {
 							>
 							</TextInput>
 						</FormField>
+					</Box>
+					<Box
+						flex
+						width='100%'
+						direction='row'
+						align='center'
+						justify='between'
+						gap='large'
+					>
+						<Box
+							flex
+							width='100%'
+							direction='column'
+							align='start'
+							justify='center'
+							gap='small'
+						>
+							<Text fontFamily='Inconsolata' size='large'>start term</Text>
+							<Box
+								flex
+								width='100%'
+								direction='row'
+								align='center'
+								justify='between'
+							>
+								<RadioButton
+									label="fall"
+									name="fa_start"
+									value="fall"
+									checked={this.state.startRadio === 'fall'}
+									onChange={e => {
+										console.log("Start Term: " + e.target.value)
+										this.setState({
+											startRadio: e.target.value
+										});
+									}}
+								/>
+								<RadioButton
+									label="spring"
+									name="sp_start"
+									value="spring"
+									checked={this.state.startRadio === 'spring'}
+									onChange={e => {
+										console.log("Start Term: " + e.target.value)
+										this.setState({
+											startRadio: e.target.value
+										});
+									}}
+								/>
+							</Box>
+							<Box
+								flex
+							>
+								<TextInput
+									ref={this.startyearref}
+									id='startyear'
+									type='number'
+									focusIndicator
+									value={this.state.startYear}
+									onChange={(event) => this.setState({startYear: event.target.value})}
+								/>
+							</Box>
+						</Box>
+						<Box
+							flex
+							direction='column'
+							align='start'
+							justify='center'
+							gap='small'
+						>
+							<Text fontFamily='Inconsolata' size='large'>end term</Text>
+							<Box
+								flex
+								width='100%'
+								direction='row'
+								align='center'
+								justify='between'
+							>
+								<RadioButton
+									label="fall"
+									name="fa_end"
+									value="fall"
+									checked={this.state.endRadio === 'fall'}
+									onChange={e => {
+										console.log("End Term: " + e.target.value)
+										this.setState({
+											endRadio: e.target.value
+										});
+									}}
+								/>
+								<RadioButton
+									label="spring"
+									name="sp_end"
+									value="spring"
+									checked={this.state.endRadio === 'spring'}
+									onChange={e => {
+										console.log("End Term: " + e.target.value)
+										this.setState({
+											endRadio: e.target.value
+										});
+									}}
+								/>
+							</Box>
+							<Box
+								flex
+							>
+									<TextInput
+										ref={this.endyearref}
+										id='endyear'
+										type='number'
+										focusIndicator
+										value={this.state.endYear}
+										onChange={(event) => this.setState({endYear: event.target.value})}
+									/>
+							</Box>
+						</Box>
 					</Box>
 					<Box
 						flex

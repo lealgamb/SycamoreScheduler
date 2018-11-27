@@ -8,37 +8,31 @@ import {
 	TableCell, 
 	TableHeader,
 	TableRow,
-	Text
+	Text,
+	Button
 } from 'grommet';
 
-const DATA = [
+import {
+	SubtractCircle
+} from 'grommet-icons';
+
+var DATA = [
 	{
 		term: '2017-3',
 		classes: [
-			'CSCI 103',
-			'CSCI 109',
-			'WRIT 150',
-			'CHEM 105a',
-			'MATH 226'
+			
 		]
 	},
 	{
 		term: '2018-1',
 		classes: [
-			'CSCI 104',
-			'CSCI 170',
-			'GESM 121',
-			'CHEM 115b',
-			'MATH 225'
+			
 		]
 	},
 	{
 		term: '2018-3',
 		classes: [
-			'CSCI 201',
-			'CSCI 270',
-			'PSYC 100',
-			'CHEM 322a'
+			
 		]
 	},
 	{
@@ -124,9 +118,20 @@ class CoursePlan extends Component {
 									{item.classes.map(course => (
 										<TableRow key={i++}>
 											<TableCell>
-												<Text size='large'>
-													{course}
-												</Text>
+												<Box 
+													direction='row'
+													align='center'
+													justify='between'
+												>
+													<Text size='large'>
+														{course}
+													</Text>
+													<Button
+														hoverIndicator
+														icon={<SubtractCircle color='main'></SubtractCircle>}
+													>
+													</Button>
+												</Box>
 											</TableCell>
 										</TableRow>
 									))}

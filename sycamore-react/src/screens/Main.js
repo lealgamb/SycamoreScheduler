@@ -57,19 +57,10 @@ class Main extends Component {
 			signedIn: props.signedIn,
 			email: props.email,
 			classes: null,
-            classNames: null,
-        };
-        this.info = {
-            fName: 'John', 
-            lName: 'Smith',
-            password: 'password',
-            email: 'john@gmail.com',
-            major1: 'CSCI',
-            major2: '',
-            minor1: 'MATH',
-            minor2: '' 
-        }
-        
+			classNames: null,
+			info: null
+		};
+		
 		let ok = false;
 		this.loadClasses = function() { 
 			fetch('/SycamoreScheduler/ClassesServlet', {
@@ -81,7 +72,6 @@ class Main extends Component {
 			})
 			.then((json) => {
 				if (ok) {
-					console.log(json);
 					let classNames = json.map((degClass) => {
 						let thekey = Object.keys(degClass)[0];
 						return (degClass[thekey].degreeName + ' ' + degClass[thekey].classNumber);
@@ -92,8 +82,12 @@ class Main extends Component {
 					}, () => {
 						console.log('ClassesServlet returned status 200');
 						console.log('Classes stored in this.state.classes');
-						console.log('Class names:\n');
-						console.log(this.state.classNames);	
+						if (this.props.signedIn) {
+							console.log("Loading profile now");
+							this.loadProfile();
+						} else {
+							console.log("Not signed in, not loading profile");
+						}
 					});
 				} else {
 					console.log('ClassesServlet did not return status 200.');
@@ -101,7 +95,24 @@ class Main extends Component {
 				}
 			});
 		}.bind(this);
-        this.loadClasses();
+
+		this.loadProfile = function() {
+			fetch('/SycamoreScheduler/ProfileServlet?profileEmail='+props.email, {
+				method: 'GET',
+			}).then((response) => {
+                ok = response.ok;
+				return response.json();
+			})
+			.then(json => {
+				console.log(json);
+				this.setState({
+					info: json
+				})
+			});
+
+		}.bind(this);
+
+		this.loadClasses();
 	}
 
 	displayClass = (id) => {
@@ -145,7 +156,7 @@ class Main extends Component {
 							>
 								<PageLink margin={{right: 'large'}} text='Classes' func={() => this.setState({showSidebar: !this.state.showSidebar})}></PageLink>
 								{this.state.signedIn && <PageLink margin={{right: 'large'}} text='Course Plan' func={() => this.setState({display: 'coursePlan'})}></PageLink>}
-								{this.state.signedIn && <PageLink text='Profile' func={() => this.setState({display: 'profile'})}></PageLink>}
+								{this.state.signedIn && this.state.info !== null && <PageLink text='Profile' func={() => this.setState({display: 'profile'})}></PageLink>}
 							</Box>
 						</Header> 
 						<Box
@@ -184,7 +195,7 @@ class Main extends Component {
 								</Collapsible>
 							}
 							{display==='coursePlan' && <CoursePlan></CoursePlan>}
-							{display==='profile' && <Profile info={this.info}></Profile>}
+							{display==='profile' && <Profile info={this.state.info}></Profile>}
 							{display==='none' && 
 								<Box
 									flex
@@ -202,7 +213,7 @@ class Main extends Component {
 								</Box>
 							}
 							{display==='class' && this.state.whichClass !== null &&
-								<ClassView socketFunc={this.props.socketFunc} defaultInfo={this.state.whichClass} classInfo={this.state.whichClass}></ClassView>
+								<ClassView isSignedIn={this.state.signedIn} socketFunc={this.props.socketFunc} defaultInfo={this.state.whichClass} classInfo={this.state.whichClass}></ClassView>
 							}
 						</Box>
 					</Box>

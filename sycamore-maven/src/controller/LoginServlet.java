@@ -52,8 +52,9 @@ public class LoginServlet extends HttpServlet {
         
         // Store the email as a session attribute
         request.getSession().setAttribute("email", email);
-        
-        // Communicate with the front-end
+		System.out.println("POST /LoginServlet Session ID:\t" + request.getSession().getId());        
+		
+		// Communicate with the front-end
         response.setStatus(HttpServletResponse.SC_OK);
         Map<String, String> success = new HashMap<String, String>();
         success.put("success", "Successfully authenticated the user.");

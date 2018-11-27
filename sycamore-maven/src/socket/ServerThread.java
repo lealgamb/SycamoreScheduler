@@ -1,21 +1,9 @@
 package socket;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
-
-import java.util.ArrayList;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
 import javax.websocket.Session;
 
-import driver.JDBCDriver;
-import com.google.gson.Gson;
+
 
 
 //deal with threads

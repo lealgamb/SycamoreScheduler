@@ -94,10 +94,13 @@ class Classes extends Component {
 			courseTab: 0,
 			search: '',
 			allClasses: props.classes,
-			searchClasses: props.classes
+			searchClasses: props.classes,
+			allMajorClasses: props.classes.filter(s => new RegExp('CSCI', 'i').test(s)),
+			searchMajorClasses: props.classes.filter(s => new RegExp('CSCI', 'i').test(s)),
+			allMinorClasses: props.classes.filter(s => new RegExp('MATH', 'i').test(s)),
+			searchMinorClasses: props.classes.filter(s => new RegExp('MATH', 'i').test(s)),
 		}
 		this.onSearch = function (query) {
-			console.log('New search query:\t'+query);
 			const exp = new RegExp(query, 'i');
 			this.setState({
 				search: query,
@@ -163,18 +166,20 @@ class Classes extends Component {
            		<Tab 
                     title={
                         <RichTabTitle
-                      		label="Major"
+                      		label="CSCI"
                         />
                     }
                 >
+					<CourseList clickFunc={this.props.clickFunc} defList={this.state.allMajorClasses} list={this.state.searchMajorClasses} />	
 				</Tab>
                 <Tab 
                     title={
                         <RichTabTitle
-                            label="Minor"
+                            label="MATH"
                         />
                     }
                 >
+					<CourseList clickFunc={this.props.clickFunc} defList={this.state.allMinorClasses} list={this.state.searchMinorClasses} />	
 				</Tab>
 			</Tabs>
 		);

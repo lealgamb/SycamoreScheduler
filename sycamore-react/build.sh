@@ -1,7 +1,7 @@
 #!/bin/bash
 # Compiles the Sycamore Scheduler React.js app into static .html/.css/.js that is built with some Java Servlets in the backend
 # (using Maven) to create a directory (/sycamore-maven/target/SycamoreScheduler) that can be deployed on any Tomcat server.
-PROJ_DIR='/Users/sajeev/git/sycamore-scheduler/sycamore-react'
+PROJ_DIR='/c/Users/Sajeev/git/sycamore-scheduler/sycamore-react'
 cd ${PROJ_DIR}
 npm run build
 cd '../sycamore-maven/web/'

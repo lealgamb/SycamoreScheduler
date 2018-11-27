@@ -4,6 +4,7 @@ import {
 	Button,
 	FormField,
 	Heading,
+	Keyboard,
 	Text,
 	TextInput,
 	RoutedButton
@@ -104,6 +105,14 @@ class SignIn extends Component {
 	
 	render ( ) {
 		return (
+			<Keyboard
+				onEnter={() => {
+					this.doLogin(null); // doesn't matter what event we pass into the function
+				}}
+				onEsc={() => {
+					this.props.history.push('/');
+				}}
+			>
 			<Box
 				flex
 				direction='column'
@@ -223,6 +232,7 @@ class SignIn extends Component {
 					</Box>
 				</Box>
 			</Box>
+			</Keyboard>
 		);
 	}
 }

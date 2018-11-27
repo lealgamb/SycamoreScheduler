@@ -3,29 +3,16 @@ package socket;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Scanner;
-
 import driver.JDBCDriver;
-import com.google.gson.Gson;
-
 
 public class ChatClient extends Thread {
 
 	public  String line;
 	public String user;
-	private Socket s;
 	
-	private BufferedWriter bw;
 	private BufferedReader br;
 	
 	public ChatClient (BufferedWriter bw, BufferedReader br) {
-		this.bw = bw;
 		this.br = br;
 		System.out.println("Connected! [ in ChatClient() ]");
 		this.start();
