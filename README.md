@@ -1,1 +1,1 @@
-# sycamore-scheduler
+# SycamoreScheduler
